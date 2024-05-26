@@ -1,0 +1,6 @@
+@Shortify.NET_HostAddress = http://localhost:5276
+
+GET {{Shortify.NET_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
