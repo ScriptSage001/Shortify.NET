@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
+using Shortify.NET.Applicaion.Users.Commands.LoginUser;
+using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
 using Shortify.NET.Common.Messaging.Abstractions;
-using Shortify.NET.Core.ValueObjects;
 
 namespace Shortify.NET.API.Controllers
 {

@@ -40,5 +40,25 @@ namespace Shortify.NET.Core.Errors
 
             public static readonly Error InvalidFormat = Error.Validation("ShortUrl.InvalidFormat", "ShortUrl format is invalid");
         }
+
+        /// <summary>
+        /// Error related to User Entity
+        /// </summary>
+        public readonly struct User
+        {
+            public static readonly Error UserNameAlreadyInUse = Error.Conflict("User.UserNameAlreadyInUse", "The specified UserName is already in use.");
+
+            public static readonly Error EmailAlreadyInUse = Error.Conflict("User.EmailAlreadyInUse", "The specified Email is already in use.");
+
+            public static readonly Error UserNotFound = Error.NotFound("User.UserNotFound", "The specified UserId doesn't return any User.");
+        }
+
+        /// <summary>
+        /// Error related to UserCredentials Entity
+        /// </summary>
+        public readonly struct UserCredentials
+        {
+            public static readonly Error WrongCredentials = Error.Unauthorized("User.WrongCredentials", "The specified credentials are wrong.");
+        }
     }
 }

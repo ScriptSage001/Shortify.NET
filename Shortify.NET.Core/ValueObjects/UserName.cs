@@ -6,15 +6,15 @@ namespace Shortify.NET.Core.ValueObjects
 {
     public sealed class UserName : ValueObject
     {
-        private const int MinLength = 5;
+        public const int MinLength = 5;
 
-        private const int MaxLength = 20;
+        public const int MaxLength = 20;
 
         private UserName(string value) => Value = value;
 
         public string Value { get; }
 
-        public Result<UserName> Create(string value)
+        public static Result<UserName> Create(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
