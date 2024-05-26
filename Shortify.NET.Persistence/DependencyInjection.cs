@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shortify.NET.Applicaion.Abstractions.Repositories;
 using Shortify.NET.Core;
+using Shortify.NET.Persistence.Repository;
 
 namespace Shortify.NET.Persistence
 {

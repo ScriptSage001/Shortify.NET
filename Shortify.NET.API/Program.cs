@@ -1,25 +1,41 @@
+using Shortify.NET.API;
+using Shortify.NET.Common;
+using Shortify.NET.Persistence;
+using Shortify.NET.Infrastructure;
+using Shortify.NET.Applicaion;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    builder.Services
+                .AddApi(builder.Configuration)
+                .AddShortifyNetCommon(Shortify.NET.Applicaion.AssemblyReference.Assembly)
+                .AddPersistence(builder.Configuration)
+                .AddInfrastructure(builder.Configuration)
+                .AddApplication(builder.Configuration);
 }
 
-app.UseHttpsRedirection();
+{
+    var app = builder.Build();
 
-app.UseAuthorization();
+    // Configure the HTTP request pipeline.
+    //if (app.Environment.IsDevelopment())
+    //{
+    //    app.UseSwagger();
+    //    app.UseSwaggerUI(s => s.SwaggerEndpoint("/swagger/v1/swagger.json", "Shortify.NET API V1"));
+    //}
 
-app.MapControllers();
+    app.UseSwagger();
+    app.UseSwaggerUI(s => s.SwaggerEndpoint("/swagger/v1/swagger.json", "Shortify.NET API V1"));
 
-app.Run();
+    app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.UseExceptionHandler(_ => { });
+
+    app.MapControllers();
+    app.Run();
+}

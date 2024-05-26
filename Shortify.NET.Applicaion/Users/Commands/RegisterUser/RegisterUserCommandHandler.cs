@@ -63,7 +63,7 @@ namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
                                                                     passwordHash: passwordHash,
                                                                     passwordSalt: passwordSalt);
 
-            AuthenticationResult authResult = _authServices.CreateToken(newUser.Id, email.Value.Value);
+            AuthenticationResult authResult = _authServices.CreateToken(newUser.Id, userName.Value.Value, email.Value.Value);
 
             newUserCredentials.AddOrUpdateRefreshToken(authResult.RefreshToken, authResult.RefreshTokenExpirationTimeUtc);
 
