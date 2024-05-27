@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shortify.NET.Applicaion.Helpers;
 
 namespace Shortify.NET.Applicaion
 {
@@ -16,7 +17,7 @@ namespace Shortify.NET.Applicaion
 
         private static IServiceCollection AddHelpers(this IServiceCollection services, IConfiguration configuration)
         {
-            //services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
 
             return services;
         }

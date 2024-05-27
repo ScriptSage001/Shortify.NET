@@ -21,7 +21,7 @@ namespace Shortify.NET.Infrastructure
         {
             services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
             services.Configure<ShortLinkSettings>(configuration.GetSection("ShortLinkSettings"));
-            //services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
 
             return services;
         }
@@ -30,7 +30,7 @@ namespace Shortify.NET.Infrastructure
         {
             services.AddScoped<IAuthServices, AuthServices>();
             services.AddScoped<IUrlShorteningService, UrlShorteningService>();
-            //services.AddSingleton<IEmailServices, EmailServices>();
+            services.AddSingleton<IEmailServices, EmailServices>();
 
             return services;
         }
