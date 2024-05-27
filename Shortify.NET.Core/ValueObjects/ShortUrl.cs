@@ -1,4 +1,5 @@
-﻿using Shortify.NET.Common.FunctionalTypes;
+﻿using MediatR;
+using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Core.Errors;
 using Shortify.NET.Core.Primitives;
 
@@ -17,7 +18,7 @@ namespace Shortify.NET.Core.ValueObjects
                 return Result.Failure<ShortUrl>(DomainErrors.ShortUrl.Empty);
             }
 
-            if (value.Split('/').Length != 2)
+            if (!Uri.TryCreate(value, UriKind.Absolute, out _))
             {
                 return Result.Failure<ShortUrl>(DomainErrors.ShortUrl.InvalidFormat);
             }

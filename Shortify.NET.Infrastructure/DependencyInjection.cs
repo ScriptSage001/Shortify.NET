@@ -20,6 +20,7 @@ namespace Shortify.NET.Infrastructure
         private static IServiceCollection AddHelpers(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
+            services.Configure<ShortLinkSettings>(configuration.GetSection("ShortLinkSettings"));
             //services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
 
             return services;
@@ -28,6 +29,7 @@ namespace Shortify.NET.Infrastructure
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthServices, AuthServices>();
+            services.AddScoped<IUrlShorteningService, UrlShorteningService>();
             //services.AddSingleton<IEmailServices, EmailServices>();
 
             return services;

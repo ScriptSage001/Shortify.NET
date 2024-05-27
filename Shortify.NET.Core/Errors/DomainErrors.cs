@@ -60,5 +60,13 @@ namespace Shortify.NET.Core.Errors
         {
             public static readonly Error WrongCredentials = Error.Unauthorized("User.WrongCredentials", "The specified credentials are wrong.");
         }
+
+        /// <summary>
+        /// Error related to ShortenedUrl Entity
+        /// </summary>
+        public readonly struct ShortenedUrl
+        {
+            public static readonly Error ShortenedUrlNotFound = Error.NotFound("ShortenedUrl.NotFound", "The specified short url does not exists.");
+        }
     }
 }
