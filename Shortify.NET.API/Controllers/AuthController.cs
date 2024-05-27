@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
+using Shortify.NET.API.Mappers;
 using Shortify.NET.Applicaion.Users.Commands.LoginUser;
 using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
 using Shortify.NET.Common.Messaging.Abstractions;
@@ -9,8 +10,11 @@ namespace Shortify.NET.API.Controllers
     [Route("api/[controller]")]
     public class AuthController : BaseApiController
     {
+        private readonly MapperProfiles _mapper;
+
         public AuthController(IApiService apiService) : base(apiService)
         {
+            _mapper = new MapperProfiles();
         }
 
         #region Public Endpoints
@@ -32,22 +36,13 @@ namespace Shortify.NET.API.Controllers
                 return HandleNullOrEmptyRequest();
             }
 
-            // Auto Map - ToDo
-            var command = new RegisterUserCommand(
-                UserName: request.UserName,
-                Email: request.Email,
-                Password: request.Password
-                );
+            RegisterUserCommand command = _mapper.RegisterUserRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
             return response.IsFailure ?
                     HandleFailure(response) :
-                    Ok(new RegisterUserResponse(
-                        UserId: response.Value.UserId,
-                        AccessToken: response.Value.AccessToken,
-                        RefreshToken: response.Value.RefreshToken,
-                        RefreshTokenExpirationTimeUtc: response.Value.RefreshTokenExpirationTimeUtc)); // Auto Map - ToDo
+                    Ok(_mapper.AuthResultToRegisterUserResponse(response.Value));
         }
 
         /// <summary>
@@ -67,19 +62,13 @@ namespace Shortify.NET.API.Controllers
                 return HandleNullOrEmptyRequest();
             }
 
-            var command = new LoginUserCommand(
-                                    UserName: request.UserName,
-                                    Password: request.Password);
+            LoginUserCommand command = _mapper.LoginUserRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
             return response.IsFailure ?
                     HandleFailure(response) :
-                    Ok(new LoginUserResponse(
-                        UserId: response.Value.UserId,
-                        AccessToken: response.Value.AccessToken,
-                        RefreshToken: response.Value.RefreshToken,
-                        RefreshTokenExpirationTimeUtc: response.Value.RefreshTokenExpirationTimeUtc)); // Auto Map - ToDo
+                    Ok(_mapper.AuthResultToLoginUserResponse(response.Value));
         }
 
         /// <summary>

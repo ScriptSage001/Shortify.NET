@@ -10,7 +10,7 @@ namespace Shortify.NET.Applicaion.Users.Commands.LoginUser
             RuleFor(x => x).NotEmpty();
 
             RuleFor(x => x.UserName)
-            .NotEmpty()
+                .NotEmpty()
                 .MinimumLength(UserName.MinLength)
                 .MaximumLength(UserName.MaxLength);
 

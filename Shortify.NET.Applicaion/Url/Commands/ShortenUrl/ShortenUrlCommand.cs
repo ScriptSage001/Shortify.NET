@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Shortify.NET.Applicaion.Shared.Models;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core.ValueObjects;
 
