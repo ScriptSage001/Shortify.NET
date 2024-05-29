@@ -29,33 +29,59 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
 
         public async Task<Result<ShortUrl>> Handle(ShortenUrlCommand command, CancellationToken cancellationToken)
         {
-            // Generate Code
-            var code = await _urlShorteningService.GenerateUniqueCode(cancellationToken);
+            const int MaxRetries = 5;
+            int retryCount = 0;
 
-            // Generate Short Url
-            string shortUrlString = $"{command.HttpRequest.Scheme}://{command.HttpRequest.Host}/{code}";
-            var shortUrl = ShortUrl.Create(shortUrlString);
-
-            // Validate Short Url
-            if (shortUrl.IsFailure)
+            while(retryCount < MaxRetries)
             {
-                return Result.Failure<ShortUrl>(shortUrl.Error);
+                // Generate Code
+                var code = await _urlShorteningService.GenerateUniqueCode(cancellationToken);
+
+                // Generate Short Url
+                string shortUrlString = $"{command.HttpRequest.Scheme}://{command.HttpRequest.Host}/{code}";
+                var shortUrl = ShortUrl.Create(shortUrlString);
+
+                // Validate Short Url
+                if (shortUrl.IsFailure)
+                {
+                    return Result.Failure<ShortUrl>(shortUrl.Error);
+                }
+
+                // Genereate the shortened url object
+                var shortenedUrl = ShortenedUrl.Create(
+                    userId: null,
+                    originalUrl: command.Url,
+                    shortUrl: shortUrl.Value,
+                    code: code
+                    );
+
+                try
+                {
+                    // Save in DB
+                    _shortenedUrlRepository.Add(shortenedUrl);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                    // Return
+                    return shortUrl;
+                }
+                catch (Exception ex)
+                {
+                    retryCount++;
+
+                    if (retryCount >= MaxRetries)
+                    {
+                        return Result.Failure<ShortUrl>(
+                                    Error.Failure(
+                                            "ShortUrl.FailedToCreate", 
+                                            $"Failed to generate a unique short URL after multiple attempts. Exception : {ex.Message}"));
+                    }
+                }
             }
 
-            // Genereate the shortened url object
-            var shortenedUrl = ShortenedUrl.Create(
-                userId: null,
-                originalUrl: command.Url,
-                shortUrl: shortUrl.Value,
-                code: code
-                );
-
-            // Save in DB
-            _shortenedUrlRepository.Add(shortenedUrl);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            // Return
-            return shortUrl;
+            return Result.Failure<ShortUrl>(
+                                    Error.Failure(
+                                            "ShortUrl.FailedToCreate",
+                                            $"Failed to generate a unique short URL after multiple attempts."));
         }
     }
 }
