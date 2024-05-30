@@ -1,4 +1,5 @@
-﻿using Shortify.NET.Core.Primitives;
+﻿using Shortify.NET.Core.Events;
+using Shortify.NET.Core.Primitives;
 using Shortify.NET.Core.ValueObjects;
 
 namespace Shortify.NET.Core.Entites
@@ -62,7 +63,7 @@ namespace Shortify.NET.Core.Entites
         {
             var user = new User(Guid.NewGuid(), userName, email);
 
-            //user.RaiseDomainEvent(new UserRegisteredDomainEvent(Guid.NewGuid(), user.Id, email.Value));
+            user.RaiseDomainEvent(new UserRegisteredDomainEvent(Guid.NewGuid(), user.Id, email.Value));
 
             return user;
         }

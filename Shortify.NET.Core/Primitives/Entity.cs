@@ -1,10 +1,14 @@
-﻿namespace Shortify.NET.Core.Primitives
+﻿using Shortify.NET.Common.Messaging.Abstractions;
+
+namespace Shortify.NET.Core.Primitives
 {
     /// <summary>
     /// Base Entity Class for Domain Entities
     /// </summary>
     public abstract class Entity : IEquatable<Entity>
     {
+        private readonly List<IDomainEvent> _domainEvents = [];
+
         /// <summary>
         /// Constructor to initialize 
         /// the base properties of any entity
@@ -19,6 +23,8 @@
         /// Identifier Property for the Entities
         /// </summary>
         public Guid Id { get; private init; }
+
+        #region Equatable Functions
 
         public bool Equals(Entity? other)
         {
@@ -54,5 +60,17 @@
         }
 
         public override int GetHashCode() => Id.GetHashCode();
+
+        #endregion
+
+        #region Domain Events
+
+        public void RaiseDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+
+        public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => [.. _domainEvents];
+
+        public void ClearDomainEvents() => _domainEvents.Clear();
+
+        #endregion
     }
 }

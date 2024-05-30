@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Newtonsoft.Json;
+using Shortify.NET.Common.Messaging.Abstractions;
+using Shortify.NET.Common.Messaging.Outbox;
 using Shortify.NET.Core;
 using Shortify.NET.Core.Primitives;
 
@@ -19,7 +22,7 @@ namespace Shortify.NET.Persistence
         /// <returns></returns>
         public Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            //InsertDomainEventsIntoOutboxMessages();
+            InsertDomainEventsIntoOutboxMessages();
             UpdateAuditableEntities();
 
             return _appDbContext.SaveChangesAsync(cancellationToken);
@@ -73,39 +76,40 @@ namespace Shortify.NET.Persistence
         /// Inserts OutboxMessages into the DB
         /// Using ChangeTracker of EF Core
         /// </summary>
-        //private void InsertDomainEventsIntoOutboxMessages()
-        //{
-        //    var outboxMessages = _appDbContext
-        //                            .ChangeTracker
-        //                            .Entries<Entity>()
-        //                            .Select(entry => entry.Entity)
-        //                            .SelectMany(GetDomainEvents)
-        //                            .Select(CreateOutboxMessage)
-        //                            .ToList();
+        private void InsertDomainEventsIntoOutboxMessages()
+        {
+            var outboxMessages = _appDbContext
+                                    .ChangeTracker
+                                    .Entries<Entity>()
+                                    .Select(entry => entry.Entity)
+                                    .SelectMany(GetDomainEvents)
+                                    .Select(CreateOutboxMessage)
+                                    .ToList();
 
-        //    _appDbContext.Set<OutboxMessage>().AddRange(outboxMessages);
-        //}
+            _appDbContext.Set<OutboxMessage>().AddRange(outboxMessages);
+        }
 
-        //private IReadOnlyCollection<IDomainEvent> GetDomainEvents(Entity entity)
-        //{
-        //    var domainEvents = entity.GetDomainEvents();
-        //    entity.ClearDomainEvents();
-        //    return domainEvents;
-        //}
+        private IReadOnlyCollection<IDomainEvent> GetDomainEvents(Entity entity)
+        {
+            var domainEvents = entity.GetDomainEvents();
+            entity.ClearDomainEvents();
+            return domainEvents;
+        }
 
-        //private OutboxMessage CreateOutboxMessage(IDomainEvent domainEvent)
-        //{
-        //    return new OutboxMessage
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        OccurredOnUtc = DateTime.UtcNow,
-        //        Content = JsonConvert.SerializeObject(
-        //                                    domainEvent,
-        //                                    new JsonSerializerSettings
-        //                                    {
-        //                                        TypeNameHandling = TypeNameHandling.All
-        //                                    })
-        //    };
-        //}
+        private OutboxMessage CreateOutboxMessage(IDomainEvent domainEvent)
+        {
+            return new OutboxMessage
+            {
+                Id = Guid.NewGuid(),
+                Type = nameof(IDomainEvent),
+                OccurredOnUtc = DateTime.UtcNow,
+                Content = JsonConvert.SerializeObject(
+                                            domainEvent,
+                                            new JsonSerializerSettings
+                                            {
+                                                TypeNameHandling = TypeNameHandling.All
+                                            })
+            };
+        }
     }
 }
