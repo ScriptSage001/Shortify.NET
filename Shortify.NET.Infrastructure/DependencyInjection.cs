@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Quartz;
 using Shortify.NET.Applicaion.Abstractions;
 using Shortify.NET.Infrastructure.Helpers;
+using Shortify.NET.Infrastructure.Idempotence;
 
 namespace Shortify.NET.Infrastructure
 {
@@ -11,8 +14,8 @@ namespace Shortify.NET.Infrastructure
         {
             services.AddHelpers(configuration);
             services.AddServices();
-            //services.AddBackgroundJobs(configuration);
-            //services.AddDomainEventHandlerWithDecorator();
+            services.AddBackgroundJobs(configuration);
+            services.AddMiddleware();
 
             return services;
         }
@@ -35,65 +38,48 @@ namespace Shortify.NET.Infrastructure
             return services;
         }
 
-        //private static IServiceCollection AddBackgroundJobs(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    services.AddQuartz(configure =>
-        //    {
-        //        List<BackgroundJobConfig>? backgroundJobs = configuration.GetSection("BackgroundJobs").Get<List<BackgroundJobConfig>>();
+        private static IServiceCollection AddBackgroundJobs(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddQuartz(configure =>
+            {
+                List<BackgroundJobConfig>? backgroundJobs = configuration.GetSection("BackgroundJobs").Get<List<BackgroundJobConfig>>();
 
-        //        if (backgroundJobs is not null && backgroundJobs.Count != 0)
-        //        {
-        //            foreach (var backgroundJob in backgroundJobs)
-        //            {
-        //                if (backgroundJob.Enabled)
-        //                {
-        //                    Type? jobType = AssemblyReference.Assembly.GetType($"ShopEase.Backend.PassportService.Infrastructure.BackgroundJobs.{backgroundJob.Name}");
+                if (backgroundJobs is not null && backgroundJobs.Count != 0)
+                {
+                    foreach (var backgroundJob in backgroundJobs)
+                    {
+                        if (backgroundJob.Enabled)
+                        {
+                            Type? jobType = AssemblyReference.Assembly.GetType($"Shortify.NET.Infrastructure.BackgroudJobs.{backgroundJob.Name}");
 
-        //                    if (jobType is not null)
-        //                    {
-        //                        var jobKey = new JobKey(backgroundJob.Name);
-        //                        var triggerKey = backgroundJob.Name + "Trigger";
+                            if (jobType is not null)
+                            {
+                                var jobKey = new JobKey(backgroundJob.Name);
+                                var triggerKey = backgroundJob.Name + "Trigger";
 
-        //                        configure.AddJob(jobType, jobKey);
+                                configure.AddJob(jobType, jobKey);
 
-        //                        configure.AddTrigger(trigger =>
-        //                                                trigger
-        //                                                    .WithIdentity(triggerKey)
-        //                                                    .ForJob(jobKey)
-        //                                                    .WithCronSchedule(backgroundJob.Schedule));
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    });
+                                configure.AddTrigger(trigger =>
+                                                        trigger
+                                                            .WithIdentity(triggerKey)
+                                                            .ForJob(jobKey)
+                                                            .WithCronSchedule(backgroundJob.Schedule));
+                            }
+                        }
+                    }
+                }
+            });
 
-        //    services.AddQuartzHostedService();
+            services.AddQuartzHostedService();
 
-        //    return services;
-        //}
+            return services;
+        }
 
-        //private static IServiceCollection AddDomainEventHandlerWithDecorator(this IServiceCollection services)
-        //{
-        //    services.Scan(
-        //        selector => selector
-        //            .FromAssemblies(
-        //                Application.AssemblyReference.Assembly
-        //            )
-        //            .AddClasses(classes =>
-        //                classes.Where(t =>
-        //                    t.IsClass &&
-        //                    !t.IsAbstract &&
-        //                    t.GetInterfaces()
-        //                        .Any(i =>
-        //                            i.IsGenericType &&
-        //                            i.GetGenericTypeDefinition() == typeof(IDomainEventHandler<>))))
-        //            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-        //            .AsImplementedInterfaces()
-        //            .WithScopedLifetime());
+        private static IServiceCollection AddMiddleware(this IServiceCollection services)
+        {
+            services.Decorate(typeof(INotificationHandler<>), typeof(IdempotentDomainEventHandler<>));
 
-        //    services.Decorate(typeof(IDomainEventHandler<>), typeof(IdempotentDomainEventHandler<>));
-
-        //    return services;
-        //}
+            return services;
+        }
     }
 }
