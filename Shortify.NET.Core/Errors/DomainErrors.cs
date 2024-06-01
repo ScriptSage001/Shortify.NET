@@ -50,7 +50,7 @@ namespace Shortify.NET.Core.Errors
 
             public static readonly Error EmailAlreadyInUse = Error.Conflict("User.EmailAlreadyInUse", "The specified Email is already in use.");
 
-            public static readonly Error UserNotFound = Error.NotFound("User.UserNotFound", "The specified UserId doesn't return any User.");
+            public static readonly Error UserNotFound = Error.NotFound("User.UserNotFound", "The requested user doesn't Exists.");
         }
 
         /// <summary>

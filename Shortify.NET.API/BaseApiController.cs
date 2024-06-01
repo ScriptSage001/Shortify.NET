@@ -77,5 +77,29 @@ namespace Shortify.NET.API
 
             return ValidationProblem(modelStateDictionary);
         }
+
+        /// <summary>
+        /// Handles Unauthorized Request
+        /// </summary>
+        /// <returns></returns>
+        protected IActionResult HandleUnauthorizedRequest()
+        {
+            var modelStateDictionary = new ModelStateDictionary();
+            modelStateDictionary.AddModelError(Error.UnauthorizedRequest.Code, Error.UnauthorizedRequest.Message);
+
+            return ValidationProblem(modelStateDictionary);
+        }
+
+        protected string GetUser()
+        {
+            var userIdClaims = User.Claims.FirstOrDefault(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase));
+
+            if (userIdClaims is null)
+            {
+                return string.Empty;
+            }
+
+            return userIdClaims.Value;
+        }
     }
 }

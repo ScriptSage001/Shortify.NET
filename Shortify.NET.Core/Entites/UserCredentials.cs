@@ -101,6 +101,18 @@ namespace Shortify.NET.Core.Entites
             RefreshTokenExpirationTimeUtc = refreshTokenExpirationTimeUtc;
         }
 
+        /// <summary>
+        /// To Update Password Hash and Salt
+        /// </summary>
+        /// <param name="userCreds"></param>
+        /// <param name="passwordHash"></param>
+        /// <param name="passwordSalt"></param>
+        public void UpdatePasswordHashAndSalt(byte[] passwordHash, byte[] passwordSalt)
+        {
+            PasswordHash = passwordHash;
+            PasswordSalt = passwordSalt;
+        }
+
         #endregion
     }
 }

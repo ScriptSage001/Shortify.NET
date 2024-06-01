@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shortify.NET.Applicaion.Abstractions.Repositories;
 using Shortify.NET.Core.Entites;
+using Shortify.NET.Core.ValueObjects;
 
 namespace Shortify.NET.Persistence.Repository
 {
@@ -32,6 +33,21 @@ namespace Shortify.NET.Persistence.Repository
         public void Delete(UserCredentials userCredentials)
         {
             _appDbContext.Set<UserCredentials>().Remove(userCredentials);
+        }
+
+        public async Task<UserCredentials?> GetByUserNameAsync(UserName userName, CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext
+                            .Set<UserCredentials>()
+                            .Join(
+                                _appDbContext.Set<User>(),
+                                userCreds => userCreds.UserId,
+                                user => user.Id,
+                                (userCreds, user) => new {userCreds, user.UserName})
+                            .Where(
+                                 u => u.UserName == userName)
+                            .Select(u => u.userCreds)
+                            .FirstOrDefaultAsync(cancellationToken);
         }
     }
 }

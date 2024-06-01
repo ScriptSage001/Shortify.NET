@@ -17,6 +17,8 @@
 
         public static readonly Error NullOrEmptyRequest = new("Error.NullOrEmptyRequest", "A validation Error occurred.", ErrorType.Validation);
 
+        public static readonly Error UnauthorizedRequest = new("Error.Unauthorized", "An Unauthorized Error occurred.", ErrorType.Unauthorized);
+
         public static Error Failure(string code, string message) => new(code, message, ErrorType.Failure);
         public static Error Unexpected(string code, string message) => new(code, message, ErrorType.Unexpected);
         public static Error Validation(string code, string message) => new(code, message, ErrorType.Validation);

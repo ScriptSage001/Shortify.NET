@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
 using Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp;
 using Shortify.NET.Applicaion.Users.Commands.LoginUser;
 using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
+using Shortify.NET.Applicaion.Users.Commands.ResetPassword;
 using Shortify.NET.Common.Messaging.Abstractions;
 
 namespace Shortify.NET.API.Controllers
@@ -109,7 +111,40 @@ namespace Shortify.NET.API.Controllers
 
         #region Password
 
+        /// <summary>
+        /// To Reset Password
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut]
+        [Route("password/reset")]
+        [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken = default)
+        {
+            if (request is null)
+            {
+                return HandleNullOrEmptyRequest();
+            }
 
+            string userId = GetUser();
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return HandleUnauthorizedRequest();
+            }
+
+            ResetPasswordCommand command = _mapper.ResetPasswordRequestToCommand(request, userId);
+
+            var response = await _apiService.SendAsync(command, cancellationToken);
+
+            return response.IsFailure ?
+                    HandleFailure(response) :
+                    Ok("Password Changed Successfully!");
+
+        }
 
         #endregion
 
