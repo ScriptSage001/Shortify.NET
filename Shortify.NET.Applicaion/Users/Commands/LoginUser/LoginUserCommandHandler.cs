@@ -4,6 +4,7 @@ using Shortify.NET.Applicaion.Shared.Models;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core;
+using Shortify.NET.Core.Entites;
 using Shortify.NET.Core.Errors;
 using Shortify.NET.Core.ValueObjects;
 
@@ -30,14 +31,30 @@ namespace Shortify.NET.Applicaion.Users.Commands.LoginUser
 
         public async Task<Result<AuthenticationResult>> Handle(LoginUserCommand command, CancellationToken cancellationToken)
         {
-            Result<UserName> userName = UserName.Create(command.UserName);
+            User? user = null;
 
-            if (userName.IsFailure)
+            if (!string.IsNullOrWhiteSpace(command.UserName))
             {
-                return Result.Failure<AuthenticationResult>(userName.Error);
-            }
+                Result<UserName> userName = UserName.Create(command.UserName);
 
-            var user = await _userRepository.GetByUserNameAsyncWithCredentials(userName.Value, cancellationToken);
+                if (userName.IsFailure)
+                {
+                    return Result.Failure<AuthenticationResult>(userName.Error);
+                }
+
+                user = await _userRepository.GetByUserNameAsyncWithCredentials(userName.Value, cancellationToken);
+            }
+            else if (!string.IsNullOrWhiteSpace(command.Email))
+            {
+                Result<Email> email = Email.Create(command.Email);
+
+                if (email.IsFailure)
+                {
+                    return Result.Failure<AuthenticationResult>(email.Error);
+                }
+
+                user = await _userRepository.GetByEmailAsyncWithCredentials(email.Value, cancellationToken);
+            }            
 
             if (user is null) 
             {
@@ -53,7 +70,7 @@ namespace Shortify.NET.Applicaion.Users.Commands.LoginUser
 
             if (isVerified)
             {
-                AuthenticationResult authenticationResult = _authServices.CreateToken(user.Id, userName.Value.Value, user.Email.Value);
+                AuthenticationResult authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
 
                 userCredentials.AddOrUpdateRefreshToken(
                                     authenticationResult.RefreshToken,

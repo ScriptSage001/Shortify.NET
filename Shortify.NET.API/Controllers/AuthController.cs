@@ -54,6 +54,7 @@ namespace Shortify.NET.API.Controllers
 
         /// <summary>
         /// To Login a Registered User
+        /// Using either UserName or Email
         /// </summary>
         /// <param name="request"></param>
         /// <param name="cancellationToken"></param>
