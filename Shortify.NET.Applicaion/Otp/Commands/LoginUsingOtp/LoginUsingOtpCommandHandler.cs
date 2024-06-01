@@ -46,7 +46,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
 
             var user = await _userRepository.GetByEmailAsyncWithCredentials(email.Value, cancellationToken);
 
-            if (user == null)
+            if (user is null)
             {
                 return Result.Failure<AuthenticationResult>(DomainErrors.User.UserNotFound);
             }
