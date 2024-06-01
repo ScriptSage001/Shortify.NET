@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
 using Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp;
+using Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret;
+using Shortify.NET.Applicaion.Token.Commands.RefreshToken;
+using Shortify.NET.Applicaion.Token.Commands.RevokeToken;
 using Shortify.NET.Applicaion.Users.Commands.ForgetPassword;
 using Shortify.NET.Applicaion.Users.Commands.LoginUser;
 using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
@@ -173,6 +176,97 @@ namespace Shortify.NET.API.Controllers
                     Ok("Password Changed Successfully!");
 
         }
+
+        #endregion
+
+        #region Token
+
+        #region Refresh Token
+
+        /// <summary>
+        /// To Refresh Tokens
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("token/refresh")]
+        [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken = default)
+        {
+            if (request is null)
+            {
+                return HandleNullOrEmptyRequest();
+            }
+
+            RefreshTokenCommand command = _mapper.RefreshTokenRequestToCommand(request);
+
+            var response = await _apiService.SendAsync(command, cancellationToken);
+
+            return response.IsFailure ?
+                    HandleFailure(response)
+                    : Ok(_mapper.AuthenticationResultToResponse(response.Value));
+        }
+
+        /// <summary>
+        /// To Revoke Refresh Tokens by User Id
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut]
+        [Route("token/refresh/revoke")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> RevokeRefreshToken(CancellationToken cancellationToken = default)
+        {
+            string userId = GetUser();
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return HandleUnauthorizedRequest();
+            }
+
+            RevokeRefreshTokenCommand command = new RevokeRefreshTokenCommand(userId);
+
+            var response = await _apiService.SendAsync(command, cancellationToken);
+
+            return response.IsFailure ?
+                    HandleFailure(response) :
+                    Ok("Refresh Token Revoked Successfully!");
+        }
+
+        #endregion
+
+        #region Access Token
+
+        /// <summary>
+        /// To Generate Access and Refresh Tokens using Client Secret
+        /// </summary>
+        /// <param name="clientCredentials"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("token")]
+        [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetTokenByClientSecret([FromBody] ClientCredentials clientCredentials, CancellationToken cancellationToken = default)
+        {
+            if (clientCredentials is null)
+            {
+                HandleNullOrEmptyRequest();
+            }
+
+            GenerateTokenByClientSecretCommand command = _mapper.ClientCredentialsToGenerateTokenByClientSecretCommand(clientCredentials);
+
+            var response = await _apiService.SendAsync(command, cancellationToken);
+
+            return response.IsFailure ?
+                    HandleFailure(response) :
+                    Ok(_mapper.AuthenticationResultToResponse(response.Value));
+        }
+
+        #endregion
 
         #endregion
 

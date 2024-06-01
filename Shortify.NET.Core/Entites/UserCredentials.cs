@@ -95,7 +95,7 @@ namespace Shortify.NET.Core.Entites
         /// </summary>
         /// <param name="refreshToken"></param>
         /// <param name="refreshTokenExpirationTimeUtc"></param>
-        public void AddOrUpdateRefreshToken(string refreshToken, DateTime refreshTokenExpirationTimeUtc)
+        public void AddOrUpdateRefreshToken(string? refreshToken, DateTime refreshTokenExpirationTimeUtc)
         {
             RefreshToken = refreshToken;
             RefreshTokenExpirationTimeUtc = refreshTokenExpirationTimeUtc;

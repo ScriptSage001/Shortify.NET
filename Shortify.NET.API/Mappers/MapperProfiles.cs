@@ -2,6 +2,8 @@
 using Shortify.NET.API.Contracts;
 using Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp;
 using Shortify.NET.Applicaion.Shared.Models;
+using Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret;
+using Shortify.NET.Applicaion.Token.Commands.RefreshToken;
 using Shortify.NET.Applicaion.Users.Commands.ForgetPassword;
 using Shortify.NET.Applicaion.Users.Commands.LoginUser;
 using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
@@ -40,5 +42,12 @@ namespace Shortify.NET.API.Mappers
         }
 
         public partial ResetPasswordUsingOtpCommand ResetPasswordUsingOtpRequestToCommand(ResetPasswordUsingOtpRequest request);
+
+        public partial RefreshTokenCommand RefreshTokenRequestToCommand(RefreshTokenRequest request);
+
+        public partial AuthenticationResponse AuthenticationResultToResponse(AuthenticationResult result);
+
+        public partial GenerateTokenByClientSecretCommand ClientCredentialsToGenerateTokenByClientSecretCommand(ClientCredentials clientCredentials);
+
     }
 }
