@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
 using Shortify.NET.Applicaion.Users.Queries.GetUserById;
 using Shortify.NET.Common.Messaging.Abstractions;
@@ -20,17 +21,20 @@ namespace Shortify.NET.API.Controllers
         #region Public Endpoints
 
         /// <summary>
-        /// To Get a User by UserId
+        /// To Get the Current User by UserId
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult> GetUser(string id, CancellationToken cancellationToken = default)
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken = default)
         {
+            string id = GetUser();
+
             if (string.IsNullOrWhiteSpace(id))
             {
-                return HandleNullOrEmptyRequest();
+                return HandleUnauthorizedRequest();
             }
 
             Guid userId = Guid.Parse(id);
