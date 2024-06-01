@@ -26,6 +26,7 @@
                 public const string ResetPasswordOtp = "OTP for Password Reset";
                 public const string LoginOtp = "OTP for Login";
                 public const string Welcome = "Welcome to Shortify.NET!";
+                public const string PasswordChanged = "Your Password for Shortify.NET is changed";
             }
         }
     }

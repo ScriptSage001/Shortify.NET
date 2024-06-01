@@ -1,4 +1,5 @@
-﻿using Shortify.NET.Core.Primitives;
+﻿using Shortify.NET.Core.Events;
+using Shortify.NET.Core.Primitives;
 
 namespace Shortify.NET.Core.Entites
 {
@@ -111,6 +112,8 @@ namespace Shortify.NET.Core.Entites
         {
             PasswordHash = passwordHash;
             PasswordSalt = passwordSalt;
+
+            RaiseDomainEvent(new PasswordChangedDomainEvent(Guid.NewGuid(), UserId));
         }
 
         #endregion
