@@ -14,7 +14,7 @@
 
             public struct ClaimTypeValue
             {
-                public const string ResetPassword = "ResetPassword";
+                public const string ValidateOtp = "ValidateOtp";
                 public const string AccessToken = "AccessToken";
             }
         }

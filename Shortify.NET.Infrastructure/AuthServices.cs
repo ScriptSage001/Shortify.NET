@@ -72,9 +72,34 @@ namespace Shortify.NET.Infrastructure
             );
         }
 
-        public string GenerateResetPasswordToken(string email)
+        public string GenerateValidateOtpToken(string email)
         {
-            throw new NotImplementedException();
+            List<Claim> claims =
+            [
+                new Claim(ClaimType.Email, email),
+                new Claim(ClaimType.TokenType, ClaimTypeValue.ValidateOtp)
+            ];
+
+            var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
+            var tokenExpirationTime = _appSettings.ValidateOtpTokenExpirationTimeInMin;
+
+            var securityKey = new SymmetricSecurityKey(key);
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
+
+            var tokenDescriptor = new SecurityTokenDescriptor()
+            {
+                Subject = new ClaimsIdentity(claims.ToArray()),
+                Issuer = _appSettings.Issuer,
+                NotBefore = DateTime.UtcNow,
+                Expires = DateTime.UtcNow.AddMinutes(tokenExpirationTime == 0 ? 5 : tokenExpirationTime),
+                SigningCredentials = credentials
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            string jwt = tokenHandler.WriteToken(token);
+
+            return jwt;
         }
 
         public async Task<Result<AuthenticationResult>> RefreshToken(string accessToken, string refreshToken)
@@ -116,7 +141,7 @@ namespace Shortify.NET.Infrastructure
 
         public bool ValidateClientSecret(string clientSecret)
         {
-            throw new NotImplementedException();
+            return _appSettings.ClientSecret.Equals(clientSecret);
         }
 
         /// <summary>
@@ -138,9 +163,18 @@ namespace Shortify.NET.Infrastructure
             return newHash.SequenceEqual(passwordhash);
         }
 
-        public bool VerifyResetPasswordToken(string email, string token)
+        public bool VerifyValidateOtpToken(string email, string token)
         {
-            throw new NotImplementedException();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+
+            var userEmail = jwtToken.Claims.First(c => c.Type == ClaimType.Email)?.Value;
+            var tokenType = jwtToken.Claims.First(c => c.Type == ClaimType.TokenType)?.Value;
+            var expiresOn = jwtToken.ValidTo;
+
+            return (email.Equals(userEmail, StringComparison.OrdinalIgnoreCase)
+                    && ClaimTypeValue.ValidateOtp.Equals(tokenType, StringComparison.OrdinalIgnoreCase)
+                    && expiresOn >= DateTime.UtcNow);
         }
 
         #endregion

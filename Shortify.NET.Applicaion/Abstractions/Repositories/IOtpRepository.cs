@@ -11,5 +11,7 @@
         void MarkOtpDetailAsUsed(
                 Guid id,
                 DateTime otpUsedOnUtc);
+
+        Task<(Guid, string)> GetLatestUnusedOtpAsync(string email);
     }
 }

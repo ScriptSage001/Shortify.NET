@@ -38,19 +38,19 @@ namespace Shortify.NET.Applicaion.Abstractions
         Task<Result<AuthenticationResult>> RefreshToken(string accessToken, string refreshToken);
 
         /// <summary>
-        /// To Generate Reset Password Token
+        /// To Generate Validate Otp Token
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
-        string GenerateResetPasswordToken(string email);
+        string GenerateValidateOtpToken(string email);
 
         /// <summary>
-        /// To Verify Reset Password Token
+        /// To Verify Validate Otp Token
         /// </summary>
         /// <param name="email"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        bool VerifyResetPasswordToken(string email, string token);
+        bool VerifyValidateOtpToken(string email, string token);
 
         /// <summary>
         /// To Validate ClientSecret

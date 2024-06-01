@@ -49,5 +49,21 @@ namespace Shortify.NET.Persistence.Repository
             _appDbContext.Entry(otp).Property(x => x.IsUsed).IsModified = true;
             _appDbContext.Entry(otp).Property(x => x.OtpUsedOnUtc).IsModified = true;
         }
+
+        public async Task<(Guid, string)> GetLatestUnusedOtpAsync(string email)
+        {
+            var otp = await _appDbContext
+                                .Set<OtpDetails>()
+                                .AsNoTracking()
+                                .FirstOrDefaultAsync(
+                                        otp => 
+                                               otp.Email == email
+                                            && otp.IsUsed == false
+                                            && otp.OtpExpiresOnUtc >= DateTime.UtcNow);
+
+            return otp is not null 
+                        ? (otp.Id, otp.Otp) 
+                        : (Guid.Empty, string.Empty);
+        }
     }
 }

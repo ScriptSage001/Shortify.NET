@@ -62,6 +62,14 @@ namespace Shortify.NET.Core.Errors
         }
 
         /// <summary>
+        /// Error related to Otp
+        /// </summary>
+        public readonly struct Otp
+        {
+            public static readonly Error Invalid = Error.Unauthorized("Otp.Invalid", "The specified OTP is invalid.");
+        }
+
+        /// <summary>
         /// Error related to ShortenedUrl Entity
         /// </summary>
         public readonly struct ShortenedUrl

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
+using Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp;
 using Shortify.NET.Applicaion.Users.Commands.LoginUser;
 using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
 using Shortify.NET.Common.Messaging.Abstractions;
@@ -18,6 +19,8 @@ namespace Shortify.NET.API.Controllers
         }
 
         #region Public Endpoints
+
+        #region Register
 
         /// <summary>
         /// To Register a new User
@@ -44,6 +47,10 @@ namespace Shortify.NET.API.Controllers
                     HandleFailure(response) :
                     Ok(_mapper.AuthResultToRegisterUserResponse(response.Value));
         }
+
+        #endregion
+
+        #region Login
 
         /// <summary>
         /// To Login a Registered User
@@ -88,8 +95,22 @@ namespace Shortify.NET.API.Controllers
                 return HandleNullOrEmptyRequest();
             }
 
-            return Ok();
+            LoginUsingOtpCommand command = _mapper.LoginUsingOtpRequestToCommand(request);
+
+            var response = await _apiService.SendAsync(command, cancellationToken);
+
+            return response.IsFailure ?
+                    HandleFailure(response) :
+                    Ok(_mapper.AuthResultToLoginUserResponse(response.Value));
         }
+
+        #endregion
+
+        #region Password
+
+
+
+        #endregion
 
         #endregion
     }
