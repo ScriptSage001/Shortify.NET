@@ -16,26 +16,38 @@ namespace Shortify.NET.Core.Entites
         /// <param name="shortUrl"></param>
         /// <param name="code"></param>
         private ShortenedUrl(
-            Guid id, Guid? userId, string originalUrl, ShortUrl shortUrl, string code) 
+            Guid id, 
+            Guid userId, 
+            string originalUrl, 
+            ShortUrl shortUrl, 
+            string code,
+            string? title,
+            List<string>? tags) 
             : base(id)
         {
             this.UserId = userId;
             this.OriginalUrl = originalUrl;
             this.ShortUrl = shortUrl;
             this.Code = code;
+            this.Title = title;
+            this.Tags = tags;
         }
 
         #endregion
 
         #region Properties
 
-        public Guid? UserId { get; private set; }
+        public Guid UserId { get; private set; }
 
         public string OriginalUrl { get; private set; }
 
         public ShortUrl ShortUrl { get; private set; }
 
         public string Code { get; private set; }
+
+        public string? Title { get; private set; }
+
+        public List<string>? Tags { get; private set; }
 
         public DateTime CreatedOnUtc { get; set; }
         
@@ -47,9 +59,22 @@ namespace Shortify.NET.Core.Entites
 
         #region Public Methods
 
-        public static ShortenedUrl Create(Guid? userId, string originalUrl, ShortUrl shortUrl, string code)
+        public static ShortenedUrl Create(
+            Guid userId, 
+            string originalUrl, 
+            ShortUrl shortUrl, 
+            string code,
+            string? title,
+            List<string>? tags)
         {
-            var shortenedUrl = new ShortenedUrl(Guid.NewGuid(), userId, originalUrl, shortUrl, code);
+            var shortenedUrl = new ShortenedUrl(
+                                        Guid.NewGuid(), 
+                                        userId, 
+                                        originalUrl, 
+                                        shortUrl, 
+                                        code,
+                                        title,
+                                        tags);
             return shortenedUrl;
         }
 

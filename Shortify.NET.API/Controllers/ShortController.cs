@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
+using Shortify.NET.API.Mappers;
 using Shortify.NET.Applicaion.Url.Commands.ShortenUrl;
 using Shortify.NET.Applicaion.Url.Queries.ShortenedUrl;
 using Shortify.NET.Common.FunctionalTypes;
@@ -9,13 +11,23 @@ namespace Shortify.NET.API.Controllers
 {
     public class ShortController : BaseApiController
     {
+        private readonly MapperProfiles _mapper;
+
         public ShortController(IApiService apiService)
             : base(apiService)
         {
+            _mapper = new MapperProfiles();
         }
 
         #region Public Endpoints
 
+        /// <summary>
+        /// To Shorte Any Url
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
         [HttpPost]
         [Route("api/shorten")]
         [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status200OK)]
@@ -36,10 +48,14 @@ namespace Shortify.NET.API.Controllers
                             "The specified URL is not valid.")));
             }
 
-            var httpRequest = HttpContext.Request;
+            string userId = GetUser();
 
-            // Auto Map - ToDo
-            var command = new ShortenUrlCommand(request.Url, httpRequest);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return HandleUnauthorizedRequest();
+            }
+
+            ShortenUrlCommand command = _mapper.ShortenUrlRequestToCommand(request, userId, HttpContext.Request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 

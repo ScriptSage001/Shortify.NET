@@ -1,9 +1,11 @@
-﻿using Riok.Mapperly.Abstractions;
+﻿using Org.BouncyCastle.Bcpg;
+using Riok.Mapperly.Abstractions;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp;
 using Shortify.NET.Applicaion.Shared.Models;
 using Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret;
 using Shortify.NET.Applicaion.Token.Commands.RefreshToken;
+using Shortify.NET.Applicaion.Url.Commands.ShortenUrl;
 using Shortify.NET.Applicaion.Users.Commands.ForgetPassword;
 using Shortify.NET.Applicaion.Users.Commands.LoginUser;
 using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
@@ -49,5 +51,14 @@ namespace Shortify.NET.API.Mappers
 
         public partial GenerateTokenByClientSecretCommand ClientCredentialsToGenerateTokenByClientSecretCommand(ClientCredentials clientCredentials);
 
+        public ShortenUrlCommand ShortenUrlRequestToCommand(ShortenUrlRequest request, string userId, HttpRequest httpRequest)
+        {
+            return new ShortenUrlCommand(
+                            Url: request.Url,
+                            UserId: userId,
+                            Title: request.Title,
+                            Tags: request.Tags,
+                            HttpRequest: httpRequest);
+        }
     }
 }

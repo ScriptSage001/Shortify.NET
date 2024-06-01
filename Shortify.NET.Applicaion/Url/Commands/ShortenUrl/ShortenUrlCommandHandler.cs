@@ -11,7 +11,9 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
     internal sealed class ShortenUrlCommandHandler : ICommandHandler<ShortenUrlCommand, ShortUrl>
     {
         private readonly IUrlShorteningService _urlShorteningService;
+
         private readonly IUnitOfWork _unitOfWork;
+
         private readonly IShortenedUrlRepository _shortenedUrlRepository;
 
         /// <summary>
@@ -20,7 +22,10 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
         /// <param name="urlShorteningService"></param>
         /// <param name="unitOfWork"></param>
         /// <param name="shortenedUrlRepository"></param>
-        public ShortenUrlCommandHandler(IUrlShorteningService urlShorteningService, IUnitOfWork unitOfWork, IShortenedUrlRepository shortenedUrlRepository)
+        public ShortenUrlCommandHandler(
+            IUrlShorteningService urlShorteningService, 
+            IUnitOfWork unitOfWork, 
+            IShortenedUrlRepository shortenedUrlRepository)
         {
             _urlShorteningService = urlShorteningService;
             _unitOfWork = unitOfWork;
@@ -31,6 +36,8 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
         {
             const int MaxRetries = 5;
             int retryCount = 0;
+
+            Guid userId = Guid.Parse(command.UserId);
 
             while(retryCount < MaxRetries)
             {
@@ -49,10 +56,12 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
 
                 // Genereate the shortened url object
                 var shortenedUrl = ShortenedUrl.Create(
-                    userId: null,
-                    originalUrl: command.Url,
-                    shortUrl: shortUrl.Value,
-                    code: code
+                        userId: userId,
+                        originalUrl: command.Url,
+                        shortUrl: shortUrl.Value,
+                        code: code,
+                        title: command.Title,
+                        tags: command.Tags
                     );
 
                 try

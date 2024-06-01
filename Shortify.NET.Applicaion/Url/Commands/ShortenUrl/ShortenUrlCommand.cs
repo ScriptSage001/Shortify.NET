@@ -6,5 +6,8 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
 {
     public record ShortenUrlCommand(
         string Url,
+        string UserId,
+        string? Title,
+        List<string>? Tags,
         HttpRequest HttpRequest ) : ICommand<ShortUrl>;
 }
