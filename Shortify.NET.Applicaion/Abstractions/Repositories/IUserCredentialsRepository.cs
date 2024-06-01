@@ -9,6 +9,8 @@ namespace Shortify.NET.Applicaion.Abstractions.Repositories
 
         Task<UserCredentials?> GetByUserNameAsync(UserName userName, CancellationToken cancellationToken = default);
 
+        Task<UserCredentials?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default);
+
         void Add(UserCredentials userCredentials);
 
         void Update(UserCredentials userCredentials);

@@ -49,5 +49,20 @@ namespace Shortify.NET.Persistence.Repository
                             .Select(u => u.userCreds)
                             .FirstOrDefaultAsync(cancellationToken);
         }
+
+        public async Task<UserCredentials?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext
+                            .Set<UserCredentials>()
+                            .Join(
+                                _appDbContext.Set<User>(),
+                                userCreds => userCreds.UserId,
+                                user => user.Id,
+                                (userCreds, user) => new { userCreds, user.Email })
+                            .Where(
+                                 u => u.Email == email)
+                            .Select(u => u.userCreds)
+                            .FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }

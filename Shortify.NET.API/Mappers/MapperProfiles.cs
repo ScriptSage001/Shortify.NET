@@ -2,6 +2,7 @@
 using Shortify.NET.API.Contracts;
 using Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp;
 using Shortify.NET.Applicaion.Shared.Models;
+using Shortify.NET.Applicaion.Users.Commands.ForgetPassword;
 using Shortify.NET.Applicaion.Users.Commands.LoginUser;
 using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
 using Shortify.NET.Applicaion.Users.Commands.ResetPassword;
@@ -37,5 +38,7 @@ namespace Shortify.NET.API.Mappers
                             NewPassword: request.NewPassword,
                             ConfirmPassword: request.ConfirmPassword);
         }
+
+        public partial ResetPasswordUsingOtpCommand ResetPasswordUsingOtpRequestToCommand(ResetPasswordUsingOtpRequest request);
     }
 }

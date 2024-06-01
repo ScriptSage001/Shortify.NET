@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
 using Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp;
+using Shortify.NET.Applicaion.Users.Commands.ForgetPassword;
 using Shortify.NET.Applicaion.Users.Commands.LoginUser;
 using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
 using Shortify.NET.Applicaion.Users.Commands.ResetPassword;
@@ -137,6 +138,33 @@ namespace Shortify.NET.API.Controllers
             }
 
             ResetPasswordCommand command = _mapper.ResetPasswordRequestToCommand(request, userId);
+
+            var response = await _apiService.SendAsync(command, cancellationToken);
+
+            return response.IsFailure ?
+                    HandleFailure(response) :
+                    Ok("Password Changed Successfully!");
+
+        }
+
+        /// <summary>
+        /// To Reset Password Using OTP - Forgot Password Scenario
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("password/reset/forgot")]
+        [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> ResetPasswordUsingOtp([FromBody] ResetPasswordUsingOtpRequest request, CancellationToken cancellationToken = default)
+        {
+            if (request is null)
+            {
+                return HandleNullOrEmptyRequest();
+            }
+
+            ResetPasswordUsingOtpCommand command = _mapper.ResetPasswordUsingOtpRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
