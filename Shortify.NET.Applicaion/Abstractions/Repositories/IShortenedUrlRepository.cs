@@ -10,6 +10,8 @@ namespace Shortify.NET.Applicaion.Abstractions.Repositories
 
         Task<ShortenedUrl?> GetByCodeAsync(string code, CancellationToken cancellationToken = default);
 
+        Task<List<ShortenedUrl>?> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+
         void Add(ShortenedUrl shortenedUrl);
 
         void Update(ShortenedUrl shortenedUrl);

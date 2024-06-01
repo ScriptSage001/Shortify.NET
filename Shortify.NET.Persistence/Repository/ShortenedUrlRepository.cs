@@ -30,7 +30,9 @@ namespace Shortify.NET.Persistence.Repository
         {
             return await _appDbContext
                                .Set<ShortenedUrl>()
-                               .Where(x => x.Code == code)
+                               .Where(x => 
+                                    x.Code == code
+                                 && x.RowStatus == true)
                                .FirstOrDefaultAsync(cancellationToken);
         }
 
@@ -38,8 +40,20 @@ namespace Shortify.NET.Persistence.Repository
         {
             return await _appDbContext
                               .Set<ShortenedUrl>()
-                              .Where(x => x.UserId == userId)
+                              .Where(x =>
+                                    x.UserId == userId
+                                 && x.RowStatus == true)
                               .FirstOrDefaultAsync(cancellationToken);
+        }
+
+        public async Task<List<ShortenedUrl>?> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext
+                              .Set<ShortenedUrl>()
+                              .Where(x => 
+                                    x.UserId == userId
+                                 && x.RowStatus == true)
+                              .ToListAsync(cancellationToken);
         }
 
         public async Task<bool> IsCodeUniqueAsync(string code, CancellationToken cancellationToken = default)

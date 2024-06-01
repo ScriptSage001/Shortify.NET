@@ -60,5 +60,7 @@ namespace Shortify.NET.API.Mappers
                             Tags: request.Tags,
                             HttpRequest: httpRequest);
         }
+
+        public partial List<ShortenedUrlResponse> ShortenedUrlDtoToResponse(List<ShortenedUrlDto> dtos);
     }
 }
