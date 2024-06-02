@@ -26,10 +26,22 @@ namespace Shortify.NET.Persistence.Repository
             _appDbContext.Set<ShortenedUrl>().Update(shortenedUrl);
         }
 
+        public async Task<ShortenedUrl?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _appDbContext
+                               .Set<ShortenedUrl>()
+                               .AsNoTracking()
+                               .Where(x =>
+                                    x.Id == id
+                                 && x.RowStatus == true)
+                               .FirstOrDefaultAsync(cancellationToken);
+        }
+
         public async Task<ShortenedUrl?> GetByCodeAsync(string code, CancellationToken cancellationToken = default)
         {
             return await _appDbContext
                                .Set<ShortenedUrl>()
+                               .AsNoTracking()
                                .Where(x => 
                                     x.Code == code
                                  && x.RowStatus == true)
@@ -40,6 +52,7 @@ namespace Shortify.NET.Persistence.Repository
         {
             return await _appDbContext
                               .Set<ShortenedUrl>()
+                              .AsNoTracking()
                               .Where(x =>
                                     x.UserId == userId
                                  && x.RowStatus == true)
@@ -50,6 +63,7 @@ namespace Shortify.NET.Persistence.Repository
         {
             return await _appDbContext
                               .Set<ShortenedUrl>()
+                              .AsNoTracking()
                               .Where(x => 
                                     x.UserId == userId
                                  && x.RowStatus == true)

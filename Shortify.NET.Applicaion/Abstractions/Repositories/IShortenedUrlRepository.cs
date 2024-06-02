@@ -6,6 +6,8 @@ namespace Shortify.NET.Applicaion.Abstractions.Repositories
     {
         Task<bool> IsCodeUniqueAsync(string code, CancellationToken cancellationToken = default);
 
+        Task<ShortenedUrl?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
         Task<ShortenedUrl?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
 
         Task<ShortenedUrl?> GetByCodeAsync(string code, CancellationToken cancellationToken = default);

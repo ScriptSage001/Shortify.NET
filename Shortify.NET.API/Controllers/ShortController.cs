@@ -7,6 +7,7 @@ using Shortify.NET.Applicaion.Url.Queries.ShortenedUrl;
 using Shortify.NET.Applicaion.Url.Queries.GetAllShortenedUrls;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
+using Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl;
 
 namespace Shortify.NET.API.Controllers
 {
@@ -75,7 +76,7 @@ namespace Shortify.NET.API.Controllers
         [Route("/{code}")]
         public async Task<IActionResult> RedirectUrl(string code, CancellationToken cancellationToken = default)
         {
-            var query = new GetShortenedUrlQuery(code);
+            var query = new GetOriginalUrlQuery(code);
 
             var response = await _apiService.RequestAsync(query, cancellationToken);
 
@@ -104,6 +105,48 @@ namespace Shortify.NET.API.Controllers
             }
 
             var query = new GetAllShortenedUrlsQuery(userId);
+
+            var response = await _apiService.RequestAsync(query, cancellationToken);
+
+            return response.IsFailure ?
+                    HandleFailure(response) :
+                    Ok(_mapper.ShortenedUrlDtoListToResponseList(response.Value));
+        }
+
+        /// <summary>
+        /// Get Shortened Url by the Id
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet]
+        [Route("api/shorten/{id}")]
+        [ProducesResponseType(typeof(ShortenedUrlResponse), statusCode: StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetShortenedUrl(Guid id, CancellationToken cancellationToken = default)
+        {
+            var query = new GetShortenedUrlByIdQuery(id);
+
+            var response = await _apiService.RequestAsync(query, cancellationToken);
+
+            return response.IsFailure ?
+                    HandleFailure(response) :
+                    Ok(_mapper.ShortenedUrlDtoToResponse(response.Value));
+        }
+
+        /// <summary>
+        /// Get Shortened Url by the Code
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet]
+        [Route("api/shorten/get/{code}")]
+        [ProducesResponseType(typeof(ShortenedUrlResponse), statusCode: StatusCodes.Status200OK)]
+        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        public async Task<IActionResult> GetShortenedUrl(string code, CancellationToken cancellationToken = default)
+        {
+            var query = new GetShortenedUrlByCodeQuery(code);
 
             var response = await _apiService.RequestAsync(query, cancellationToken);
 

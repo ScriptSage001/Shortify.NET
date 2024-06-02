@@ -2,9 +2,9 @@
 
 namespace Shortify.NET.Applicaion.Url.Queries.ShortenedUrl
 {
-    internal class GetShortenedUrlQueryValidator : AbstractValidator<GetShortenedUrlQuery>
+    internal class GetShortenedUrlByCodeQueryValidator : AbstractValidator<GetShortenedUrlByCodeQuery>
     {
-        public GetShortenedUrlQueryValidator()
+        public GetShortenedUrlByCodeQueryValidator()
         {
             RuleFor(x => x).NotEmpty();
 

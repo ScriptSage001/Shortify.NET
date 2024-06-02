@@ -61,6 +61,8 @@ namespace Shortify.NET.API.Mappers
                             HttpRequest: httpRequest);
         }
 
-        public partial List<ShortenedUrlResponse> ShortenedUrlDtoToResponse(List<ShortenedUrlDto> dtos);
+        public partial ShortenedUrlResponse ShortenedUrlDtoToResponse(ShortenedUrlDto dtos);
+
+        public partial List<ShortenedUrlResponse> ShortenedUrlDtoListToResponseList(List<ShortenedUrlDto> dtos);
     }
 }
