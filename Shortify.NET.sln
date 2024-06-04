@@ -5,15 +5,17 @@ VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shortify.NET.API", "Shortify.NET.API\Shortify.NET.API.csproj", "{8A26324F-9E39-4220-ACFB-9F41D0A9DC5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shortify.NET.Applicaion", "Shortify.NET.Applicaion\Shortify.NET.Applicaion.csproj", "{14F482A7-0ED8-4A79-ACBE-6A0E4729428D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shortify.NET.Applicaion", "Shortify.NET.Applicaion\Shortify.NET.Applicaion.csproj", "{14F482A7-0ED8-4A79-ACBE-6A0E4729428D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shortify.NET.Core", "Shortify.NET.Core\Shortify.NET.Core.csproj", "{63598DCF-39E5-40BF-8AEA-322A887E321B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shortify.NET.Core", "Shortify.NET.Core\Shortify.NET.Core.csproj", "{63598DCF-39E5-40BF-8AEA-322A887E321B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shortify.NET.Infrastructure", "Shortify.NET.Infrastructure\Shortify.NET.Infrastructure.csproj", "{7E405540-621A-4422-B5C5-0739D30C3181}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shortify.NET.Infrastructure", "Shortify.NET.Infrastructure\Shortify.NET.Infrastructure.csproj", "{7E405540-621A-4422-B5C5-0739D30C3181}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shortify.NET.Persistence", "Shortify.NET.Persistence\Shortify.NET.Persistence.csproj", "{9CB8C1A6-C34B-4979-81D4-E98025254BCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shortify.NET.Persistence", "Shortify.NET.Persistence\Shortify.NET.Persistence.csproj", "{9CB8C1A6-C34B-4979-81D4-E98025254BCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shortify.NET.Common", "Shortify.NET.Common\Shortify.NET.Common.csproj", "{F21873F0-29D2-4E76-AD72-CEA06AC735DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shortify.NET.Common", "Shortify.NET.Common\Shortify.NET.Common.csproj", "{F21873F0-29D2-4E76-AD72-CEA06AC735DF}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{B90C233B-74CA-4F24-BF49-A87805A9A0EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{F21873F0-29D2-4E76-AD72-CEA06AC735DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F21873F0-29D2-4E76-AD72-CEA06AC735DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F21873F0-29D2-4E76-AD72-CEA06AC735DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B90C233B-74CA-4F24-BF49-A87805A9A0EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B90C233B-74CA-4F24-BF49-A87805A9A0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B90C233B-74CA-4F24-BF49-A87805A9A0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B90C233B-74CA-4F24-BF49-A87805A9A0EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
