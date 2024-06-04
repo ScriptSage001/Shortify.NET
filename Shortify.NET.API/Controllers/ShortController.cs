@@ -32,7 +32,7 @@ namespace Shortify.NET.API.Controllers
         [Authorize]
         [HttpPost]
         [Route("api/shorten")]
-        [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status201Created)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> ShortenUrl([FromBody] ShortenUrlRequest request, CancellationToken cancellationToken = default)
         {
@@ -63,7 +63,7 @@ namespace Shortify.NET.API.Controllers
 
             return response.IsFailure ?
                     HandleFailure(response) :
-                    Ok(response.Value.Value);
+                    Created(nameof(ShortenUrl), response.Value.Value);
         }
 
         /// <summary>

@@ -36,7 +36,7 @@ namespace Shortify.NET.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("register")]
-        [ProducesResponseType(typeof(RegisterUserResponse), statusCode: StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RegisterUserResponse), statusCode: StatusCodes.Status201Created)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
@@ -51,7 +51,7 @@ namespace Shortify.NET.API.Controllers
 
             return response.IsFailure ?
                     HandleFailure(response) :
-                    Ok(_mapper.AuthResultToRegisterUserResponse(response.Value));
+                    Created(nameof(RegisterUser), _mapper.AuthResultToRegisterUserResponse(response.Value));
         }
 
         #endregion
