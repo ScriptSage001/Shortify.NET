@@ -3,6 +3,7 @@ name: Keep Shortify Alive
 on:
   schedule:
     - cron: '*/5 * * * *'
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   ping_render:
