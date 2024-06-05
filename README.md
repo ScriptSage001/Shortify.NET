@@ -24,7 +24,30 @@ docker run -d -p 5000:80 thescriptsage/shortifynetapi
 
 <h2>🍰 Contribution Guidelines:</h2>
 
-Contributions are what make the open source community such an amazing place to learn inspire and create. Any contributions you make are greatly appreciated. If you have a suggestion that would make this better please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Don't forget to give the project a star! Thanks again! ## How to Contribute 1. \*\*Fork the Project\*\* 2. \*\*Create your Feature Branch\*\* \`\`\` git checkout -b feature/AmazingFeature \`\`\`
+<p>Contributions are what make the open source community such an amazing place to learn inspire and create. Any contributions you make are greatly appreciated.</p> 
+<p>If you have a suggestion that would make this better please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Don't forget to give the project a star! Thanks again!</p> 
+
+<h3>How to Contribute</h3> 
+<p>1. Fork the Project </p>
+<p>2. Create your Feature Branch</p> 
+
+``` 
+git checkout -b feature/AmazingFeature
+```
+
+<p>3. Commit your Changes</p> 
+
+``` 
+git commit -m &#39;Add some AmazingFeature&#39;
+```
+
+<p>4. Push to the Branch</p> 
+
+``` 
+git push origin feature/AmazingFeature
+```
+
+<p>5. Open a Pull Request</p>
 
 <h2>🛡️ License:</h2>
 
