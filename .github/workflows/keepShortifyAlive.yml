@@ -9,6 +9,8 @@ jobs:
   ping_render:
     runs-on: ubuntu-latest
     steps:
+      - name: Display Current Time
+        run: date
       - name: Ping Render Instance
         run: |
           curl -s -o /dev/null -w "%{http_code}" https://shortify-net.onrender.com/api/Monitor/keepAlive
