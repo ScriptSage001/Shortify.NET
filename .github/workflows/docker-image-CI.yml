@@ -28,3 +28,4 @@ jobs:
           context: .
           push: true
           tags: thescriptsage/shortifynetapi:latest
+          file: Shortify.NET.API/Dockerfile
