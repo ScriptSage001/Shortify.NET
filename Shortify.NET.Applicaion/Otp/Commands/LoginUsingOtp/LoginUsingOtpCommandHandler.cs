@@ -35,7 +35,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
             _userCredentialsRepository = userCredentialsRepository;
         }
 
-        public async Task<Result<AuthenticationResult>> Handle(LoginUsingOtpCommand command, CancellationToken cancellationToken)
+        public async Task<Result<AuthenticationResult>> Handle(LoginUsingOtpCommand command, CancellationToken cancellationToken = default)
         {
             Result<Email> email = Email.Create(command.Email);
 
@@ -51,13 +51,13 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
                 return Result.Failure<AuthenticationResult>(DomainErrors.User.UserNotFound);
             }
 
-            var isOtpValid = await IsOtpValid(command);
+            var isOtpValid = await IsOtpValid(command, cancellationToken);
 
             if (isOtpValid)
             {
                 AuthenticationResult authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
 
-                user.UserCredentials.AddOrUpdateRefreshToken(
+                user.UserCredentials?.AddOrUpdateRefreshToken(
                                         authenticationResult.RefreshToken,
                                         authenticationResult.RefreshTokenExpirationTimeUtc);
 
@@ -71,7 +71,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
             return Result.Failure<AuthenticationResult>(DomainErrors.Otp.Invalid);
         }
 
-        private async Task<bool> IsOtpValid(LoginUsingOtpCommand command)
+        private async Task<bool> IsOtpValid(LoginUsingOtpCommand command, CancellationToken cancellationToken = default)
         {
             var (otpId, otp) = await _otpRepository.GetLatestUnusedOtpAsync(command.Email);
 
@@ -79,7 +79,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
             {
                 if (command.Otp.Equals(otp))
                 {
-                    _otpRepository.MarkOtpDetailAsUsed(otpId, DateTime.UtcNow);
+                    await _otpRepository.MarkOtpDetailAsUsed(otpId, DateTime.UtcNow, cancellationToken);
 
                     return true;
                 }
