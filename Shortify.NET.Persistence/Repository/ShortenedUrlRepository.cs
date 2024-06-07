@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shortify.NET.Applicaion.Abstractions.Repositories;
 using Shortify.NET.Core.Entites;
+using System.Linq.Expressions;
 
 namespace Shortify.NET.Persistence.Repository
 {
@@ -10,6 +11,27 @@ namespace Shortify.NET.Persistence.Repository
 
         public ShortenedUrlRepository(AppDbContext context) 
             => _appDbContext = context;
+
+        #region Private Methods
+        
+        private async Task<ShortenedUrl?> GetShortenedUrlAsync(
+            Expression<Func<ShortenedUrl, bool>> predicate,
+            bool asNoTracking = false,
+            CancellationToken cancellationToken = default)
+        {
+            IQueryable<ShortenedUrl> query = _appDbContext.Set<ShortenedUrl>();
+
+            if (asNoTracking)
+            {
+                query.AsNoTracking();
+            }
+
+            return await query.FirstOrDefaultAsync(predicate, cancellationToken);
+        }
+
+        #endregion
+
+        #region Public Methods
 
         public void Add(ShortenedUrl shortenedUrl)
         {
@@ -27,46 +49,29 @@ namespace Shortify.NET.Persistence.Repository
         }
 
         public async Task<ShortenedUrl?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        {
-            return await _appDbContext
-                               .Set<ShortenedUrl>()
-                               .AsNoTracking()
-                               .Where(x =>
-                                    x.Id == id
-                                 && x.RowStatus == true)
-                               .FirstOrDefaultAsync(cancellationToken);
-        }
+            => await GetShortenedUrlAsync(
+                        shortenedUrl => shortenedUrl.Id == id,
+                        true,
+                        cancellationToken);
 
         public async Task<ShortenedUrl?> GetByCodeAsync(string code, CancellationToken cancellationToken = default)
-        {
-            return await _appDbContext
-                               .Set<ShortenedUrl>()
-                               .AsNoTracking()
-                               .Where(x => 
-                                    x.Code == code
-                                 && x.RowStatus == true)
-                               .FirstOrDefaultAsync(cancellationToken);
-        }
+            => await GetShortenedUrlAsync(
+                        shortenedUrl => shortenedUrl.Code == code,
+                        true,
+                        cancellationToken);
 
-        public async Task<ShortenedUrl?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
-        {
-            return await _appDbContext
-                              .Set<ShortenedUrl>()
-                              .AsNoTracking()
-                              .Where(x =>
-                                    x.UserId == userId
-                                 && x.RowStatus == true)
-                              .FirstOrDefaultAsync(cancellationToken);
-        }
+        public async Task<ShortenedUrl?> GetLatestByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+            => await GetShortenedUrlAsync(
+                        shortenedUrl => shortenedUrl.UserId == userId,
+                        true,
+                        cancellationToken);
 
         public async Task<List<ShortenedUrl>?> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
         {
             return await _appDbContext
                               .Set<ShortenedUrl>()
                               .AsNoTracking()
-                              .Where(x => 
-                                    x.UserId == userId
-                                 && x.RowStatus == true)
+                              .Where(x => x.UserId == userId)
                               .ToListAsync(cancellationToken);
         }
 
@@ -76,5 +81,7 @@ namespace Shortify.NET.Persistence.Repository
                             .Set<ShortenedUrl>()
                             .AnyAsync(url => url.Code == code, cancellationToken);
         }
+
+        #endregion
     }
 }
