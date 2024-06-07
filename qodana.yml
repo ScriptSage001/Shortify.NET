@@ -1,0 +1,12 @@
+#-------------------------------------------------------------------------------#
+#               Qodana analysis is configured by qodana.yaml file               #
+#             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
+#-------------------------------------------------------------------------------#
+version: "1.0"
+
+profile:
+  name: qodana.recommended
+
+linter: jetbrains/qodana-cdnet:2024.1-eap
+
+fixesStrategy: apply
