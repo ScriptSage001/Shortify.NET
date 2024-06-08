@@ -26,7 +26,7 @@ jobs:
         run: dotnet restore Shortify.NET.API/Shortify.NET.API.csproj
             
       - name: Generate Migration Script
-        run: dotnet ef migrations script --idempotent -o migrations.sql --project Shortify.NET.Persistence/Shortify.NET.Persistence.csproj
+        run: dotnet ef migrations script --idempotent --context AppDbContext --startup-project Shortify.NET.API/Shortify.NET.API.csproj --project Shortify.NET.Persistence/Shortify.NET.Persistence.csproj -o migrations.sql
         
       - name: Apply Migration Script
         env:
