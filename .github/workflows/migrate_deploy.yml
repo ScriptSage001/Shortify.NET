@@ -15,6 +15,12 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
             dotnet-version: '8.x'
+
+      - name: Install dotnet-ef Tool
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add dotnet tools to PATH
+        run: echo "::add-path::${HOME}/.dotnet/tools"
             
       - name: Restore Dependencies
         run: dotnet restore Shortify.NET.Persistence/Shortify.NET.Persistence.csproj
