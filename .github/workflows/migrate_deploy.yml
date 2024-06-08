@@ -17,10 +17,10 @@ jobs:
             dotnet-version: '8.x'
             
       - name: Restore Dependencies
-        run: dotnet restore
+        run: dotnet restore Shortify.NET.Persistence/Shortify.NET.Persistence.csproj
             
       - name: Generate Migration Script
-        run: dotnet ef migrations script --idempotent -o migrations.sql
+        run: dotnet ef migrations script --idempotent -o migrations.sql --project Shortify.NET.Persistence/Shortify.NET.Persistence.csproj
         
       - name: Apply Migration Script
         env:
