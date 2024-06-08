@@ -18,9 +18,6 @@ jobs:
 
       - name: Install dotnet-ef Tool
         run: dotnet tool install --global dotnet-ef
-
-      #- name: Add dotnet tools to PATH
-        #run: echo "::add-path::${HOME}/.dotnet/tools"
             
       - name: Restore Dependencies
         run: dotnet restore Shortify.NET.API/Shortify.NET.API.csproj
@@ -37,8 +34,8 @@ jobs:
           PGDATABASE: ${{ secrets.DATABASE_NAME }}
         run: psql -h $PGHOST -p $PGPORT -U $PGUSER -d $PGDATABASE -f migrations.sql $PGPASSWORD
         
-      # - name: Deploy to Render
-        # env:
-          # deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-        # run: |
-          # curl "$deploy_url"
+      - name: Deploy to Render
+        env:
+          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          curl "$deploy_url"
