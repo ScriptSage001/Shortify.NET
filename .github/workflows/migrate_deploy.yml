@@ -23,7 +23,7 @@ jobs:
         #run: echo "::add-path::${HOME}/.dotnet/tools"
             
       - name: Restore Dependencies
-        run: dotnet restore Shortify.NET.Persistence/Shortify.NET.Persistence.csproj
+        run: dotnet restore Shortify.NET.API/Shortify.NET.API.csproj
             
       - name: Generate Migration Script
         run: dotnet ef migrations script --idempotent -o migrations.sql --project Shortify.NET.Persistence/Shortify.NET.Persistence.csproj
