@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Options;
-using Shortify.NET.Common.FunctionalTypes;
-using Shortify.NET.Common.Messaging.Abstractions;
-using Shortify.NET.Core;
-using static Shortify.NET.Applicaion.Shared.Constant.EmailConstants;
-using System.Text;
 using Shortify.NET.Applicaion.Abstractions;
 using Shortify.NET.Applicaion.Abstractions.Repositories;
 using Shortify.NET.Applicaion.Helpers;
 using Shortify.NET.Applicaion.Shared.Models;
+using Shortify.NET.Common.FunctionalTypes;
+using Shortify.NET.Common.Messaging.Abstractions;
+using Shortify.NET.Core;
+using System.Text;
+using static Shortify.NET.Applicaion.Shared.Constant.EmailConstants;
 
 namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
 {
@@ -33,7 +33,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result> Handle(SendOtpCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(SendOtpCommand command, CancellationToken cancellationToken = default)
         {
             var otp = GenerateOtp();
             var subject = string.Empty;
@@ -168,16 +168,34 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
         /// <param name="email"></param>
         /// <param name="otp"></param>
         /// <returns></returns>
-        private async Task SaveOtpDetailsAsync(string email, string otp, CancellationToken cancellationToken)
+        private async Task SaveOtpDetailsAsync(
+                                string email, 
+                                string otp, 
+                                CancellationToken cancellationToken = default)
         {
-            _otpRepository.AddOtpDetail(
-                email,
-                otp,
-                DateTime.UtcNow,
-                DateTime.UtcNow.AddMinutes(_otpLifeSpan)
-            );
+            using (var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken))
+            {
+                try
+                {
+                    await _otpRepository.AddOtpDetail(
+                                            email,
+                                            otp,
+                                            DateTime.UtcNow,
+                                            DateTime.UtcNow
+                                                        .AddMinutes(_otpLifeSpan),
+                                            cancellationToken);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                    await transaction.CommitAsync(cancellationToken);
+                }
+                catch
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    throw;
+                }
+            }
+            
         }
 
         #endregion

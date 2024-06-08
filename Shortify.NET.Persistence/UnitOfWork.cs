@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Common.Messaging.Outbox;
@@ -12,14 +13,17 @@ namespace Shortify.NET.Persistence
     {
         private readonly AppDbContext _appDbContext;
 
-        public UnitOfWork(AppDbContext appDbContext) => _appDbContext = appDbContext;
+        public UnitOfWork(AppDbContext appDbContext) 
+                        => _appDbContext = appDbContext;
+
+        #region Public Methods
 
         /// <summary>
         /// Custom SaveChanges method on top of the SaveChanges of EFCore
         /// Handles Update of Auditable Entites before saving changes to DB
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <returns>A task that represents the asynchronous save operation. The task result contains the number of state entries written to the database.</returns>
         public Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             InsertDomainEventsIntoOutboxMessages();
@@ -27,6 +31,30 @@ namespace Shortify.NET.Persistence
 
             return _appDbContext.SaveChangesAsync(cancellationToken);
         }
+
+        /// <summary>
+        /// Asynchronously begins a new database transaction.
+        /// </summary>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
+        {
+            return await _appDbContext
+                            .Database
+                            .BeginTransactionAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Disposes the context and releases all resources used by the UnitOfWork.
+        /// </summary>
+        public void Dispose()
+        {
+            _appDbContext.Dispose();
+        }
+
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
         /// To set Auditable Properties of the Auditable Enitites
@@ -111,5 +139,7 @@ namespace Shortify.NET.Persistence
                                             })
             };
         }
+
+        #endregion
     }
 }

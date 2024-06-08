@@ -2,16 +2,20 @@
 {
     public interface IOtpRepository
     {
-        void AddOtpDetail(
+        Task AddOtpDetail(
                 string email,
                 string otp,
                 DateTime otpRequestedOnUtc,
-                DateTime otpExpiresOnUtc);
+                DateTime otpExpiresOnUtc,
+                CancellationToken cancellationToken = default);
 
-        void MarkOtpDetailAsUsed(
+        Task MarkOtpDetailAsUsed(
                 Guid id,
-                DateTime otpUsedOnUtc);
+                DateTime otpUsedOnUtc,
+                CancellationToken cancellationToken = default);
 
-        Task<(Guid, string)> GetLatestUnusedOtpAsync(string email);
+        Task<(Guid, string)> GetLatestUnusedOtpAsync(
+                                    string email,
+                                    CancellationToken cancellationToken = default);
     }
 }
