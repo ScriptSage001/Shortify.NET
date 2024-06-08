@@ -13,11 +13,12 @@ namespace Shortify.NET.Persistence.Repository
             _appDbContext = appDbContext;
         }
 
-        public void AddOtpDetail(
+        public async Task AddOtpDetail(
             string email, 
             string otp, 
             DateTime otpRequestedOnUtc, 
-            DateTime otpExpiresOnUtc)
+            DateTime otpExpiresOnUtc,
+            CancellationToken cancellationToken = default)
         {
             OtpDetails otpDetails = new()
             {
@@ -30,36 +31,41 @@ namespace Shortify.NET.Persistence.Repository
                 OtpUsedOnUtc = null
             };
 
-            _appDbContext
-                    .Set<OtpDetails>()
-                    .Add(otpDetails);
+            await _appDbContext
+                        .Set<OtpDetails>()
+                        .AddAsync(otpDetails, cancellationToken);
         }
 
-        public void MarkOtpDetailAsUsed(Guid id, DateTime otpUsedOnUtc)
+        public async Task MarkOtpDetailAsUsed(
+            Guid id, 
+            DateTime otpUsedOnUtc,
+            CancellationToken cancellationToken = default)
         {
-            var otp = new OtpDetails
-            {
-                Id = id,
-                IsUsed = true,
-                OtpUsedOnUtc = otpUsedOnUtc
-            };
+            var otp = await _appDbContext
+                                .Set<OtpDetails>()
+                                .FindAsync(
+                                        [id], 
+                                        cancellationToken);
 
-            _appDbContext.Attach(otp);
-            
-            _appDbContext.Entry(otp).Property(x => x.IsUsed).IsModified = true;
-            _appDbContext.Entry(otp).Property(x => x.OtpUsedOnUtc).IsModified = true;
+            if (otp != null)
+            {
+                otp.IsUsed = true;
+                otp.OtpUsedOnUtc = otpUsedOnUtc;
+            }
         }
 
-        public async Task<(Guid, string)> GetLatestUnusedOtpAsync(string email)
+        public async Task<(Guid, string)> GetLatestUnusedOtpAsync(string email, CancellationToken cancellationToken = default)
         {
             var otp = await _appDbContext
                                 .Set<OtpDetails>()
                                 .AsNoTracking()
+                                .OrderByDescending(otp => otp.OtpRequestedOnUtc)
                                 .FirstOrDefaultAsync(
                                         otp => 
                                                otp.Email == email
-                                            && otp.IsUsed == false
-                                            && otp.OtpExpiresOnUtc >= DateTime.UtcNow);
+                                            && !otp.IsUsed
+                                            && otp.OtpExpiresOnUtc >= DateTime.UtcNow,
+                                        cancellationToken);
 
             return otp is not null 
                         ? (otp.Id, otp.Otp) 

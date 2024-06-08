@@ -24,7 +24,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.ValidateOtp
             _authService = authService;
         }
 
-        public async Task<Result<string>> Handle(ValidateOtpCommand command, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(ValidateOtpCommand command, CancellationToken cancellationToken = default)
         {
 
             var (otpId, otp) = await _otpRepository.GetLatestUnusedOtpAsync(command.Email);
@@ -35,8 +35,8 @@ namespace Shortify.NET.Applicaion.Otp.Commands.ValidateOtp
                 {
                     var token = _authService.GenerateValidateOtpToken(command.Email);
                     
-                    _otpRepository.MarkOtpDetailAsUsed(otpId, DateTime.UtcNow);
-                    await _unitOfWork.SaveChangesAsync();
+                    await _otpRepository.MarkOtpDetailAsUsed(otpId, DateTime.UtcNow, cancellationToken);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
 
                     return token;
                 }
