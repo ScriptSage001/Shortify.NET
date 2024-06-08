@@ -1,0 +1,38 @@
+name: Database Migrations and Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: action/setup-dotnet@v4
+        with:
+            dotnet-version: '8.x'
+            
+      - name: Restore Dependencies
+        run: dotnet restore
+            
+      - name: Generate Migration Script
+        run: dotnet ef migrations script --idempotent -o migrations.sql
+        
+      - name: Apply Migration Script
+        env:
+          PGHOST: ${{ secrets.DATABASE_HOST }}
+          PGPORT: ${{ secrets.DATABASE_PORT }}
+          PGUSER: ${{ secrets.DATABASE_USER }}
+          PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          PGDATABASE: ${{ secrets.DATABASE_NAME }}
+        run: psql -h $PGHOST -p $PGPORT -U $PGUSER -d $PGDATABASE -f migrations.sql $PGPASSWORD
+        
+      # - name: Deploy to Render
+        # env:
+          # deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        # run: |
+          # curl "$deploy_url"
