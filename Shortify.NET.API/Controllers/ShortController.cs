@@ -24,11 +24,11 @@ namespace Shortify.NET.API.Controllers
         #region Public Endpoints
 
         /// <summary>
-        /// To Shorte Any Url
+        /// Shortens a given URL.
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="request">The request containing the URL to shorten.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The shortened URL.</returns>
         [Authorize]
         [HttpPost]
         [Route("api/shorten")]
@@ -67,11 +67,11 @@ namespace Shortify.NET.API.Controllers
         }
 
         /// <summary>
-        /// Endppoinf to rediect all the short url to Original Url
+        /// Redirects the short URL to the original URL.
         /// </summary>
-        /// <param name="code"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="code">The code of the short URL.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A redirection to the original URL.</returns>
         [HttpGet]
         [Route("/{code}")]
         public async Task<IActionResult> RedirectUrl(string code, CancellationToken cancellationToken = default)
@@ -86,10 +86,10 @@ namespace Shortify.NET.API.Controllers
         }
 
         /// <summary>
-        /// Get all Shortened Urls of the Current User
+        /// Gets all shortened URLs of the current user.
         /// </summary>
-        /// <param name="cancellation"></param>
-        /// <returns></returns>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A list of shortened URLs.</returns>
         [Authorize]
         [HttpGet]
         [Route("api/shorten/getAll")]
@@ -114,10 +114,11 @@ namespace Shortify.NET.API.Controllers
         }
 
         /// <summary>
-        /// Get Shortened Url by the Id
+        /// Gets a shortened URL by its ID.
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="id">The ID of the shortened URL.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The shortened URL.</returns>
         [Authorize]
         [HttpGet]
         [Route("api/shorten/{id}")]
@@ -135,10 +136,11 @@ namespace Shortify.NET.API.Controllers
         }
 
         /// <summary>
-        /// Get Shortened Url by the Code
+        /// Gets a shortened URL by its code.
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="code">The code of the shortened URL.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The shortened URL.</returns>
         [Authorize]
         [HttpGet]
         [Route("api/shorten/get/{code}")]
