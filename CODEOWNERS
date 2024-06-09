@@ -1,0 +1,14 @@
+##############################################################
+#
+# List of approvers/reviewers
+#
+##############################################################
+#
+# Get in touch with us via - contact.shortify.net@gmail.com
+#
+# Learn about CODEOWNERS file format: 
+#  https://help.github.com/en/articles/about-code-owners
+#
+
+# These owners will be the default owners for everything in the repo.
+* @ScriptSage001
