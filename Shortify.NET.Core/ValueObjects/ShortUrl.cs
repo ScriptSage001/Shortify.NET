@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Shortify.NET.Common.FunctionalTypes;
+﻿using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Core.Errors;
 using Shortify.NET.Core.Primitives;
 
