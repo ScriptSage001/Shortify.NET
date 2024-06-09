@@ -75,7 +75,7 @@ namespace Shortify.NET.Core.Entites
 
             user.RaiseDomainEvent(
                     new UserRegisteredDomainEvent(
-                            Guid.NewGuid(), user.Id, email.Value));
+                            Guid.NewGuid(), user.Id));
 
             return user;
         }
