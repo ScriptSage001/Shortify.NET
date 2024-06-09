@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Shortify.NET.Applicaion.Abstractions.Repositories;
 using Shortify.NET.Core.Entites;
 using Shortify.NET.Core.ValueObjects;
