@@ -222,19 +222,13 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> GetTokenByClientSecret([FromBody] ClientCredentials clientCredentials, CancellationToken cancellationToken = default)
         {
-            if (!string.IsNullOrWhiteSpace(clientCredentials.UserName) &&
-                !string.IsNullOrWhiteSpace(clientCredentials.ClientSecret))
-            {
-                GenerateTokenByClientSecretCommand command = _mapper.ClientCredentialsToGenerateTokenByClientSecretCommand(clientCredentials);
+            GenerateTokenByClientSecretCommand command = _mapper.ClientCredentialsToGenerateTokenByClientSecretCommand(clientCredentials);
 
-                var response = await _apiService.SendAsync(command, cancellationToken);
+            var response = await _apiService.SendAsync(command, cancellationToken);
 
-                return response.IsFailure ?
-                        HandleFailure(response) :
-                        Ok(_mapper.AuthenticationResultToResponse(response.Value));
-            }
-
-            return HandleNullOrEmptyRequest();
+            return response.IsFailure ?
+                    HandleFailure(response) :
+                    Ok(_mapper.AuthenticationResultToResponse(response.Value));
         }
 
         #endregion
