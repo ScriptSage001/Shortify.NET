@@ -27,7 +27,10 @@ var builder = WebApplication.CreateBuilder(args);
     //}
 
     app.UseSwagger();
-    app.UseSwaggerUI(s => s.SwaggerEndpoint("/swagger/v1/swagger.json", "Shortify.NET API V1"));
+    app.UseSwaggerUI(s => 
+    {
+        s.SwaggerEndpoint("/swagger/v1/swagger.json", "Shortify.NET API V1");
+    });
 
     app.UseHttpsRedirection();
 

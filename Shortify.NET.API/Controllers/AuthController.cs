@@ -29,11 +29,11 @@ namespace Shortify.NET.API.Controllers
         #region Register
 
         /// <summary>
-        /// To Register a new User
+        /// Registers a new user.
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="request">The request containing user registration details.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating the result of the registration.</returns>
         [HttpPost]
         [Route("register")]
         [ProducesResponseType(typeof(RegisterUserResponse), statusCode: StatusCodes.Status201Created)]
@@ -59,12 +59,11 @@ namespace Shortify.NET.API.Controllers
         #region Login
 
         /// <summary>
-        /// To Login a Registered User
-        /// Using either UserName or Email
+        /// Logs in a registered user using either username or email.
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="request">The request containing login details.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating the result of the login attempt.</returns>
         [HttpPost]
         [Route("login")]
         [ProducesResponseType(typeof(LoginUserResponse), statusCode: StatusCodes.Status200OK)]
@@ -86,11 +85,11 @@ namespace Shortify.NET.API.Controllers
         }
 
         /// <summary>
-        /// To Login a Registered User using OTP
+        /// Logs in a registered user using OTP.
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="request">The request containing OTP login details.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating the result of the OTP login attempt.</returns>
         [HttpPost]
         [Route("login/otp")]
         [ProducesResponseType(typeof(LoginUserResponse), statusCode: StatusCodes.Status200OK)]
@@ -116,11 +115,11 @@ namespace Shortify.NET.API.Controllers
         #region Password
 
         /// <summary>
-        /// To Reset Password
+        /// Resets the password of a logged-in user.
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="request">The request containing the new password details.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating the result of the password reset attempt.</returns>
         [Authorize]
         [HttpPut]
         [Route("password/reset")]
@@ -151,11 +150,11 @@ namespace Shortify.NET.API.Controllers
         }
 
         /// <summary>
-        /// To Reset Password Using OTP - Forgot Password Scenario
+        /// Resets the password using OTP (forgot password scenario).
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="request">The request containing the OTP and new password details.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating the result of the password reset attempt.</returns>
         [HttpPut]
         [Route("password/reset/forgot")]
         [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status200OK)]
@@ -184,11 +183,11 @@ namespace Shortify.NET.API.Controllers
         #region Refresh Token
 
         /// <summary>
-        /// To Refresh Tokens
+        /// Refreshes tokens.
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="request">The request containing refresh token details.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating the result of the token refresh attempt.</returns>
         [HttpPost]
         [Route("token/refresh")]
         [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
@@ -210,10 +209,10 @@ namespace Shortify.NET.API.Controllers
         }
 
         /// <summary>
-        /// To Revoke Refresh Tokens by User Id
+        /// Revokes refresh tokens by user ID.
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating the result of the token revocation attempt.</returns>
         [Authorize]
         [HttpPut]
         [Route("token/refresh/revoke")]
@@ -242,10 +241,11 @@ namespace Shortify.NET.API.Controllers
         #region Access Token
 
         /// <summary>
-        /// To Generate Access and Refresh Tokens using Client Secret
+        /// Generates access and refresh tokens using client secret.
         /// </summary>
-        /// <param name="clientCredentials"></param>
-        /// <returns></returns>
+        /// <param name="clientCredentials">The client credentials.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating the result of the token generation attempt.</returns>
         [HttpPost]
         [Route("token")]
         [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]

@@ -21,10 +21,10 @@ namespace Shortify.NET.API.Controllers
         #region Public Endpoints
 
         /// <summary>
-        /// To Get the Current User by UserId
+        /// Gets the current user by UserId.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The user information.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]

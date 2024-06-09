@@ -2,10 +2,16 @@ name: Database Migrations and Deploy
 
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the workflow'
+        required: true
+        default: 'release'
 
 jobs:
   migrate-and-deploy:
     runs-on: ubuntu-latest
+    if: github.events.inputs.branch == 'release'
 
     steps:
       - name: Checkout code

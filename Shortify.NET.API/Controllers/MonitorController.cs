@@ -14,16 +14,14 @@ namespace Shortify.NET.API.Controllers
         #region Public Endpoints
 
         /// <summary>
-        /// To 
+        /// Checks the health status of the API.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A response indicating that the API is running.</returns>
         [HttpGet]
         [Route("keepAlive")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
-        public async Task<IActionResult> KeepAlive()
+        public IActionResult KeepAlive()
         {
-            await Task.Delay(1);
-
             return Ok();
         }
 
