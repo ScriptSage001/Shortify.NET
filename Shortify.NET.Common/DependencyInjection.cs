@@ -18,7 +18,7 @@ namespace Shortify.NET.Common
             return services;
         }
 
-        private static IServiceCollection AddMessaging(this IServiceCollection services, Assembly handlerAssembly)
+        private static void AddMessaging(this IServiceCollection services, Assembly handlerAssembly)
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(handlerAssembly));
             services.AddScoped<IApiService, ApiService>(c =>
@@ -26,22 +26,16 @@ namespace Shortify.NET.Common
                 var mediator = c.GetRequiredService<IMediator>();
                 return new ApiService(mediator);
             });
-
-            return services;
         }
 
-        private static IServiceCollection AddBehaviours(this IServiceCollection services)
+        private static void AddBehaviours(this IServiceCollection services)
         {
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehaviour<,>));
-
-            return services;
         }
 
-        private static IServiceCollection AddExceptionHandler(this IServiceCollection services)
+        private static void AddExceptionHandler(this IServiceCollection services)
         {
             services.AddExceptionHandler<GlobalExceptionHandler>();
-
-            return services;
         }
     }
 }
