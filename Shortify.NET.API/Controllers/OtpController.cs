@@ -19,10 +19,11 @@ namespace Shortify.NET.API.Controllers
         #region Send OTP
 
         /// <summary>
-        /// To Send Otp For Email Verification
+        /// Sends an OTP for email verification.
         /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
+        /// <param name="email">The email address to send the OTP to.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating whether the OTP was sent successfully.</returns>
         [HttpPost]
         [Route("send/verify-email/{email}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
@@ -45,10 +46,11 @@ namespace Shortify.NET.API.Controllers
         }
 
         /// <summary>
-        /// To Send Otp For Login
+        /// Sends an OTP for login.
         /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
+        /// <param name="email">The email address to send the OTP to.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating whether the OTP was sent successfully.</returns>
         [HttpPost]
         [Route("send/login/{email}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
@@ -71,10 +73,11 @@ namespace Shortify.NET.API.Controllers
         }
 
         /// <summary>
-        /// To Send Otp To Reset Password
+        /// Sends an OTP to reset password.
         /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
+        /// <param name="email">The email address to send the OTP to.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating whether the OTP was sent successfully.</returns>
         [HttpPost]
         [Route("send/forgot-password/{email}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
@@ -100,6 +103,12 @@ namespace Shortify.NET.API.Controllers
 
         #region Validate OTP
 
+        /// <summary>
+        /// Validates the provided OTP.
+        /// </summary>
+        /// <param name="request">The request containing the email and OTP to validate.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating whether the OTP validation was successful.</returns>
         [HttpPost]
         [Route("validate")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
