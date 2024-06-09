@@ -11,7 +11,7 @@ on:
 jobs:
   migrate-and-deploy:
     runs-on: ubuntu-latest
-    if: github.events.inputs.branch == 'release'
+    if: github.event.inputs.branch == 'release'
 
     steps:
       - name: Checkout code
