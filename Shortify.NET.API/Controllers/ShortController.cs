@@ -36,7 +36,7 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> ShortenUrl([FromBody] ShortenUrlRequest request, CancellationToken cancellationToken = default)
         {
-            if (request is null || string.IsNullOrWhiteSpace(request.Url))
+            if (string.IsNullOrWhiteSpace(request.Url))
             {
                 return HandleNullOrEmptyRequest();
             }

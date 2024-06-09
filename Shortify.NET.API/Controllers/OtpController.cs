@@ -116,11 +116,6 @@ namespace Shortify.NET.API.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ValidateOtp(ValidateOtpRequest request, CancellationToken cancellationToken = default)
         {
-            if (request is null )
-            {
-                return HandleNullOrEmptyRequest();
-            }
-
             var command = new ValidateOtpCommand(request.Email, request.Otp);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
