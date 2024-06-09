@@ -68,19 +68,19 @@ namespace Shortify.NET.Persistence.Repository
         public async Task<User?> GetByEmailAsyncWithCredentials(Email email, CancellationToken cancellationToken = default)
             => await GetUserAsync(
                             user => user.Email == email, 
-                            user => user.UserCredentials ?? default!,
+                            user => user.UserCredentials,
                             cancellationToken: cancellationToken);
 
         public async Task<User?> GetByUserNameAsyncWithCredentials(UserName userName, CancellationToken cancellationToken = default)
             => await GetUserAsync(
                             user => user.UserName == userName,
-                            user => user.UserCredentials ?? default!,
+                            user => user.UserCredentials,
                             cancellationToken: cancellationToken);
 
         public async Task<User?> GetByIdAsyncWithCredentials(Guid id, CancellationToken cancellationToken = default)
             => await GetUserAsync(
                             user => user.Id == id,
-                            user => user.UserCredentials ?? default!,
+                            user => user.UserCredentials,
                             cancellationToken: cancellationToken);
 
         public async Task<User?> GetByIdAsyncWithShortenedUrls(Guid id, CancellationToken cancellationToken = default)

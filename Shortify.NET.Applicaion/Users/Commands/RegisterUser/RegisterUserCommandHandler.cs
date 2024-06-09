@@ -14,20 +14,16 @@ namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
     {
         private readonly IUserRepository _userRepository;
 
-        private readonly IUserCredentialsRepository _userCredentialsRepository;
-
         private readonly IAuthServices _authServices;
 
         private readonly IUnitOfWork _unitOfWork;
 
         public RegisterUserCommandHandler(
-            IUserRepository userRepository, 
-            IUserCredentialsRepository userCredentialsRepository, 
+            IUserRepository userRepository,
             IUnitOfWork unitOfWork, 
             IAuthServices authServices)
         {
             _userRepository = userRepository;
-            _userCredentialsRepository = userCredentialsRepository;
             _unitOfWork = unitOfWork;
             _authServices = authServices;
         }
@@ -50,24 +46,26 @@ namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
                 return Result.Failure<AuthenticationResult>(DomainErrors.User.EmailAlreadyInUse);
             }
 
-            User newUser = User.CreateUser(
-                                    userName: userName.Value,
-                                    email: email.Value);
-
-            _userRepository.Add(newUser);
+            Guid userId = Guid.NewGuid();
 
             var (passwordHash, passwordSalt) = _authServices.CreatePasswordHashAndSalt(command.Password);
 
             UserCredentials newUserCredentials = UserCredentials.Create(
-                                                                    userId: newUser.Id,
+                                                                    userId: userId,
                                                                     passwordHash: passwordHash,
                                                                     passwordSalt: passwordSalt);
 
-            AuthenticationResult authResult = _authServices.CreateToken(newUser.Id, userName.Value.Value, email.Value.Value);
+            AuthenticationResult authResult = _authServices.CreateToken(userId, userName.Value.Value, email.Value.Value);
 
             newUserCredentials.AddOrUpdateRefreshToken(authResult.RefreshToken, authResult.RefreshTokenExpirationTimeUtc);
 
-            _userCredentialsRepository.Add(newUserCredentials);
+            User newUser = User.CreateUser(
+                                    id: userId,
+                                    userName: userName.Value,
+                                    email: email.Value,
+                                    userCredentials: newUserCredentials);
+
+            _userRepository.Add(newUser);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

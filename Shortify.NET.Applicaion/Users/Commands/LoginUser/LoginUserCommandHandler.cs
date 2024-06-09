@@ -61,7 +61,7 @@ namespace Shortify.NET.Applicaion.Users.Commands.LoginUser
                 return Result.Failure<AuthenticationResult>(DomainErrors.User.UserNotFound);
             }
 
-            var userCredentials = user?.UserCredentials;
+            var userCredentials = user.UserCredentials;
 
             bool isVerified = _authServices.VerifyPasswordHash(
                                                  command.Password,
