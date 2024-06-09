@@ -148,10 +148,10 @@ namespace Shortify.NET.Infrastructure
         /// To Verify Password 
         /// </summary>
         /// <param name="password"></param>
-        /// <param name="passwordhash"></param>
+        /// <param name="passwordHash"></param>
         /// <param name="passwordSalt"></param>
         /// <returns></returns>
-        public bool VerifyPasswordHash(string password, byte[] passwordhash, byte[] passwordSalt)
+        public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
             byte[] newHash;
 
@@ -160,7 +160,7 @@ namespace Shortify.NET.Infrastructure
                 newHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             }
 
-            return newHash.SequenceEqual(passwordhash);
+            return newHash.SequenceEqual(passwordHash);
         }
 
         public bool VerifyValidateOtpToken(string email, string token)

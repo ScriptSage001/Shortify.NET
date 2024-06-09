@@ -41,22 +41,19 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
 
             switch (command.OtpType)
             {
-                case OTPType.VerifyEmail:
+                case OtpType.VerifyEmail:
                     subject = Subject.VerifyEmailOtp;
                     body = PrepareEmailBodyForEmailVerification(otp);
                     break;
 
-                case OTPType.ResetPassword:
+                case OtpType.ResetPassword:
                     subject = Subject.ResetPasswordOtp;
                     body = PrepareEmailBodyForPasswordReset(otp);
                     break;
 
-                case OTPType.Login:
+                case OtpType.Login:
                     subject = Subject.LoginOtp;
                     body = PrepareEmailBodyForLogin(otp);
-                    break;
-
-                default:
                     break;
             }
 
@@ -167,6 +164,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
         /// </summary>
         /// <param name="email"></param>
         /// <param name="otp"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         private async Task SaveOtpDetailsAsync(
                                 string email, 

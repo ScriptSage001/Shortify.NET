@@ -3,8 +3,6 @@ using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core;
 using Shortify.NET.Core.Errors;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
 
 namespace Shortify.NET.Applicaion.Token.Commands.RevokeToken
 {

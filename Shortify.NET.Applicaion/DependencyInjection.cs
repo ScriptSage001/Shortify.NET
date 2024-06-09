@@ -18,14 +18,12 @@ namespace Shortify.NET.Applicaion
             return services;
         }
 
-        private static IServiceCollection AddHelpers(this IServiceCollection services, IConfiguration configuration)
+        private static void AddHelpers(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
-
-            return services;
         }
 
-        private static IServiceCollection AddDomainEventHandlers(this IServiceCollection services)
+        private static void AddDomainEventHandlers(this IServiceCollection services)
         {
             services.Scan(
                 selector => selector
@@ -43,8 +41,6 @@ namespace Shortify.NET.Applicaion
                     .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                     .AsImplementedInterfaces()
                     .WithScopedLifetime());
-
-            return services;
         }
     }
 }

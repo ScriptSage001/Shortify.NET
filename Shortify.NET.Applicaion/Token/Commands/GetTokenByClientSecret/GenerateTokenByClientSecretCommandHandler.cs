@@ -56,7 +56,7 @@ namespace Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret
 
             AuthenticationResult authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
 
-            user.UserCredentials?.AddOrUpdateRefreshToken(
+            user.UserCredentials.AddOrUpdateRefreshToken(
                                 authenticationResult.RefreshToken,
                                 authenticationResult.RefreshTokenExpirationTimeUtc);
 

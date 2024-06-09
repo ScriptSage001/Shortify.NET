@@ -2,7 +2,6 @@
 using Shortify.NET.Applicaion.Shared.Models;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
-using System.Collections.Generic;
 
 namespace Shortify.NET.Applicaion.Url.Queries.GetAllShortenedUrls
 {

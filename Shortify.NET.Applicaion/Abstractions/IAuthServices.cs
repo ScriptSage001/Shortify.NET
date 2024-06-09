@@ -11,14 +11,14 @@ namespace Shortify.NET.Applicaion.Abstractions
         /// <param name="password"></param>
         (byte[] passwordHash, byte[] passwordSalt) CreatePasswordHashAndSalt(string password);
 
-        // <summary>
+        /// <summary>
         /// To Verify Password during Login
         /// </summary>
         /// <param name="password"></param>
         /// <param name="passwordHash"></param>
         /// <param name="passwordSalt"></param>
         /// <returns>boolean</returns>
-        bool VerifyPasswordHash(string password, byte[] passwordhash, byte[] passwordSalt);
+        bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt);
 
         /// <summary>
         /// To generate Authorization Bearer Token

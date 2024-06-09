@@ -3,7 +3,6 @@ using Shortify.NET.Applicaion.Shared.Models;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core.Errors;
-using System;
 
 namespace Shortify.NET.Applicaion.Url.Queries.ShortenedUrl
 {

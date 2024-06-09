@@ -36,7 +36,7 @@ namespace Shortify.NET.API.Controllers
                 return HandleNullOrEmptyRequest();
             }
 
-            var command = new SendOtpCommand(email, OTPType.VerifyEmail);
+            var command = new SendOtpCommand(email, OtpType.VerifyEmail);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -63,7 +63,7 @@ namespace Shortify.NET.API.Controllers
                 return HandleNullOrEmptyRequest();
             }
 
-            var command = new SendOtpCommand(email, OTPType.Login);
+            var command = new SendOtpCommand(email, OtpType.Login);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -90,7 +90,7 @@ namespace Shortify.NET.API.Controllers
                 return HandleNullOrEmptyRequest();
             }
 
-            var command = new SendOtpCommand(email, OTPType.ResetPassword);
+            var command = new SendOtpCommand(email, OtpType.ResetPassword);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 

@@ -4,7 +4,6 @@ using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core.Entites;
 using Shortify.NET.Core.Errors;
-using System.Net.Http.Headers;
 
 namespace Shortify.NET.Applicaion.Users.Queries.GetUserById
 {
