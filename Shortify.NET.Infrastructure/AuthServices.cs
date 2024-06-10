@@ -15,49 +15,44 @@ using static Shortify.NET.Infrastructure.InfraErrors;
 
 namespace Shortify.NET.Infrastructure
 {
-    public sealed class AuthServices : IAuthServices
+    /// <summary>
+    /// Implements the IAuthServices interface, providing methods for user authentication, token generation, and password management.
+    /// </summary>
+    /// <param name = "appSettings" > The application settings containing configuration values.</param>
+    /// <param name = "userCredentialsRepository" > The repository for accessing user credentials data.</param>
+    /// <param name = "unitOfWork" > The unit of work for managing database transactions.</param>
+    public sealed class AuthServices(
+        IOptions<AppSettings> appSettings, 
+        IUserCredentialsRepository userCredentialsRepository, 
+        IUnitOfWork unitOfWork) 
+        : IAuthServices
     {
-        private readonly AppSettings _appSettings;
+        private readonly AppSettings _appSettings = appSettings.Value;
 
-        private readonly IUserCredentialsRepository _userCredentialsRepository;
+        private readonly IUserCredentialsRepository _userCredentialsRepository = userCredentialsRepository;
 
-        private readonly IUnitOfWork _unitOfWork;
-
-        public AuthServices(IOptions<AppSettings> appSettings, IUserCredentialsRepository userCredentialsRepository, IUnitOfWork unitOfWork)
-        {
-            _appSettings = appSettings.Value;
-            _userCredentialsRepository = userCredentialsRepository;
-            _unitOfWork = unitOfWork;
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         #region Public Methods
 
         /// <summary>
-        /// Generates PasswordSalt and Hashed Password
+        /// Generates a password hash and salt for the provided password.
         /// </summary>
-        /// <param name="password"></param>
-        /// <returns></returns>
+        /// <param name="password">The plaintext password to hash.</param>
+        /// <returns>A tuple containing the password hash and salt.</returns>
         public (byte[] passwordHash, byte[] passwordSalt) CreatePasswordHashAndSalt(string password)
         {
-            byte[] salt;
-            byte[] hash;
-
-            using (var hmac = new HMACSHA512())
-            {
-                salt = hmac.Key;
-                hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-            }
-
-            return (hash, salt);
+            using var hmac = new HMACSHA512();
+            return (hmac.ComputeHash(Encoding.UTF8.GetBytes(password)), hmac.Key);
         }
 
         /// <summary>
-        /// Creates Access and Refresh Token
+        /// Creates access and refresh tokens for the specified user.
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="userName"></param>
-        /// <param name="email"></param>
-        /// <returns></returns>
+        /// <param name="userId">The ID of the user.</param>
+        /// <param name="userName">The username of the user.</param>
+        /// <param name="email">The email of the user.</param>
+        /// <returns>An AuthenticationResult containing the generated tokens and their expiration times.</returns>
         public AuthenticationResult CreateToken(Guid userId, string userName, string email)
         {
             string accessToken = GenerateAccessToken(userId, userName, email);
@@ -72,6 +67,11 @@ namespace Shortify.NET.Infrastructure
             );
         }
 
+        /// <summary>
+        /// Generates a token for validating an OTP (One-Time Password) for the specified email.
+        /// </summary>
+        /// <param name="email">The email address for which the OTP token is generated.</param>
+        /// <returns>A JWT token for OTP validation.</returns>
         public string GenerateValidateOtpToken(string email)
         {
             List<Claim> claims =
@@ -88,7 +88,7 @@ namespace Shortify.NET.Infrastructure
 
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
-                Subject = new ClaimsIdentity(claims.ToArray()),
+                Subject = new ClaimsIdentity(claims),
                 Issuer = _appSettings.Issuer,
                 NotBefore = DateTime.UtcNow,
                 Expires = DateTime.UtcNow.AddMinutes(tokenExpirationTime == 0 ? 5 : tokenExpirationTime),
@@ -102,6 +102,12 @@ namespace Shortify.NET.Infrastructure
             return jwt;
         }
 
+        /// <summary>
+        /// Refreshes the access and refresh tokens using the provided tokens.
+        /// </summary>
+        /// <param name="accessToken">The current access token.</param>
+        /// <param name="refreshToken">The current refresh token.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a Result object with the new AuthenticationResult.</returns>
         public async Task<Result<AuthenticationResult>> RefreshToken(string accessToken, string refreshToken)
         {
             JwtSecurityTokenHandler tokenHandler = new();
@@ -139,30 +145,42 @@ namespace Shortify.NET.Infrastructure
             }
         }
 
+        /// <summary>
+        /// Validates the provided client secret against the stored client secret.
+        /// </summary>
+        /// <param name="clientSecret">The client secret to validate.</param>
+        /// <returns>
+        /// True if the client secret is valid, otherwise false.
+        /// </returns>
         public bool ValidateClientSecret(string clientSecret)
         {
             return _appSettings.ClientSecret.Equals(clientSecret);
         }
 
         /// <summary>
-        /// To Verify Password 
+        /// Verifies that the provided password matches the stored password hash and salt.
         /// </summary>
-        /// <param name="password"></param>
-        /// <param name="passwordHash"></param>
-        /// <param name="passwordSalt"></param>
-        /// <returns></returns>
+        /// <param name="password">The plaintext password to verify.</param>
+        /// <param name="passwordHash">The stored password hash.</param>
+        /// <param name="passwordSalt">The stored password salt.</param>
+        /// <returns>
+        /// True if the password matches the hash, otherwise false.
+        /// </returns>
         public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
-            byte[] newHash;
-
-            using (var hmac = new HMACSHA512(passwordSalt))
-            {
-                newHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-            }
-
-            return newHash.SequenceEqual(passwordHash);
+            using var hmac = new HMACSHA512(passwordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return computedHash.SequenceEqual(passwordHash);
         }
 
+        /// <summary>
+        /// Verifies the provided OTP token for the specified email.
+        /// </summary>
+        /// <param name="email">The email address to verify the token against.</param>
+        /// <param name="token">The OTP token to verify.</param>
+        /// <returns>
+        /// True if the token is valid and not expired, otherwise false.
+        /// </returns>
         public bool VerifyValidateOtpToken(string email, string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -182,12 +200,14 @@ namespace Shortify.NET.Infrastructure
         #region Private Methods
 
         /// <summary>
-        /// Generates JWT Access Token
+        /// Generates a JWT access token for the specified user.
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="userName"></param>
-        /// <param name="email"></param>
-        /// <returns></returns>
+        /// <param name="userId">The ID of the user.</param>
+        /// <param name="userName">The username of the user.</param>
+        /// <param name="email">The email of the user.</param>
+        /// <returns>
+        /// A JWT access token.
+        /// </returns>
         private string GenerateAccessToken(Guid userId, string userName, string email)
         {
             List<Claim> claims =
@@ -220,10 +240,12 @@ namespace Shortify.NET.Infrastructure
         }
 
         /// <summary>
-        /// Generates Refresh Token
+        /// Generates a refresh token and sets its expiration time.
         /// </summary>
-        /// <param name="expirationTime"></param>
-        /// <returns></returns>
+        /// <param name="expirationTime">The expiration time of the refresh token.</param>
+        /// <returns>
+        /// A refresh token.
+        /// </returns>
         private string GenerateRefreshToken(out DateTime expirationTime)
         {
             expirationTime = DateTime.UtcNow.AddMinutes(

@@ -11,27 +11,20 @@ using static Shortify.NET.Applicaion.Shared.Constant.EmailConstants;
 
 namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
 {
-    internal sealed class SendOtpCommandHandler : ICommandHandler<SendOtpCommand>
+    internal sealed class SendOtpCommandHandler(
+        IEmailServices emailServices,
+        IOptions<EmailSettings> options,
+        IOtpRepository otpRepository,
+        IUnitOfWork unitOfWork) 
+        : ICommandHandler<SendOtpCommand>
     {
-        private readonly IEmailServices _emailServices;
+        private readonly IEmailServices _emailServices = emailServices;
 
-        private readonly IOtpRepository _otpRepository;
+        private readonly IOtpRepository _otpRepository = otpRepository;
 
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        private readonly int _otpLifeSpan;
-
-        public SendOtpCommandHandler(
-            IEmailServices emailServices, 
-            IOptions<EmailSettings> options, 
-            IOtpRepository otpRepository, 
-            IUnitOfWork unitOfWork)
-        {
-            _emailServices = emailServices;
-            _otpLifeSpan = options.Value.OtpLifeSpanInMinutes;
-            _otpRepository = otpRepository;
-            _unitOfWork = unitOfWork;
-        }
+        private readonly int _otpLifeSpan = options.Value.OtpLifeSpanInMinutes;
 
         public async Task<Result> Handle(SendOtpCommand command, CancellationToken cancellationToken = default)
         {
@@ -171,29 +164,27 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
                                 string otp, 
                                 CancellationToken cancellationToken = default)
         {
-            using (var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken))
+            using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            try
             {
-                try
-                {
-                    await _otpRepository.AddOtpDetail(
-                                            email,
-                                            otp,
-                                            DateTime.UtcNow,
-                                            DateTime.UtcNow
-                                                        .AddMinutes(_otpLifeSpan),
-                                            cancellationToken);
+                await _otpRepository.AddOtpDetail(
+                                        email,
+                                        otp,
+                                        DateTime.UtcNow,
+                                        DateTime.UtcNow
+                                                    .AddMinutes(_otpLifeSpan),
+                                        cancellationToken);
 
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                    await transaction.CommitAsync(cancellationToken);
-                }
-                catch
-                {
-                    await transaction.RollbackAsync(cancellationToken);
-                    throw;
-                }
+                await transaction.CommitAsync(cancellationToken);
             }
-            
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
+
         }
 
         #endregion

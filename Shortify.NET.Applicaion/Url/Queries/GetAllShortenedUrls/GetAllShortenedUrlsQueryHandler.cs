@@ -5,20 +5,16 @@ using Shortify.NET.Common.Messaging.Abstractions;
 
 namespace Shortify.NET.Applicaion.Url.Queries.GetAllShortenedUrls
 {
-    internal sealed class GetAllShortenedUrlsQueryHandler : IQueryHandler<GetAllShortenedUrlsQuery, List<ShortenedUrlDto>>
+    internal sealed class GetAllShortenedUrlsQueryHandler(IShortenedUrlRepository shortenedUrlRepository) 
+        : IQueryHandler<GetAllShortenedUrlsQuery, List<ShortenedUrlDto>>
     {
-        private readonly IShortenedUrlRepository _shortenedUrlRepository;
-
-        public GetAllShortenedUrlsQueryHandler(IShortenedUrlRepository shortenedUrlRepository)
-        {
-            _shortenedUrlRepository = shortenedUrlRepository;
-        }
+        private readonly IShortenedUrlRepository _shortenedUrlRepository = shortenedUrlRepository;
 
         public async Task<Result<List<ShortenedUrlDto>>> Handle(GetAllShortenedUrlsQuery query, CancellationToken cancellationToken)
         {
             Guid userId = Guid.Parse(query.UserId);
 
-            var response = await _shortenedUrlRepository.GetAllByUserIdAsync(userId);
+            var response = await _shortenedUrlRepository.GetAllByUserIdAsync(userId, cancellationToken);
 
             if (response is null)
             {

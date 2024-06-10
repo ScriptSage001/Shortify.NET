@@ -42,7 +42,7 @@ namespace Shortify.NET.Core.Entites
         /// <summary>
         /// Id of User Entity
         /// </summary>
-        public Guid UserId { get; private set; }
+        public Guid UserId { get; }
 
         /// <summary>
         /// Password Hash

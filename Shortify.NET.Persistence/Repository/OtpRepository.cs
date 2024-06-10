@@ -4,14 +4,10 @@ using Shortify.NET.Persistence.Models;
 
 namespace Shortify.NET.Persistence.Repository
 {
-    public class OtpRepository : IOtpRepository
+    public class OtpRepository(AppDbContext appDbContext) 
+        : IOtpRepository
     {
-        private readonly AppDbContext _appDbContext;
-
-        public OtpRepository(AppDbContext appDbContext)
-        {
-            _appDbContext = appDbContext;
-        }
+        private readonly AppDbContext _appDbContext = appDbContext;
 
         public async Task AddOtpDetail(
             string email, 

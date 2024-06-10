@@ -7,14 +7,10 @@ using Shortify.NET.Core.Errors;
 
 namespace Shortify.NET.Applicaion.Users.Queries.GetUserById
 {
-    internal sealed class GetUserByIdQueryHandler : IQueryHandler<GetUserByIdQuery, UserDto>
+    internal sealed class GetUserByIdQueryHandler(IUserRepository userRepository) 
+        : IQueryHandler<GetUserByIdQuery, UserDto>
     {
-        private readonly IUserRepository _userRepository;
-
-        public GetUserByIdQueryHandler(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        private readonly IUserRepository _userRepository = userRepository;
 
         public async Task<Result<UserDto>> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
         {

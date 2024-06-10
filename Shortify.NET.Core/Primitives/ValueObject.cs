@@ -5,7 +5,7 @@
     /// </summary>
     public abstract class ValueObject : IEquatable<ValueObject>
     {
-        public abstract IEnumerable<object> GetAtomicValues();
+        protected abstract IEnumerable<object> GetAtomicValues();
 
         public bool Equals(ValueObject? other)
         {

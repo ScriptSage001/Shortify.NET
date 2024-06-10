@@ -9,31 +9,23 @@ using Email = Shortify.NET.Core.ValueObjects.Email;
 
 namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
 {
-    internal sealed class LoginUsingOtpCommandHandler : ICommandHandler<LoginUsingOtpCommand, AuthenticationResult>
+    internal sealed class LoginUsingOtpCommandHandler(
+        IUserRepository userRepository,
+        IOtpRepository otpRepository,
+        IUnitOfWork unitOfWork,
+        IAuthServices authService,
+        IUserCredentialsRepository userCredentialsRepository) 
+        : ICommandHandler<LoginUsingOtpCommand, AuthenticationResult>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository _userRepository = userRepository;
         
-        private readonly IOtpRepository _otpRepository;
+        private readonly IOtpRepository _otpRepository = otpRepository;
 
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        private readonly IAuthServices _authServices;
+        private readonly IAuthServices _authServices = authService;
 
-        private readonly IUserCredentialsRepository _userCredentialsRepository;
-
-        public LoginUsingOtpCommandHandler(
-            IUserRepository userRepository,
-            IOtpRepository otpRepository,
-            IUnitOfWork unitOfWork,
-            IAuthServices authService,
-            IUserCredentialsRepository userCredentialsRepository)
-        {
-            _userRepository = userRepository;
-            _otpRepository = otpRepository;
-            _unitOfWork = unitOfWork;
-            _authServices = authService;
-            _userCredentialsRepository = userCredentialsRepository;
-        }
+        private readonly IUserCredentialsRepository _userCredentialsRepository = userCredentialsRepository;
 
         public async Task<Result<AuthenticationResult>> Handle(LoginUsingOtpCommand command, CancellationToken cancellationToken = default)
         {
@@ -73,7 +65,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
 
         private async Task<bool> IsOtpValid(LoginUsingOtpCommand command, CancellationToken cancellationToken = default)
         {
-            var (otpId, otp) = await _otpRepository.GetLatestUnusedOtpAsync(command.Email);
+            var (otpId, otp) = await _otpRepository.GetLatestUnusedOtpAsync(command.Email, cancellationToken);
 
             if (otpId != Guid.Empty && !string.IsNullOrEmpty(otp))
             {

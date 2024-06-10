@@ -10,17 +10,14 @@ using Newtonsoft.Json;
 namespace Shortify.NET.Infrastructure.BackgroudJobs
 {
     [DisallowConcurrentExecution]
-    public class PublishDomainEventJob : IJob
+    public class PublishDomainEventJob(
+        AppDbContext appDbContext, 
+        IApiService apiService) 
+        : IJob
     {
-        private readonly AppDbContext _appDbContext;
+        private readonly AppDbContext _appDbContext = appDbContext;
 
-        private readonly IApiService _apiService;
-
-        public PublishDomainEventJob(AppDbContext appDbContext, IApiService apiService)
-        {
-            _appDbContext = appDbContext;
-            _apiService = apiService;
-        }
+        private readonly IApiService _apiService = apiService;
 
         public async Task Execute(IJobExecutionContext context)
         {

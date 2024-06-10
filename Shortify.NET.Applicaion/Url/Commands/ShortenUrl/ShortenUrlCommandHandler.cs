@@ -90,7 +90,7 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
             return Result.Failure<ShortUrl>(
                                     Error.Failure(
                                             "ShortUrl.FailedToCreate",
-                                            $"Failed to generate a unique short URL after multiple attempts."));
+                                            "Failed to generate a unique short URL after multiple attempts."));
         }
     }
 }

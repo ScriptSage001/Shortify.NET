@@ -10,23 +10,17 @@ using Shortify.NET.Core.ValueObjects;
 
 namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
 {
-    internal sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, AuthenticationResult>
+    internal sealed class RegisterUserCommandHandler(
+        IUserRepository userRepository,
+        IUnitOfWork unitOfWork,
+        IAuthServices authServices) 
+        : ICommandHandler<RegisterUserCommand, AuthenticationResult>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository _userRepository = userRepository;
 
-        private readonly IAuthServices _authServices;
+        private readonly IAuthServices _authServices = authServices;
 
-        private readonly IUnitOfWork _unitOfWork;
-
-        public RegisterUserCommandHandler(
-            IUserRepository userRepository,
-            IUnitOfWork unitOfWork, 
-            IAuthServices authServices)
-        {
-            _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
-            _authServices = authServices;
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Result<AuthenticationResult>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
         {

@@ -11,15 +11,10 @@ using Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl;
 
 namespace Shortify.NET.API.Controllers
 {
-    public class ShortController : BaseApiController
+    public class ShortController(IApiService apiService) 
+        : BaseApiController(apiService)
     {
-        private readonly MapperProfiles _mapper;
-
-        public ShortController(IApiService apiService)
-            : base(apiService)
-        {
-            _mapper = new MapperProfiles();
-        }
+        private readonly MapperProfiles _mapper = new MapperProfiles();
 
         #region Public Endpoints
 

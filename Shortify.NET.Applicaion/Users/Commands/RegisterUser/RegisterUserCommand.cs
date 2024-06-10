@@ -7,7 +7,5 @@ namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
         string UserName,
         string Email,
         string Password
-        ) : ICommand<AuthenticationResult>
-    {
-    }
+        ) : ICommand<AuthenticationResult>;
 }

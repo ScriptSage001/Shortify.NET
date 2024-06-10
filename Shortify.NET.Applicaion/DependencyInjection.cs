@@ -32,8 +32,7 @@ namespace Shortify.NET.Applicaion
                     )
                     .AddClasses(classes =>
                         classes.Where(t =>
-                            t.IsClass &&
-                            !t.IsAbstract &&
+                            t is { IsClass: true, IsAbstract: false } &&
                             t.GetInterfaces()
                                 .Any(i =>
                                     i.IsGenericType &&

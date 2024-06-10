@@ -10,24 +10,17 @@ using Shortify.NET.Core.ValueObjects;
 
 namespace Shortify.NET.Applicaion.Users.Commands.LoginUser
 {
-    internal class LoginUserCommandHandler : ICommandHandler<LoginUserCommand, AuthenticationResult>
+    internal class LoginUserCommandHandler(
+            IUserCredentialsRepository userCredentialsRepository,
+            IUserRepository userRepository,
+            IAuthServices authServices,
+            IUnitOfWork unitOfWork) 
+        : ICommandHandler<LoginUserCommand, AuthenticationResult>
     {
-        private readonly IUserCredentialsRepository _userCredentialsRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IAuthServices _authServices;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public LoginUserCommandHandler(
-                IUserCredentialsRepository userCredentialsRepository,
-                IUserRepository userRepository,
-                IAuthServices authServices,
-                IUnitOfWork unitOfWork)
-        {
-            _userCredentialsRepository = userCredentialsRepository;
-            _userRepository = userRepository;
-            _authServices = authServices;
-            _unitOfWork = unitOfWork;
-        }
+        private readonly IUserCredentialsRepository _userCredentialsRepository = userCredentialsRepository;
+        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IAuthServices _authServices = authServices;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Result<AuthenticationResult>> Handle(LoginUserCommand command, CancellationToken cancellationToken)
         {

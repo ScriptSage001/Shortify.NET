@@ -2,11 +2,11 @@
 {
     public class AppSettings
     {
-        public string Secret { get; set; } = string.Empty;
-        public string Issuer { get; set; } = string.Empty;
-        public int TokenExpirationTime { get; set; }
-        public int RefreshTokenExpirationTimeInDays { get; set; }
-        public int ValidateOtpTokenExpirationTimeInMin { get; set; }
-        public string ClientSecret { get; set; } = string.Empty;
+        public string Secret { get; init; } = string.Empty;
+        public string Issuer { get; init; } = string.Empty;
+        public int TokenExpirationTime { get; init; }
+        public int RefreshTokenExpirationTimeInDays { get; init; }
+        public int ValidateOtpTokenExpirationTimeInMin { get; init; }
+        public string ClientSecret { get; init; } = string.Empty;
     }
 }

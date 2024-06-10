@@ -10,16 +10,11 @@ using static Shortify.NET.Applicaion.Shared.Constant.EmailConstants;
 
 namespace Shortify.NET.Applicaion.Users.Events
 {
-    internal sealed class UserRegisteredDomainEventHandler : IDomainEventHandler<UserRegisteredDomainEvent>
+    internal sealed class UserRegisteredDomainEventHandler(IUserRepository userRepository, IEmailServices emailServices) 
+        : IDomainEventHandler<UserRegisteredDomainEvent>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IEmailServices _emailServices;
-
-        public UserRegisteredDomainEventHandler(IUserRepository userRepository, IEmailServices emailServices)
-        {
-            _userRepository = userRepository;
-            _emailServices = emailServices;
-        }
+        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IEmailServices _emailServices = emailServices;
 
         public async Task Handle(UserRegisteredDomainEvent domainEvent, CancellationToken cancellationToken)
         {

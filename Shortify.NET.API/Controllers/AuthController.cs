@@ -15,19 +15,15 @@ using Shortify.NET.Common.Messaging.Abstractions;
 namespace Shortify.NET.API.Controllers
 {
     [Route("api/[controller]")]
-    public class AuthController : BaseApiController
+    public class AuthController(IApiService apiService) 
+        : BaseApiController(apiService)
     {
-        private readonly MapperProfiles _mapper;
-
-        public AuthController(IApiService apiService) : base(apiService)
-        {
-            _mapper = new MapperProfiles();
-        }
+        private readonly MapperProfiles _mapper = new MapperProfiles();
 
         #region Public Endpoints
 
         #region Register
-
+            
         /// <summary>
         /// Registers a new user.
         /// </summary>

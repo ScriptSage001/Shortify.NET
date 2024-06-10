@@ -8,11 +8,9 @@ using static Shortify.NET.Applicaion.Shared.Constant.EmailConstants;
 namespace Shortify.NET.API.Controllers
 {
     [Route("api/[controller]")]
-    public class OtpController : BaseApiController
+    public class OtpController(IApiService apiService) 
+        : BaseApiController(apiService)
     {
-        public OtpController(IApiService apiService) : base(apiService)
-        {
-        }
 
         #region Public Endpoints
 
