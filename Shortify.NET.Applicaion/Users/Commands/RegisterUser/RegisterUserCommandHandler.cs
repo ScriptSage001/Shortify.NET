@@ -24,46 +24,53 @@ namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
 
         public async Task<Result<AuthenticationResult>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
         {
-            Result<UserName> userName = UserName.Create(command.UserName);
-            Result<Email> email = Email.Create(command.Email);
+            bool isVerified = _authServices.VerifyValidateOtpToken(command.Email, command.ValidateOtpToken);
 
-            bool isUserNameUnique = await _userRepository.IsUserNameUniqueAsync(userName.Value, cancellationToken);
-            bool isEmailUnique = await _userRepository.IsEmailUniqueAsync(email.Value, cancellationToken);
+            if (isVerified) 
+            {                
+                Result<UserName> userName = UserName.Create(command.UserName);
+                Result<Email> email = Email.Create(command.Email);
 
-            if (!isUserNameUnique)
-            {
-                return Result.Failure<AuthenticationResult>(DomainErrors.User.UserNameAlreadyInUse);
+                bool isUserNameUnique = await _userRepository.IsUserNameUniqueAsync(userName.Value, cancellationToken);
+                bool isEmailUnique = await _userRepository.IsEmailUniqueAsync(email.Value, cancellationToken);
+
+                if (!isUserNameUnique)
+                {
+                    return Result.Failure<AuthenticationResult>(DomainErrors.User.UserNameAlreadyInUse);
+                }
+
+                if (!isEmailUnique)
+                {
+                    return Result.Failure<AuthenticationResult>(DomainErrors.User.EmailAlreadyInUse);
+                }
+
+                Guid userId = Guid.NewGuid();
+
+                var (passwordHash, passwordSalt) = _authServices.CreatePasswordHashAndSalt(command.Password);
+
+                UserCredentials newUserCredentials = UserCredentials.Create(
+                                                                        userId: userId,
+                                                                        passwordHash: passwordHash,
+                                                                        passwordSalt: passwordSalt);
+
+                AuthenticationResult authResult = _authServices.CreateToken(userId, userName.Value.Value, email.Value.Value);
+
+                newUserCredentials.AddOrUpdateRefreshToken(authResult.RefreshToken, authResult.RefreshTokenExpirationTimeUtc);
+
+                User newUser = User.CreateUser(
+                                        id: userId,
+                                        userName: userName.Value,
+                                        email: email.Value,
+                                        userCredentials: newUserCredentials);
+
+                _userRepository.Add(newUser);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return authResult;
             }
 
-            if (!isEmailUnique)
-            {
-                return Result.Failure<AuthenticationResult>(DomainErrors.User.EmailAlreadyInUse);
-            }
-
-            Guid userId = Guid.NewGuid();
-
-            var (passwordHash, passwordSalt) = _authServices.CreatePasswordHashAndSalt(command.Password);
-
-            UserCredentials newUserCredentials = UserCredentials.Create(
-                                                                    userId: userId,
-                                                                    passwordHash: passwordHash,
-                                                                    passwordSalt: passwordSalt);
-
-            AuthenticationResult authResult = _authServices.CreateToken(userId, userName.Value.Value, email.Value.Value);
-
-            newUserCredentials.AddOrUpdateRefreshToken(authResult.RefreshToken, authResult.RefreshTokenExpirationTimeUtc);
-
-            User newUser = User.CreateUser(
-                                    id: userId,
-                                    userName: userName.Value,
-                                    email: email.Value,
-                                    userCredentials: newUserCredentials);
-
-            _userRepository.Add(newUser);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return authResult;
+            return Result.Failure<AuthenticationResult>(Error.UnauthorizedRequest);
         }
     }
 }
