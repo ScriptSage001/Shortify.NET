@@ -18,6 +18,17 @@ namespace Shortify.NET.Core.Entites
         #region Constructor
 
         /// <summary>
+        /// Parameterless Constructor for EF Migration
+        /// </summary>
+        private User() 
+            : base(Guid.NewGuid())
+        {
+            UserName = UserName.Create("default").Value;
+            Email = Email.Create("default@example.com").Value;
+            UserCredentials = UserCredentials.Create(Guid.NewGuid(), [], []);
+        }
+
+        /// <summary>
         /// Private Constructor for User Entity
         /// </summary>
         /// <param name="id"></param>
