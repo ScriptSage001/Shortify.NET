@@ -1,17 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Shortify.NET.Applicaion.Abstractions.Repositories;
 using Shortify.NET.Core.Entites;
 using Shortify.NET.Core.ValueObjects;
 using System.Linq.Expressions;
 namespace Shortify.NET.Persistence.Repository
 {
-    public class UserCredentialsRepository : IUserCredentialsRepository
+    public class UserCredentialsRepository(AppDbContext appDbContext) 
+        : IUserCredentialsRepository
     {
-        private readonly AppDbContext _appDbContext;
-
-        public UserCredentialsRepository(AppDbContext appDbContext)
-            => _appDbContext = appDbContext;
+        private readonly AppDbContext _appDbContext = appDbContext;
 
         #region Private Methods
 

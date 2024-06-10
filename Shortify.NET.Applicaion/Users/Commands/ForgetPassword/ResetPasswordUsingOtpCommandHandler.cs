@@ -8,23 +8,17 @@ using Shortify.NET.Core.ValueObjects;
 
 namespace Shortify.NET.Applicaion.Users.Commands.ForgetPassword
 {
-    internal sealed class ResetPasswordUsingOtpCommandHandler : ICommandHandler<ResetPasswordUsingOtpCommand>
+    internal sealed class ResetPasswordUsingOtpCommandHandler(
+        IUserCredentialsRepository userCredentialsRepository,
+        IAuthServices authServices,
+        IUnitOfWork unitOfWork) 
+        : ICommandHandler<ResetPasswordUsingOtpCommand>
     {
-        private readonly IUserCredentialsRepository _userCredentialsRepository;
+        private readonly IUserCredentialsRepository _userCredentialsRepository = userCredentialsRepository;
 
-        private readonly IAuthServices _authServices;
+        private readonly IAuthServices _authServices = authServices;
 
-        private readonly IUnitOfWork _unitOfWork;
-
-        public ResetPasswordUsingOtpCommandHandler(
-            IUserCredentialsRepository userCredentialsRepository,
-            IAuthServices authServices,
-            IUnitOfWork unitOfWork)
-        {
-            _userCredentialsRepository = userCredentialsRepository;
-            _authServices = authServices;
-            _unitOfWork = unitOfWork;
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Result> Handle(ResetPasswordUsingOtpCommand command, CancellationToken cancellationToken)
         {

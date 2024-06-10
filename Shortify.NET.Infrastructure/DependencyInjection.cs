@@ -20,25 +20,21 @@ namespace Shortify.NET.Infrastructure
             return services;
         }
 
-        private static IServiceCollection AddHelpers(this IServiceCollection services, IConfiguration configuration)
+        private static void AddHelpers(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
             services.Configure<ShortLinkSettings>(configuration.GetSection("ShortLinkSettings"));
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
-
-            return services;
         }
 
-        private static IServiceCollection AddServices(this IServiceCollection services)
+        private static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthServices, AuthServices>();
             services.AddScoped<IUrlShorteningService, UrlShorteningService>();
             services.AddSingleton<IEmailServices, EmailServices>();
-
-            return services;
         }
 
-        private static IServiceCollection AddBackgroundJobs(this IServiceCollection services, IConfiguration configuration)
+        private static void AddBackgroundJobs(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddQuartz(configure =>
             {
@@ -71,15 +67,11 @@ namespace Shortify.NET.Infrastructure
             });
 
             services.AddQuartzHostedService();
-
-            return services;
         }
 
-        private static IServiceCollection AddMiddleware(this IServiceCollection services)
+        private static void AddMiddleware(this IServiceCollection services)
         {
             services.Decorate(typeof(INotificationHandler<>), typeof(IdempotentDomainEventHandler<>));
-
-            return services;
         }
     }
 }

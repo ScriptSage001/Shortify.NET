@@ -6,7 +6,7 @@
     /// <typeparam name="TValue"></typeparam>
     public class Result<TValue> : Result
     {
-        public readonly TValue? _value;
+        private readonly TValue? _value;
 
         protected internal Result(TValue? value, bool isSuccess, Error error) : base(isSuccess, error)
         {

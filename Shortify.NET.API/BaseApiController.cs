@@ -9,14 +9,10 @@ namespace Shortify.NET.API
     /// Base ApiController with Genric Features
     /// </summary>
     [ApiController]
-    public abstract class BaseApiController : ControllerBase
+    public abstract class BaseApiController(IApiService apiService) 
+        : ControllerBase
     {
-        protected readonly IApiService _apiService;
-
-        protected BaseApiController(IApiService apiService)
-        {
-            this._apiService = apiService;
-        }
+        protected readonly IApiService _apiService = apiService;
 
         /// <summary>
         /// Handles Failure Scenarios to Genarate

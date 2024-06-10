@@ -6,8 +6,8 @@ namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
     public sealed record RegisterUserCommand(
         string UserName,
         string Email,
-        string Password
-        ) : ICommand<AuthenticationResult>
-    {
-    }
+        string Password,
+        string ConfirmPassword,
+        string ValidateOtpToken
+        ) : ICommand<AuthenticationResult>;
 }

@@ -2,7 +2,7 @@
 {
     public class ShortLinkSettings
     {
-        public int Length { get; set; }
-        public string CharacterRange { get; set; } = string.Empty;
+        public int Length { get; init; }
+        public string CharacterRange { get; init; } = string.Empty;
     }
 }

@@ -9,27 +9,20 @@ using Shortify.NET.Core.ValueObjects;
 
 namespace Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret
 {
-    internal sealed class GenerateTokenByClientSecretCommandHandler : ICommandHandler<GenerateTokenByClientSecretCommand, AuthenticationResult>
+    internal sealed class GenerateTokenByClientSecretCommandHandler(
+        IUserRepository userRepository,
+        IUserCredentialsRepository userCredentialsRepository,
+        IAuthServices authServices,
+        IUnitOfWork unitOfWork) 
+        : ICommandHandler<GenerateTokenByClientSecretCommand, AuthenticationResult>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository _userRepository = userRepository;
 
-        private readonly IUserCredentialsRepository _userCredentialsRepository;
+        private readonly IUserCredentialsRepository _userCredentialsRepository = userCredentialsRepository;
 
-        private readonly IAuthServices _authServices;
+        private readonly IAuthServices _authServices = authServices;
 
-        private readonly IUnitOfWork _unitOfWork;
-
-        public GenerateTokenByClientSecretCommandHandler(
-            IUserRepository userRepository,
-            IUserCredentialsRepository userCredentialsRepository,
-            IAuthServices authServices,
-            IUnitOfWork unitOfWork)
-        {
-            _userRepository = userRepository;
-            _userCredentialsRepository = userCredentialsRepository;
-            _authServices = authServices;
-            _unitOfWork = unitOfWork;
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Result<AuthenticationResult>> Handle(GenerateTokenByClientSecretCommand command, CancellationToken cancellationToken)
         {
@@ -56,7 +49,7 @@ namespace Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret
 
             AuthenticationResult authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
 
-            user.UserCredentials?.AddOrUpdateRefreshToken(
+            user.UserCredentials.AddOrUpdateRefreshToken(
                                 authenticationResult.RefreshToken,
                                 authenticationResult.RefreshTokenExpirationTimeUtc);
 

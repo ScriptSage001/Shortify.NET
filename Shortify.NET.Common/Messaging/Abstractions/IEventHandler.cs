@@ -8,7 +8,5 @@ namespace Shortify.NET.Common.Messaging.Abstractions
     /// </summary>
     /// <typeparam name="TEvent"></typeparam>
     public interface IEventHandler<TEvent> : INotificationHandler<TEvent>
-        where TEvent : IEvent
-    {
-    }
+        where TEvent : IEvent;
 }

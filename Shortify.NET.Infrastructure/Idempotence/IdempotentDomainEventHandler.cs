@@ -10,18 +10,15 @@ namespace Shortify.NET.Infrastructure.Idempotence
     /// To Implement Idempotence Consumption
     /// </summary>
     /// <typeparam name="TDomainEvent"></typeparam>
-    public sealed class IdempotentDomainEventHandler<TDomainEvent> : IDomainEventHandler<TDomainEvent>
+    public sealed class IdempotentDomainEventHandler<TDomainEvent>(
+        IDomainEventHandler<TDomainEvent> decoratedHandler, 
+        AppDbContext appDbContext) 
+        : IDomainEventHandler<TDomainEvent>
         where TDomainEvent : IDomainEvent
     {
-        private readonly IDomainEventHandler<TDomainEvent> _decoratedHandler;
+        private readonly IDomainEventHandler<TDomainEvent> _decoratedHandler = decoratedHandler;
 
-        private readonly AppDbContext _appDbContext;
-
-        public IdempotentDomainEventHandler(IDomainEventHandler<TDomainEvent> decoratedHandler, AppDbContext appDbContext)
-        {
-            _decoratedHandler = decoratedHandler;
-            _appDbContext = appDbContext;
-        }
+        private readonly AppDbContext _appDbContext = appDbContext;
 
         public async Task Handle(TDomainEvent domainEvent, CancellationToken cancellationToken)
         {

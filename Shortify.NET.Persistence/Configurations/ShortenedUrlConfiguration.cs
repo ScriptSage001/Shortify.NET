@@ -12,6 +12,8 @@ namespace Shortify.NET.Persistence.Configurations
         {
             builder.ToTable(TableNames.ShortenedUrls);
 
+            builder.HasKey(user => user.Id);
+
             builder
                 .Property(shortenedUrl => shortenedUrl.ShortUrl)
                 .HasConversion(

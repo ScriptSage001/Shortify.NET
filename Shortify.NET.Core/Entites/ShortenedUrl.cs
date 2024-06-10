@@ -15,6 +15,8 @@ namespace Shortify.NET.Core.Entites
         /// <param name="originalUrl"></param>
         /// <param name="shortUrl"></param>
         /// <param name="code"></param>
+        /// <param name="title"></param>
+        /// <param name="tags"></param>
         private ShortenedUrl(
             Guid id, 
             Guid userId, 

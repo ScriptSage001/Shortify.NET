@@ -14,6 +14,11 @@ namespace Shortify.NET.Persistence.Configurations
             builder.HasKey(creds => creds.Id);
 
             builder
+                .HasOne<User>()
+                .WithOne(user => user.UserCredentials)
+                .HasForeignKey<UserCredentials>(creds => creds.UserId);
+
+            builder
                 .HasQueryFilter(creds => creds.RowStatus);
         }
     }

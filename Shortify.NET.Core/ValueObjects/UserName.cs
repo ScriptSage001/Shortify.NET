@@ -34,7 +34,7 @@ namespace Shortify.NET.Core.ValueObjects
             return new UserName(value);
         }
 
-        public override IEnumerable<object> GetAtomicValues()
+        protected override IEnumerable<object> GetAtomicValues()
         {
             yield return Value;
         }

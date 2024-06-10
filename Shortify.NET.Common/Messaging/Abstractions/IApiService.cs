@@ -1,5 +1,4 @@
 ﻿using Shortify.NET.Common.FunctionalTypes;
-using System.Windows.Input;
 
 namespace Shortify.NET.Common.Messaging.Abstractions
 {

@@ -5,14 +5,10 @@ using Shortify.NET.Common.Messaging.Abstractions;
 
 namespace Shortify.NET.Applicaion.Token.Commands.RefreshToken
 {
-    internal sealed class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, AuthenticationResult>
+    internal sealed class RefreshTokenCommandHandler(IAuthServices authServices) 
+        : ICommandHandler<RefreshTokenCommand, AuthenticationResult>
     {
-        private readonly IAuthServices _authServices;
-
-        public RefreshTokenCommandHandler(IAuthServices authServices)
-        {
-            _authServices = authServices;
-        }
+        private readonly IAuthServices _authServices = authServices;
 
         public async Task<Result<AuthenticationResult>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {

@@ -4,18 +4,13 @@ using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core.Entites;
 using Shortify.NET.Core.Errors;
-using System.Net.Http.Headers;
 
 namespace Shortify.NET.Applicaion.Users.Queries.GetUserById
 {
-    internal sealed class GetUserByIdQueryHandler : IQueryHandler<GetUserByIdQuery, UserDto>
+    internal sealed class GetUserByIdQueryHandler(IUserRepository userRepository) 
+        : IQueryHandler<GetUserByIdQuery, UserDto>
     {
-        private readonly IUserRepository _userRepository;
-
-        public GetUserByIdQueryHandler(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        private readonly IUserRepository _userRepository = userRepository;
 
         public async Task<Result<UserDto>> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
         {

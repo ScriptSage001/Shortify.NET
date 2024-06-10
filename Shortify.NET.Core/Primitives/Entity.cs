@@ -22,7 +22,7 @@ namespace Shortify.NET.Core.Primitives
         /// <summary>
         /// Identifier Property for the Entities
         /// </summary>
-        public Guid Id { get; private init; }
+        public Guid Id { get; }
 
         #region Equatable Functions
 
@@ -65,7 +65,7 @@ namespace Shortify.NET.Core.Primitives
 
         #region Domain Events
 
-        public void RaiseDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        protected void RaiseDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
 
         public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => [.. _domainEvents];
 

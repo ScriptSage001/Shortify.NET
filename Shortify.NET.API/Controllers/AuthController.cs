@@ -15,19 +15,15 @@ using Shortify.NET.Common.Messaging.Abstractions;
 namespace Shortify.NET.API.Controllers
 {
     [Route("api/[controller]")]
-    public class AuthController : BaseApiController
+    public class AuthController(IApiService apiService) 
+        : BaseApiController(apiService)
     {
-        private readonly MapperProfiles _mapper;
-
-        public AuthController(IApiService apiService) : base(apiService)
-        {
-            _mapper = new MapperProfiles();
-        }
+        private readonly MapperProfiles _mapper = new();
 
         #region Public Endpoints
 
         #region Register
-
+            
         /// <summary>
         /// Registers a new user.
         /// </summary>
@@ -40,11 +36,6 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
-            if (request is null)
-            {
-                return HandleNullOrEmptyRequest();
-            }
-
             RegisterUserCommand command = _mapper.RegisterUserRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
@@ -70,11 +61,6 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserRequest request, CancellationToken cancellationToken)
         {
-            if (request is null)
-            {
-                return HandleNullOrEmptyRequest();
-            }
-
             LoginUserCommand command = _mapper.LoginUserRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
@@ -96,11 +82,6 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> LoginUsingOtp([FromBody] LoginUsingOtpRequest request, CancellationToken cancellationToken)
         {
-            if (request is null)
-            {
-                return HandleNullOrEmptyRequest();
-            }
-
             LoginUsingOtpCommand command = _mapper.LoginUsingOtpRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
@@ -127,11 +108,6 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken = default)
         {
-            if (request is null)
-            {
-                return HandleNullOrEmptyRequest();
-            }
-
             string userId = GetUser();
 
             if (string.IsNullOrWhiteSpace(userId))
@@ -161,11 +137,6 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> ResetPasswordUsingOtp([FromBody] ResetPasswordUsingOtpRequest request, CancellationToken cancellationToken = default)
         {
-            if (request is null)
-            {
-                return HandleNullOrEmptyRequest();
-            }
-
             ResetPasswordUsingOtpCommand command = _mapper.ResetPasswordUsingOtpRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
@@ -194,11 +165,6 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken = default)
         {
-            if (request is null)
-            {
-                return HandleNullOrEmptyRequest();
-            }
-
             RefreshTokenCommand command = _mapper.RefreshTokenRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
@@ -252,11 +218,6 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> GetTokenByClientSecret([FromBody] ClientCredentials clientCredentials, CancellationToken cancellationToken = default)
         {
-            if (clientCredentials is null)
-            {
-                HandleNullOrEmptyRequest();
-            }
-
             GenerateTokenByClientSecretCommand command = _mapper.ClientCredentialsToGenerateTokenByClientSecretCommand(clientCredentials);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
