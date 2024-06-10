@@ -6,7 +6,5 @@
     /// </summary>
     /// <typeparam name="TEvent"></typeparam>
     public interface IDomainEventHandler<TEvent> : IEventHandler<TEvent>
-        where TEvent : IDomainEvent
-    {
-    }
+        where TEvent : IDomainEvent;
 }

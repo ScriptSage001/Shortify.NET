@@ -6,19 +6,14 @@ using System.Text;
 
 namespace Shortify.NET.Infrastructure
 {
-    public sealed class UrlShorteningService : IUrlShorteningService
+    public sealed class UrlShorteningService(
+        IOptions<ShortLinkSettings> shortLinkSettings,
+        IShortenedUrlRepository shortenedUrlRepository) 
+        : IUrlShorteningService
     {
-        private readonly ShortLinkSettings _shortLinkSettings;
+        private readonly ShortLinkSettings _shortLinkSettings = shortLinkSettings.Value;
 
-        private readonly IShortenedUrlRepository _shortenedUrlRepository;
-
-        public UrlShorteningService(
-            IOptions<ShortLinkSettings> shortLinkSettings, 
-            IShortenedUrlRepository shortenedUrlRepository)
-        {
-            _shortLinkSettings = shortLinkSettings.Value;
-            _shortenedUrlRepository = shortenedUrlRepository;
-        }
+        private readonly IShortenedUrlRepository _shortenedUrlRepository = shortenedUrlRepository;
 
         /// <summary>
         /// Generates Code which are Unique across the application

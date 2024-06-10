@@ -164,7 +164,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
                                 string otp, 
                                 CancellationToken cancellationToken = default)
         {
-            using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
                 await _otpRepository.AddOtpDetail(
