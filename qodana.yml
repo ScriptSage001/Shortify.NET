@@ -12,3 +12,5 @@ linter: jetbrains/qodana-cdnet:2024.1-eap
 fixesStrategy: apply
 exclude:
   - name: ReplaceWithPrimaryConstructorParameter
+  - name: UnusedMember.Global
+  - name: UnusedType.Global
