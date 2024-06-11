@@ -4,6 +4,10 @@
 
 <p id="description">A powerful .NET 8 URL shortener with JWT auth analytics and caching designed for scalability and security.</p>
 
+<h3>Code Quality</h3>
+
+[![Qodana](https://github.com/ScriptSage001/Shortify.NET/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/ScriptSage001/Shortify.NET/actions/workflows/qodana_code_quality.yml)
+
 <h2>🚀 Swagger UI</h2>
 
 [https://shortify-net.onrender.com/swagger/index.html](https://shortify-net.onrender.com/swagger/index.html)
