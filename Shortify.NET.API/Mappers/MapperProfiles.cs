@@ -1,5 +1,4 @@
-﻿using Org.BouncyCastle.Bcpg;
-using Riok.Mapperly.Abstractions;
+﻿using Riok.Mapperly.Abstractions;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp;
 using Shortify.NET.Applicaion.Shared.Models;
@@ -13,13 +12,8 @@ using Shortify.NET.Applicaion.Users.Commands.ResetPassword;
 
 namespace Shortify.NET.API.Mappers
 {
-    public partial interface IMapperProfiles
-    {
-        ResetPasswordCommand ResetPasswordRequestToCommand(ResetPasswordRequest request, string userId);
-    }
-
     [Mapper]
-    public partial class MapperProfiles : IMapperProfiles
+    public partial class MapperProfiles
     {
         public partial RegisterUserCommand RegisterUserRequestToCommand(RegisterUserRequest request);
         

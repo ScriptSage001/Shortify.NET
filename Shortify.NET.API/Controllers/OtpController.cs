@@ -8,11 +8,9 @@ using static Shortify.NET.Applicaion.Shared.Constant.EmailConstants;
 namespace Shortify.NET.API.Controllers
 {
     [Route("api/[controller]")]
-    public class OtpController : BaseApiController
+    public class OtpController(IApiService apiService) 
+        : BaseApiController(apiService)
     {
-        public OtpController(IApiService apiService) : base(apiService)
-        {
-        }
 
         #region Public Endpoints
 
@@ -36,7 +34,7 @@ namespace Shortify.NET.API.Controllers
                 return HandleNullOrEmptyRequest();
             }
 
-            var command = new SendOtpCommand(email, OTPType.VerifyEmail);
+            var command = new SendOtpCommand(email, OtpType.VerifyEmail);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -63,7 +61,7 @@ namespace Shortify.NET.API.Controllers
                 return HandleNullOrEmptyRequest();
             }
 
-            var command = new SendOtpCommand(email, OTPType.Login);
+            var command = new SendOtpCommand(email, OtpType.Login);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -90,7 +88,7 @@ namespace Shortify.NET.API.Controllers
                 return HandleNullOrEmptyRequest();
             }
 
-            var command = new SendOtpCommand(email, OTPType.ResetPassword);
+            var command = new SendOtpCommand(email, OtpType.ResetPassword);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -116,11 +114,6 @@ namespace Shortify.NET.API.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ValidateOtp(ValidateOtpRequest request, CancellationToken cancellationToken = default)
         {
-            if (request is null )
-            {
-                return HandleNullOrEmptyRequest();
-            }
-
             var command = new ValidateOtpCommand(request.Email, request.Otp);
 
             var response = await _apiService.SendAsync(command, cancellationToken);

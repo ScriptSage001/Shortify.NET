@@ -18,29 +18,23 @@ namespace Shortify.NET.Persistence
             return services;
         }
 
-        private static IServiceCollection AddAppDbContext(this IServiceCollection services, IConfiguration configuration)
+        private static void AddAppDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("Shortify.NETDB");
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
-
-            return services;
         }
 
-        private static IServiceCollection AddRepositories(this IServiceCollection services)
+        private static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserCredentialsRepository, UserCredentialsRepository>();
             services.AddScoped<IShortenedUrlRepository, ShortenedUrlRepository>();
             services.AddScoped<IOtpRepository, OtpRepository>();
-
-            return services;
         }
 
-        private static IServiceCollection AddServices(this IServiceCollection services)
+        private static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            return services;
         }
     }
 }

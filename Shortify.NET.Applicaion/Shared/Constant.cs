@@ -10,7 +10,7 @@
             /// <summary>
             /// Different OTP Types to send over Email
             /// </summary>
-            public enum OTPType
+            public enum OtpType
             {
                 VerifyEmail,
                 ResetPassword,

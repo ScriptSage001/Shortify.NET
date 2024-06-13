@@ -19,8 +19,14 @@ namespace Shortify.NET.Core.Entites
         /// <param name="passwordSalt"></param>
         /// <param name="refreshToken"></param>
         /// <param name="refreshTokenExpirationTimeUtc"></param>
-        private UserCredentials(Guid id, Guid userId, byte[] passwordHash, byte[] passwordSalt, string? refreshToken, DateTime? refreshTokenExpirationTimeUtc)
-            : base(id)
+        private UserCredentials(
+                    Guid id, 
+                    Guid userId, 
+                    byte[] passwordHash, 
+                    byte[] passwordSalt, 
+                    string? refreshToken, 
+                    DateTime? refreshTokenExpirationTimeUtc)
+                    : base(id)
         {
             UserId = userId;
             PasswordHash = passwordHash;
@@ -36,7 +42,7 @@ namespace Shortify.NET.Core.Entites
         /// <summary>
         /// Id of User Entity
         /// </summary>
-        public Guid UserId { get; private set; }
+        public Guid UserId { get; }
 
         /// <summary>
         /// Password Hash
@@ -105,7 +111,6 @@ namespace Shortify.NET.Core.Entites
         /// <summary>
         /// To Update Password Hash and Salt
         /// </summary>
-        /// <param name="userCreds"></param>
         /// <param name="passwordHash"></param>
         /// <param name="passwordSalt"></param>
         public void UpdatePasswordHashAndSalt(byte[] passwordHash, byte[] passwordSalt)

@@ -8,34 +8,27 @@ using Shortify.NET.Infrastructure.Helpers;
 
 namespace Shortify.NET.Infrastructure
 {
-    public class EmailServices : IEmailServices
+    public class EmailServices(IOptions<EmailSettings> options) : IEmailServices
     {
-        private readonly EmailSettings _emailSettings;
-
-        public EmailServices(IOptions<EmailSettings> options)
-        {
-            _emailSettings = options.Value;
-        }
+        private readonly EmailSettings _emailSettings = options.Value;
 
         public async Task SendMailAsync(MailRequest mailRequest, CancellationToken cancellationToken)
         {
             var email = PrepareMail(mailRequest);
 
             using var smtp = new SmtpClient();
-            smtp.Connect(
-                    _emailSettings.Host,
-                    _emailSettings.Port,
-                    SecureSocketOptions.StartTls,
-                    cancellationToken);
+            await smtp.ConnectAsync(_emailSettings.Host,
+                                    _emailSettings.Port,
+                                    SecureSocketOptions.StartTls,
+                                    cancellationToken);
 
-            smtp.Authenticate(
-                    _emailSettings.SenderEmail,
-                    _emailSettings.Password,
-                    cancellationToken);
+            await smtp.AuthenticateAsync(_emailSettings.SenderEmail,
+                                         _emailSettings.Password,
+                                         cancellationToken);
 
             await smtp.SendAsync(email, cancellationToken);
 
-            smtp.Disconnect(true, cancellationToken);
+            await smtp.DisconnectAsync(true, cancellationToken);
         }
 
         private MimeMessage PrepareMail(MailRequest mailRequest)

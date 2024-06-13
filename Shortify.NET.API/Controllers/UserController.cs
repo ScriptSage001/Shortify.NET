@@ -9,14 +9,10 @@ namespace Shortify.NET.API.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-    public class UserController : BaseApiController
+    public class UserController(IApiService apiService) 
+        : BaseApiController(apiService)
     {
-        private readonly MapperProfiles _mapper;
-
-        public UserController(IApiService apiService) : base(apiService)
-        {
-            _mapper = new MapperProfiles();
-        }
+        private readonly MapperProfiles _mapper = new();
 
         #region Public Endpoints
 

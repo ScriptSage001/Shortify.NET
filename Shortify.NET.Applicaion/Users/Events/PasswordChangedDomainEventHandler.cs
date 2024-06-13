@@ -10,19 +10,14 @@ using System.Text;
 
 namespace Shortify.NET.Applicaion.Users.Events
 {
-    internal sealed class PasswordChangedDomainEventHandler : IDomainEventHandler<PasswordChangedDomainEvent>
+    internal sealed class PasswordChangedDomainEventHandler(
+        IUserRepository userRepository,
+        IEmailServices emailServices) 
+        : IDomainEventHandler<PasswordChangedDomainEvent>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository _userRepository = userRepository;
 
-        private readonly IEmailServices _emailServices;
-
-        public PasswordChangedDomainEventHandler(
-            IUserRepository userRepository, 
-            IEmailServices emailServices)
-        {
-            _userRepository = userRepository;
-            _emailServices = emailServices;
-        }
+        private readonly IEmailServices _emailServices = emailServices;
 
         public async Task Handle(PasswordChangedDomainEvent domainEvent, CancellationToken cancellationToken)
         {

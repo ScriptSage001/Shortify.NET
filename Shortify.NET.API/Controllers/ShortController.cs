@@ -11,15 +11,10 @@ using Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl;
 
 namespace Shortify.NET.API.Controllers
 {
-    public class ShortController : BaseApiController
+    public class ShortController(IApiService apiService) 
+        : BaseApiController(apiService)
     {
-        private readonly MapperProfiles _mapper;
-
-        public ShortController(IApiService apiService)
-            : base(apiService)
-        {
-            _mapper = new MapperProfiles();
-        }
+        private readonly MapperProfiles _mapper = new();
 
         #region Public Endpoints
 
@@ -36,7 +31,7 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> ShortenUrl([FromBody] ShortenUrlRequest request, CancellationToken cancellationToken = default)
         {
-            if (request is null || string.IsNullOrWhiteSpace(request.Url))
+            if (string.IsNullOrWhiteSpace(request.Url))
             {
                 return HandleNullOrEmptyRequest();
             }

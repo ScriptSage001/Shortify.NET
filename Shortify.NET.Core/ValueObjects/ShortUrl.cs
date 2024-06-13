@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Shortify.NET.Common.FunctionalTypes;
+﻿using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Core.Errors;
 using Shortify.NET.Core.Primitives;
 
@@ -26,7 +25,7 @@ namespace Shortify.NET.Core.ValueObjects
             return new ShortUrl(value);
         }
 
-        public override IEnumerable<object> GetAtomicValues()
+        protected override IEnumerable<object> GetAtomicValues()
         {
             yield return Value;
         }

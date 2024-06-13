@@ -5,15 +5,13 @@ using System.Linq.Expressions;
 
 namespace Shortify.NET.Persistence.Repository
 {
-    public class ShortenedUrlRepository : IShortenedUrlRepository
+    public class ShortenedUrlRepository(AppDbContext context) 
+        : IShortenedUrlRepository
     {
-        private readonly AppDbContext _appDbContext;
-
-        public ShortenedUrlRepository(AppDbContext context) 
-            => _appDbContext = context;
+        private readonly AppDbContext _appDbContext = context;
 
         #region Private Methods
-        
+
         private async Task<ShortenedUrl?> GetShortenedUrlAsync(
             Expression<Func<ShortenedUrl, bool>> predicate,
             bool asNoTracking = false,

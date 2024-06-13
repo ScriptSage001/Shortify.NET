@@ -7,23 +7,17 @@ using Shortify.NET.Core.Errors;
 
 namespace Shortify.NET.Applicaion.Users.Commands.ResetPassword
 {
-    internal sealed class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand>
+    internal sealed class ResetPasswordCommandHandler(
+        IUserCredentialsRepository userCredentialsRepository,
+        IAuthServices authServices,
+        IUnitOfWork unitOfWork) 
+        : ICommandHandler<ResetPasswordCommand>
     {
-        private readonly IUserCredentialsRepository _userCredentialsRepository;
+        private readonly IUserCredentialsRepository _userCredentialsRepository = userCredentialsRepository;
 
-        private readonly IAuthServices _authServices;
+        private readonly IAuthServices _authServices = authServices;
 
-        private readonly IUnitOfWork _unitOfWork;
-
-        public ResetPasswordCommandHandler(
-            IUserCredentialsRepository userCredentialsRepository,
-            IAuthServices authServices,
-            IUnitOfWork unitOfWork)
-        {
-            _userCredentialsRepository = userCredentialsRepository;
-            _authServices = authServices;
-            _unitOfWork = unitOfWork;
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Result> Handle(ResetPasswordCommand command, CancellationToken cancellationToken)
         {

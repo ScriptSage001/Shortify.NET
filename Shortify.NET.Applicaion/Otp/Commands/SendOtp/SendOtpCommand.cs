@@ -5,6 +5,6 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
 {
     public record SendOtpCommand(
             string Email,
-            OTPType OtpType
+            OtpType OtpType
         ) : ICommand;
 }

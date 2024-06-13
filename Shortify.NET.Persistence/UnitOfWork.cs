@@ -9,12 +9,10 @@ using Shortify.NET.Core.Primitives;
 
 namespace Shortify.NET.Persistence
 {
-    public sealed class UnitOfWork : IUnitOfWork
+    public sealed class UnitOfWork(AppDbContext appDbContext) 
+        : IUnitOfWork
     {
-        private readonly AppDbContext _appDbContext;
-
-        public UnitOfWork(AppDbContext appDbContext) 
-                        => _appDbContext = appDbContext;
+        private readonly AppDbContext _appDbContext = appDbContext;
 
         #region Public Methods
 

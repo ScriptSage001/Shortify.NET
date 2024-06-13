@@ -6,28 +6,22 @@ using Shortify.NET.Core;
 
 namespace Shortify.NET.Applicaion.Otp.Commands.ValidateOtp
 {
-    internal sealed class ValidateOtpCommandHandler : ICommandHandler<ValidateOtpCommand, string>
+    internal sealed class ValidateOtpCommandHandler(
+        IOtpRepository otpRepository,
+        IUnitOfWork unitOfWork,
+        IAuthServices authService) 
+        : ICommandHandler<ValidateOtpCommand, string>
     {
-        private readonly IOtpRepository _otpRepository;
+        private readonly IOtpRepository _otpRepository = otpRepository;
 
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        private readonly IAuthServices _authService;
-
-        public ValidateOtpCommandHandler(
-            IOtpRepository otpRepository, 
-            IUnitOfWork unitOfWork, 
-            IAuthServices authService)
-        {
-            _otpRepository = otpRepository;
-            _unitOfWork = unitOfWork;
-            _authService = authService;
-        }
+        private readonly IAuthServices _authService = authService;
 
         public async Task<Result<string>> Handle(ValidateOtpCommand command, CancellationToken cancellationToken = default)
         {
 
-            var (otpId, otp) = await _otpRepository.GetLatestUnusedOtpAsync(command.Email);
+            var (otpId, otp) = await _otpRepository.GetLatestUnusedOtpAsync(command.Email, cancellationToken);
 
             if (otpId != Guid.Empty && !string.IsNullOrEmpty(otp))
             {

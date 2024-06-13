@@ -11,6 +11,7 @@ namespace Shortify.NET.Applicaion.Abstractions
         /// To Send Emails Asynchronously
         /// </summary>
         /// <param name="mailRequest"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task SendMailAsync(MailRequest mailRequest, CancellationToken cancellationToken);
     }

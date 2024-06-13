@@ -2,7 +2,6 @@
 {
     public record UserRegisteredDomainEvent(
                         Guid Id, 
-                        Guid UserId, 
-                        string Email) 
+                        Guid UserId) 
                   : DomainEvent(Id);
 }

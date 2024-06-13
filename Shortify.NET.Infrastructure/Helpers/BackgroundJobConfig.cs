@@ -2,10 +2,10 @@
 {
     public class BackgroundJobConfig
     {
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; init; } = string.Empty;
 
-        public bool Enabled { get; set; } = false;
+        public bool Enabled { get; init; } = false;
 
-        public string Schedule { get; set; } = string.Empty;
+        public string Schedule { get; init; } = string.Empty;
     }
 }

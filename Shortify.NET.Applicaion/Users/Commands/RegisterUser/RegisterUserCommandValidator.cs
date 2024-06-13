@@ -22,6 +22,20 @@ namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
                 .NotEmpty()
                 .MinimumLength(8)
                 .MaximumLength(30);
+
+            RuleFor(x => x.ConfirmPassword)
+                .NotEmpty()
+                .MinimumLength(8)
+                .MaximumLength(30);
+
+            RuleFor(x => x)
+                .Must(
+                    command =>
+                        command.Password.Equals(command.ConfirmPassword))
+                .WithMessage("Password and ConfirmPassword must be same.");
+
+            RuleFor(x => x.ValidateOtpToken)
+                .NotEmpty();
         }
     }
 }

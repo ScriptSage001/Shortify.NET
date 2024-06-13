@@ -4,12 +4,9 @@ using Shortify.NET.Common.Messaging.Abstractions;
 namespace Shortify.NET.API.Controllers
 {
     [Route("api/[controller]")]
-    public class MonitorController : BaseApiController
+    public class MonitorController(IApiService apiService) 
+        : BaseApiController(apiService)
     {
-        public MonitorController(IApiService apiService) 
-            : base(apiService)
-        {
-        }
 
         #region Public Endpoints
 

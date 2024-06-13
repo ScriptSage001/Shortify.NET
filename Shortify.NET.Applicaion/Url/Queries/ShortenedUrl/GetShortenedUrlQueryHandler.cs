@@ -3,24 +3,18 @@ using Shortify.NET.Applicaion.Shared.Models;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core.Errors;
-using System;
 
 namespace Shortify.NET.Applicaion.Url.Queries.ShortenedUrl
 {
-    internal sealed class GetShortenedUrlQueryHandler : 
+    internal sealed class GetShortenedUrlQueryHandler(IShortenedUrlRepository shortenedUrlRepository) : 
         IQueryHandler<GetShortenedUrlByCodeQuery, ShortenedUrlDto>, 
         IQueryHandler<GetShortenedUrlByIdQuery, ShortenedUrlDto>
     {
-        private readonly IShortenedUrlRepository _shortenedUrlRepository;
-
-        public GetShortenedUrlQueryHandler(IShortenedUrlRepository shortenedUrlRepository)
-        {
-            _shortenedUrlRepository = shortenedUrlRepository;
-        }
+        private readonly IShortenedUrlRepository _shortenedUrlRepository = shortenedUrlRepository;
 
         public async Task<Result<ShortenedUrlDto>> Handle(GetShortenedUrlByCodeQuery query, CancellationToken cancellationToken)
         {
-            var shortenedUrl = await _shortenedUrlRepository.GetByCodeAsync(query.Code);
+            var shortenedUrl = await _shortenedUrlRepository.GetByCodeAsync(query.Code, cancellationToken);
 
             if(shortenedUrl == null)
             {
@@ -42,7 +36,7 @@ namespace Shortify.NET.Applicaion.Url.Queries.ShortenedUrl
 
         public async Task<Result<ShortenedUrlDto>> Handle(GetShortenedUrlByIdQuery query, CancellationToken cancellationToken)
         {
-            var shortenedUrl = await _shortenedUrlRepository.GetByIdAsync(query.Id);
+            var shortenedUrl = await _shortenedUrlRepository.GetByIdAsync(query.Id, cancellationToken);
 
             if (shortenedUrl == null)
             {
