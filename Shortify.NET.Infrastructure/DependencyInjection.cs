@@ -16,6 +16,7 @@ namespace Shortify.NET.Infrastructure
             services.AddServices();
             services.AddBackgroundJobs(configuration);
             services.AddMiddleware();
+            services.AddCaching();
 
             return services;
         }
@@ -72,6 +73,12 @@ namespace Shortify.NET.Infrastructure
         private static void AddMiddleware(this IServiceCollection services)
         {
             services.Decorate(typeof(INotificationHandler<>), typeof(IdempotentDomainEventHandler<>));
+        }
+
+        private static void AddCaching(this IServiceCollection services)
+        {
+            services.AddDistributedMemoryCache();
+            services.AddSingleton<ICachingServices, CachingServices>();
         }
     }
 }
