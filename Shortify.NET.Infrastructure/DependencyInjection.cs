@@ -16,6 +16,7 @@ namespace Shortify.NET.Infrastructure
             services.AddServices();
             services.AddBackgroundJobs(configuration);
             services.AddMiddleware();
+            services.AddCaching(configuration);
 
             return services;
         }
@@ -72,6 +73,18 @@ namespace Shortify.NET.Infrastructure
         private static void AddMiddleware(this IServiceCollection services)
         {
             services.Decorate(typeof(INotificationHandler<>), typeof(IdempotentDomainEventHandler<>));
+        }
+
+        private static void AddCaching(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddStackExchangeRedisCache(options =>
+            {
+                var redisConnection = configuration
+                                        .GetConnectionString("Shortify.NET_Redis");
+                options.Configuration = redisConnection;
+            });
+
+            services.AddSingleton<ICachingServices, CachingServices>();
         }
     }
 }
