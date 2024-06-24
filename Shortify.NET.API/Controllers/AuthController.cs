@@ -2,19 +2,28 @@
 using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
-using Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp;
-using Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret;
-using Shortify.NET.Applicaion.Token.Commands.RefreshToken;
 using Shortify.NET.Applicaion.Token.Commands.RevokeToken;
-using Shortify.NET.Applicaion.Users.Commands.ForgetPassword;
-using Shortify.NET.Applicaion.Users.Commands.LoginUser;
-using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
-using Shortify.NET.Applicaion.Users.Commands.ResetPassword;
 using Shortify.NET.Common.Messaging.Abstractions;
 
 namespace Shortify.NET.API.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Provides authentication-related operations including user registration, login,
+    /// password reset, and token management.
+    /// </summary>
+    /// <remarks>
+    /// This controller handles various authentication and authorization tasks:
+    /// - User Registration
+    /// - User Login (via username/email or OTP)
+    /// - Password Management (reset and forgot password scenarios)
+    /// - Token Management (refresh and revoke tokens)
+    /// - Access Token Generation using client credentials
+    /// 
+    /// Each endpoint is designed to interact with the appropriate service and return
+    /// standardized responses.
+    /// </remarks>
+    [Route("api/auth")]
+    [Tags("Authentication APIs")]
     public class AuthController(IApiService apiService) 
         : BaseApiController(apiService)
     {
@@ -30,13 +39,15 @@ namespace Shortify.NET.API.Controllers
         /// <param name="request">The request containing user registration details.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating the result of the registration.</returns>
+        /// <response code="201">The user was successfully registered.</response>
+        /// <response code="400">The request is invalid.</response>
         [HttpPost]
         [Route("register")]
         [ProducesResponseType(typeof(RegisterUserResponse), statusCode: StatusCodes.Status201Created)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
-            RegisterUserCommand command = _mapper.RegisterUserRequestToCommand(request);
+            var command = _mapper.RegisterUserRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -55,13 +66,16 @@ namespace Shortify.NET.API.Controllers
         /// <param name="request">The request containing login details.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating the result of the login attempt.</returns>
+        /// <response code="200">The user was successfully logged in.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="401">The login credentials are incorrect.</response>
         [HttpPost]
         [Route("login")]
         [ProducesResponseType(typeof(LoginUserResponse), statusCode: StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserRequest request, CancellationToken cancellationToken)
         {
-            LoginUserCommand command = _mapper.LoginUserRequestToCommand(request);
+            var command = _mapper.LoginUserRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -76,13 +90,16 @@ namespace Shortify.NET.API.Controllers
         /// <param name="request">The request containing OTP login details.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating the result of the OTP login attempt.</returns>
+        /// <response code="200">The user was successfully logged in using OTP.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="401">The OTP is incorrect or expired.</response>
         [HttpPost]
         [Route("login/otp")]
         [ProducesResponseType(typeof(LoginUserResponse), statusCode: StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> LoginUsingOtp([FromBody] LoginUsingOtpRequest request, CancellationToken cancellationToken)
         {
-            LoginUsingOtpCommand command = _mapper.LoginUsingOtpRequestToCommand(request);
+            var command = _mapper.LoginUsingOtpRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -101,6 +118,9 @@ namespace Shortify.NET.API.Controllers
         /// <param name="request">The request containing the new password details.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating the result of the password reset attempt.</returns>
+        /// <response code="200">The password was successfully reset.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="401">The user is not authenticated.</response>
         [Authorize]
         [HttpPut]
         [Route("password/reset")]
@@ -108,14 +128,14 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken = default)
         {
-            string userId = GetUser();
+            var userId = GetUser();
 
             if (string.IsNullOrWhiteSpace(userId))
             {
                 return HandleUnauthorizedRequest();
             }
 
-            ResetPasswordCommand command = _mapper.ResetPasswordRequestToCommand(request, userId);
+            var command = _mapper.ResetPasswordRequestToCommand(request, userId);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -131,13 +151,16 @@ namespace Shortify.NET.API.Controllers
         /// <param name="request">The request containing the OTP and new password details.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating the result of the password reset attempt.</returns>
+        /// <response code="200">The password was successfully reset using OTP.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="401">The OTP is incorrect or expired.</response>
         [HttpPut]
         [Route("password/reset/forgot")]
         [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> ResetPasswordUsingOtp([FromBody] ResetPasswordUsingOtpRequest request, CancellationToken cancellationToken = default)
         {
-            ResetPasswordUsingOtpCommand command = _mapper.ResetPasswordUsingOtpRequestToCommand(request);
+            var command = _mapper.ResetPasswordUsingOtpRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -159,13 +182,16 @@ namespace Shortify.NET.API.Controllers
         /// <param name="request">The request containing refresh token details.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating the result of the token refresh attempt.</returns>
+        /// <response code="200">The tokens were successfully refreshed.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="401">The refresh token is invalid or expired.</response>
         [HttpPost]
         [Route("token/refresh")]
         [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken = default)
         {
-            RefreshTokenCommand command = _mapper.RefreshTokenRequestToCommand(request);
+            var command = _mapper.RefreshTokenRequestToCommand(request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -179,6 +205,8 @@ namespace Shortify.NET.API.Controllers
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating the result of the token revocation attempt.</returns>
+        /// <response code="200">The refresh tokens were successfully revoked.</response>
+        /// <response code="401">The user is not authenticated.</response>
         [Authorize]
         [HttpPut]
         [Route("token/refresh/revoke")]
@@ -186,14 +214,14 @@ namespace Shortify.NET.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> RevokeRefreshToken(CancellationToken cancellationToken = default)
         {
-            string userId = GetUser();
+            var userId = GetUser();
 
             if (string.IsNullOrWhiteSpace(userId))
             {
                 return HandleUnauthorizedRequest();
             }
 
-            RevokeRefreshTokenCommand command = new RevokeRefreshTokenCommand(userId);
+            var command = new RevokeRefreshTokenCommand(userId);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -212,13 +240,16 @@ namespace Shortify.NET.API.Controllers
         /// <param name="clientCredentials">The client credentials.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating the result of the token generation attempt.</returns>
+        /// <response code="200">The tokens were successfully generated.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="401">The client credentials are invalid.</response>
         [HttpPost]
         [Route("token")]
         [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<IActionResult> GetTokenByClientSecret([FromBody] ClientCredentials clientCredentials, CancellationToken cancellationToken = default)
         {
-            GenerateTokenByClientSecretCommand command = _mapper.ClientCredentialsToGenerateTokenByClientSecretCommand(clientCredentials);
+            var command = _mapper.ClientCredentialsToGenerateTokenByClientSecretCommand(clientCredentials);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
