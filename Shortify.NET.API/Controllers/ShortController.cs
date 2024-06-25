@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
-using Shortify.NET.Applicaion.Url.Commands.ShortenUrl;
 using Shortify.NET.Applicaion.Url.Queries.ShortenedUrl;
 using Shortify.NET.Applicaion.Url.Queries.GetAllShortenedUrls;
 using Shortify.NET.Common.FunctionalTypes;
@@ -11,6 +10,11 @@ using Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl;
 
 namespace Shortify.NET.API.Controllers
 {
+    /// <summary>
+    /// Provides endpoints for URL shortening operations.
+    /// </summary>
+    [Route("api/shorten")]
+    [Tags("URL Shortening")]
     public class ShortController(IApiService apiService) 
         : BaseApiController(apiService)
     {
@@ -20,15 +24,20 @@ namespace Shortify.NET.API.Controllers
 
         /// <summary>
         /// Shortens a given URL.
-        /// </summary>
+        /// </summary> 
         /// <param name="request">The request containing the URL to shorten.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The shortened URL.</returns>
+        /// <response code="201">URL shortened successfully.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="401">Unauthorized request.</response>
+        /// <response code="500">An error occurred while shortening the URL.</response>
         [Authorize]
-        [HttpPost]
-        [Route("api/shorten")]
+        [HttpPost("")]
         [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status201Created)]
-        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ShortenUrl([FromBody] ShortenUrlRequest request, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(request.Url))
@@ -45,14 +54,14 @@ namespace Shortify.NET.API.Controllers
                             "The specified URL is not valid.")));
             }
 
-            string userId = GetUser();
+            var userId = GetUser();
 
             if (string.IsNullOrWhiteSpace(userId))
             {
                 return HandleUnauthorizedRequest();
             }
 
-            ShortenUrlCommand command = _mapper.ShortenUrlRequestToCommand(request, userId, HttpContext.Request);
+            var command = _mapper.ShortenUrlRequestToCommand(request, userId, HttpContext.Request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -67,8 +76,16 @@ namespace Shortify.NET.API.Controllers
         /// <param name="code">The code of the short URL.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A redirection to the original URL.</returns>
+        /// <response code="302">Redirection to the original URL.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="404">The short URL was not found.</response>
+        /// <response code="500">An error occurred while redirecting the URL.</response>
         [HttpGet]
-        [Route("/{code}")]
+        [Route("/{code}", Order = 1)]
+        [ProducesResponseType(StatusCodes.Status302Found)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RedirectUrl(string code, CancellationToken cancellationToken = default)
         {
             var query = new GetOriginalUrlQuery(code);
@@ -85,14 +102,17 @@ namespace Shortify.NET.API.Controllers
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A list of shortened URLs.</returns>
+        /// <response code="200">Retrieved all shortened URLs successfully.</response>
+        /// <response code="401">Unauthorized request.</response>
+        /// <response code="500">An error occurred while retrieving the shortened URLs.</response>
         [Authorize]
-        [HttpGet]
-        [Route("api/shorten/getAll")]
+        [HttpGet("getAll")]
         [ProducesResponseType(typeof(ShortenedUrlResponse), statusCode: StatusCodes.Status200OK)]
-        [ProducesErrorResponseType(typeof(ProblemDetails))]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllShortenedUrls(CancellationToken cancellationToken = default)
         {
-            string userId = GetUser();
+            var userId = GetUser();
 
             if (string.IsNullOrWhiteSpace(userId)) 
             {  
@@ -109,49 +129,58 @@ namespace Shortify.NET.API.Controllers
         }
 
         /// <summary>
-        /// Gets a shortened URL by its ID.
+        /// Gets a shortened URL by its identifier, which can be either a GUID or a code.
         /// </summary>
-        /// <param name="id">The ID of the shortened URL.</param>
+        /// <param name="identifier">The identifier of the shortened URL, either a GUID or a code.</param>
+        /// <param name="isCode">Indicates whether the identifier is a code. If false, the identifier is treated as a GUID.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The shortened URL.</returns>
+        /// <response code="200">Retrieved the shortened URL successfully.</response>
+        /// <response code="400">The request is invalid. The identifier is not a valid GUID or Code.</response>
+        /// <response code="401">Unauthorized request.</response>
+        /// <response code="404">The shortened URL was not found.</response>
+        /// <response code="500">An error occurred while retrieving the shortened URL.</response>
         [Authorize]
-        [HttpGet]
-        [Route("api/shorten/{id}")]
-        [ProducesResponseType(typeof(ShortenedUrlResponse), statusCode: StatusCodes.Status200OK)]
-        [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetShortenedUrl(Guid id, CancellationToken cancellationToken = default)
+        [HttpGet("{identifier}")]
+        [ProducesResponseType(typeof(ShortenedUrlResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetShortenedUrl(
+            string identifier, 
+            [FromQuery] bool isCode = false, 
+            CancellationToken cancellationToken = default)
         {
-            var query = new GetShortenedUrlByIdQuery(id);
+            if (isCode)
+            {
+                var queryByCode = new GetShortenedUrlByCodeQuery(identifier);
+                var responseByCode = await _apiService.RequestAsync(queryByCode, cancellationToken);
 
-            var response = await _apiService.RequestAsync(query, cancellationToken);
+                return responseByCode.IsFailure ?
+                        HandleFailure(responseByCode) :
+                        Ok(_mapper.ShortenedUrlDtoToResponse(responseByCode.Value));
+            }
+            else
+            {
+                if (!Guid.TryParse(identifier, out var id))
+                {
+                    return HandleFailure(
+                        Result.Failure(
+                            Error.Validation(
+                                "Error.ValidationError",
+                                "The specified identifier is not a valid GUID or Code.")));
+                }
 
-            return response.IsFailure ?
-                    HandleFailure(response) :
-                    Ok(_mapper.ShortenedUrlDtoToResponse(response.Value));
+                var queryById = new GetShortenedUrlByIdQuery(id);
+                var responseById = await _apiService.RequestAsync(queryById, cancellationToken);
+
+                return responseById.IsFailure ?
+                        HandleFailure(responseById) :
+                        Ok(_mapper.ShortenedUrlDtoToResponse(responseById.Value));
+            }
         }
-
-        /// <summary>
-        /// Gets a shortened URL by its code.
-        /// </summary>
-        /// <param name="code">The code of the shortened URL.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The shortened URL.</returns>
-        [Authorize]
-        [HttpGet]
-        [Route("api/shorten/get/{code}")]
-        [ProducesResponseType(typeof(ShortenedUrlResponse), statusCode: StatusCodes.Status200OK)]
-        [ProducesErrorResponseType(typeof(ProblemDetails))]
-        public async Task<IActionResult> GetShortenedUrl(string code, CancellationToken cancellationToken = default)
-        {
-            var query = new GetShortenedUrlByCodeQuery(code);
-
-            var response = await _apiService.RequestAsync(query, cancellationToken);
-
-            return response.IsFailure ?
-                    HandleFailure(response) :
-                    Ok(_mapper.ShortenedUrlDtoToResponse(response.Value));
-        }
-
+        
         #endregion
     }
 }

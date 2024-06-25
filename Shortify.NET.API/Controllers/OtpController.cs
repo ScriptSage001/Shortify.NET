@@ -7,7 +7,11 @@ using static Shortify.NET.Applicaion.Shared.Constant.EmailConstants;
 
 namespace Shortify.NET.API.Controllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// Provides endpoints for managing OTP (One Time Password) operations.
+    /// </summary>
+    [Route("api/otp")]
+    [Tags("OTP Management")]
     public class OtpController(IApiService apiService) 
         : BaseApiController(apiService)
     {
@@ -22,8 +26,10 @@ namespace Shortify.NET.API.Controllers
         /// <param name="email">The email address to send the OTP to.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating whether the OTP was sent successfully.</returns>
-        [HttpPost]
-        [Route("send/verify-email/{email}")]
+        /// <response code="200">OTP sent successfully.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="500">An error occurred while sending the OTP.</response> 
+        [HttpPost("send/verify-email/{email}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -49,8 +55,10 @@ namespace Shortify.NET.API.Controllers
         /// <param name="email">The email address to send the OTP to.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating whether the OTP was sent successfully.</returns>
-        [HttpPost]
-        [Route("send/login/{email}")]
+        /// <response code="200">OTP sent successfully.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="500">An error occurred while sending the OTP.</response>
+        [HttpPost("send/login/{email}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -76,8 +84,10 @@ namespace Shortify.NET.API.Controllers
         /// <param name="email">The email address to send the OTP to.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating whether the OTP was sent successfully.</returns>
-        [HttpPost]
-        [Route("send/forgot-password/{email}")]
+        /// <response code="200">OTP sent successfully.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="500">An error occurred while sending the OTP.</response>
+        [HttpPost("send/forgot-password/{email}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -107,8 +117,10 @@ namespace Shortify.NET.API.Controllers
         /// <param name="request">The request containing the email and OTP to validate.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A response indicating whether the OTP validation was successful.</returns>
-        [HttpPost]
-        [Route("validate")]
+        /// <response code="200">OTP validation successful.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="500">An error occurred while validating the OTP.</response>
+        [HttpPost("validate")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
