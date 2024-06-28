@@ -11,7 +11,7 @@ namespace Shortify.NET.API.Controllers
     /// Provides endpoints for managing OTP (One Time Password) operations.
     /// </summary>
     [Route("api/otp")]
-    [Tags("OTP Management")]
+    [Tags("🔢 OTP Management")]
     public class OtpController(IApiService apiService) 
         : BaseApiController(apiService)
     {

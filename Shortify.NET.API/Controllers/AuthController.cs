@@ -23,7 +23,7 @@ namespace Shortify.NET.API.Controllers
     /// standardized responses.
     /// </remarks>
     [Route("api/auth")]
-    [Tags("Authentication")]
+    [Tags("🔑 Authentication")]
     public class AuthController(IApiService apiService) 
         : BaseApiController(apiService)
     {

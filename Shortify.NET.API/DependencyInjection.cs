@@ -46,7 +46,7 @@ namespace Shortify.NET.API
                     Contact = new OpenApiContact
                     {
                         Name = "Kaustab Samanta",
-                        Email = "scriptsage001@gmail.com",
+                          Email = "scriptsage001@gmail.com",
                         Url = new Uri("https://www.linkedin.com/in/kaustab-samanta-b513511a1")
                     },
                     License = new OpenApiLicense
@@ -59,11 +59,34 @@ namespace Shortify.NET.API
                 swag.CustomSchemaIds(x => x.FullName);
                 swag.ResolveConflictingActions(x => x.FirstOrDefault());
 
+                swag.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer"
+                });
+                
+                swag.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+                
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 swag.IncludeXmlComments(xmlPath);
                 
-                swag.DocumentFilter<ControllerTagWithDescriptionFilter>();
+                swag.DocumentFilter<SwaggerFilterForTagsAndDescriptions>();
             });
         }
     }

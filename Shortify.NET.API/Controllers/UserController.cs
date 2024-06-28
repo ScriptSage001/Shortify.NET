@@ -12,7 +12,7 @@ namespace Shortify.NET.API.Controllers
     /// </summary>
     [Route("api/user")]
     [Authorize]
-    [Tags("User Management")]
+    [Tags("\ud83d\udc64 User Management")]
     public class UserController(IApiService apiService) 
         : BaseApiController(apiService)
     {

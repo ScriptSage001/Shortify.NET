@@ -8,7 +8,7 @@ namespace Shortify.NET.API.Controllers
     /// Provides endpoints for checking the health status of the application.
     /// </summary>
     [Route("api/monitor")]
-    [Tags("Application Monitoring")]
+    [Tags("📊 Application Monitoring")]
     public class MonitorController(IApiService apiService) 
         : BaseApiController(apiService)
     {

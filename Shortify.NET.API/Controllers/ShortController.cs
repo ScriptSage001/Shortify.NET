@@ -14,7 +14,7 @@ namespace Shortify.NET.API.Controllers
     /// Provides endpoints for URL shortening operations.
     /// </summary>
     [Route("api/shorten")]
-    [Tags("URL Shortening")]
+    [Tags("\u2702\ufe0f URL Shortening")]
     public class ShortController(IApiService apiService) 
         : BaseApiController(apiService)
     {
