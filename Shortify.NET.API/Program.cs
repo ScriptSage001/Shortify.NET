@@ -1,9 +1,9 @@
+using Asp.Versioning.ApiExplorer;
 using Shortify.NET.API;
-using Shortify.NET.Common;
-using Shortify.NET.Persistence;
-using Shortify.NET.Infrastructure;
 using Shortify.NET.Applicaion;
-using System.Reflection;
+using Shortify.NET.Common;
+using Shortify.NET.Infrastructure;
+using Shortify.NET.Persistence;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,16 +22,21 @@ var builder = WebApplication.CreateBuilder(args);
 
     #region Swagger Config
 
+    var apiVersionDescProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
     app.UseStaticFiles();
     app.UseSwagger();
     app.UseSwaggerUI(swag => 
     {
+        foreach (var desc in apiVersionDescProvider.ApiVersionDescriptions)
+        {
+            swag.SwaggerEndpoint(
+                $"/swagger/{desc.GroupName}/swagger.json",
+                $"Shortify.NET API - {desc.GroupName.ToUpper()}");
+        }
+
         swag.InjectStylesheet("../swagger-ui/shortify-theme.css");
         swag.InjectJavascript("../swagger-ui/shortify-theme.js");
-
-        swag.SwaggerEndpoint(
-                    "../swagger/v1/swagger.json", 
-                    $"Shortify.NET API V{Assembly.GetExecutingAssembly().GetName().Version}");
         
         swag.DefaultModelRendering(Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Model);
         swag.EnableDeepLinking();

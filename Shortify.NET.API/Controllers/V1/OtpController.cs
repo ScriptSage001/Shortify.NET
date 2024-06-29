@@ -1,16 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.Applicaion.Otp.Commands.SendOtp;
 using Shortify.NET.Applicaion.Otp.Commands.ValidateOtp;
 using Shortify.NET.Common.Messaging.Abstractions;
 using static Shortify.NET.Applicaion.Shared.Constant.EmailConstants;
 
-namespace Shortify.NET.API.Controllers
+namespace Shortify.NET.API.Controllers.V1
 {
     /// <summary>
     /// Provides endpoints for managing OTP (One Time Password) operations.
     /// </summary>
+    [ApiVersion("1.0")]
     [Route("api/otp")]
+    [Route("api/v{version:apiVersion}/otp")]
     [Tags("🔢 OTP Management")]
     public class OtpController(IApiService apiService) 
         : BaseApiController(apiService)

@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
 using Shortify.NET.Applicaion.Token.Commands.RevokeToken;
 using Shortify.NET.Common.Messaging.Abstractions;
 
-namespace Shortify.NET.API.Controllers
+namespace Shortify.NET.API.Controllers.V1
 {
     /// <summary>
     /// Provides authentication-related operations including user registration, login,
@@ -22,7 +23,9 @@ namespace Shortify.NET.API.Controllers
     /// Each endpoint is designed to interact with the appropriate service and return
     /// standardized responses.
     /// </remarks>
+    [ApiVersion("1.0")]
     [Route("api/auth")]
+    [Route("api/v{version:apiVersion}/auth")]
     [Tags("🔑 Authentication")]
     public class AuthController(IApiService apiService) 
         : BaseApiController(apiService)

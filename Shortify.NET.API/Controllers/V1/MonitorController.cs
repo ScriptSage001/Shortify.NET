@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.Common.Messaging.Abstractions;
 
-namespace Shortify.NET.API.Controllers
+namespace Shortify.NET.API.Controllers.V1
 {
     /// <summary>
     /// Controller for application monitoring endpoints.
     /// Provides endpoints for checking the health status of the application.
     /// </summary>
+    [ApiVersion("1.0")]
     [Route("api/monitor")]
+    [Route("api/v{version:apiVersion}/monitor")]
     [Tags("📊 Application Monitoring")]
     public class MonitorController(IApiService apiService) 
         : BaseApiController(apiService)

@@ -1,16 +1,19 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
 using Shortify.NET.Applicaion.Users.Queries.GetUserById;
 using Shortify.NET.Common.Messaging.Abstractions;
 
-namespace Shortify.NET.API.Controllers
+namespace Shortify.NET.API.Controllers.V1
 {
     /// <summary>
     /// Provides endpoints for managing user-related operations.
     /// </summary>
+    [ApiVersion("1.0")]
     [Route("api/user")]
+    [Route("api/v{version:apiVersion}/user")]
     [Authorize]
     [Tags("\ud83d\udc64 User Management")]
     public class UserController(IApiService apiService) 

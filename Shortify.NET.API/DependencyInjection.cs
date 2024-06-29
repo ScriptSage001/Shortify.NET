@@ -1,8 +1,12 @@
 ﻿using System.Reflection;
 using System.Text;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Shortify.NET.API.SwaggerConfig;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Shortify.NET.API
 {
@@ -10,6 +14,7 @@ namespace Shortify.NET.API
     {
         public static IServiceCollection AddApi(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddCustomApiVersioning();
             services.AddCustomAuthentication(configuration);
             services.AddControllers();
             services.AddEndpointsApiExplorer();
@@ -18,6 +23,23 @@ namespace Shortify.NET.API
             return services;
         }
 
+        private static void AddCustomApiVersioning(this IServiceCollection services)
+        {
+            services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new UrlSegmentApiVersionReader(), 
+                    new HeaderApiVersionReader("X-Api-Version"));
+            }).AddApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'V";
+                options.SubstituteApiVersionInUrl = true;
+            });
+        } 
+        
         private static void AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -36,26 +58,10 @@ namespace Shortify.NET.API
         
         private static void AddSwagger(this IServiceCollection services)
         {
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigOptions>();
+
             services.AddSwaggerGen(swag =>
             {
-                swag.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Shortify.NET API",
-                    Version = $"v{Assembly.GetExecutingAssembly().GetName().Version}",
-                    Description = "Rest APIs Documentations for the Shortify.NET application.",
-                    Contact = new OpenApiContact
-                    {
-                        Name = "Kaustab Samanta",
-                          Email = "scriptsage001@gmail.com",
-                        Url = new Uri("https://www.linkedin.com/in/kaustab-samanta-b513511a1")
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = "Shortify.NET, Licence",
-                        Url = new Uri("https://tempuri.org/license")
-                    }
-                });
-
                 swag.CustomSchemaIds(x => x.FullName);
                 swag.ResolveConflictingActions(x => x.FirstOrDefault());
 
@@ -86,7 +92,7 @@ namespace Shortify.NET.API
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 swag.IncludeXmlComments(xmlPath);
                 
-                swag.DocumentFilter<SwaggerFilterForTagsAndDescriptions>();
+                swag.DocumentFilter<SwaggerDocFilter>();
             });
         }
     }

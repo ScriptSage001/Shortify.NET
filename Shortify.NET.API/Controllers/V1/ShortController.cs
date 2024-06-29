@@ -1,19 +1,22 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
-using Shortify.NET.Applicaion.Url.Queries.ShortenedUrl;
 using Shortify.NET.Applicaion.Url.Queries.GetAllShortenedUrls;
+using Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl;
+using Shortify.NET.Applicaion.Url.Queries.ShortenedUrl;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
-using Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl;
 
-namespace Shortify.NET.API.Controllers
+namespace Shortify.NET.API.Controllers.V1
 {
     /// <summary>
     /// Provides endpoints for URL shortening operations.
     /// </summary>
+    [ApiVersion("1.0")]
     [Route("api/shorten")]
+    [Route("api/v{version:apiVersion}/shorten")]
     [Tags("\u2702\ufe0f URL Shortening")]
     public class ShortController(IApiService apiService) 
         : BaseApiController(apiService)
