@@ -21,17 +21,9 @@ namespace Shortify.NET.Core.ValueObjects
                 return Result.Failure<UserName>(DomainErrors.UserName.Empty);
             }
 
-            if (value.Length > MaxLength)
-            {
-                return Result.Failure<UserName>(DomainErrors.UserName.TooLong);
-            }
-
-            if (value.Length < MinLength)
-            {
-                return Result.Failure<UserName>(DomainErrors.UserName.TooShort);
-            }
-
-            return new UserName(value);
+            return value.Length > MaxLength ? Result.Failure<UserName>(DomainErrors.UserName.TooLong) :
+                value.Length < MinLength ? Result.Failure<UserName>(DomainErrors.UserName.TooShort) :
+                new UserName(value);
         }
 
         protected override IEnumerable<object> GetAtomicValues()

@@ -17,12 +17,9 @@ namespace Shortify.NET.Core.ValueObjects
                 return Result.Failure<ShortUrl>(DomainErrors.ShortUrl.Empty);
             }
 
-            if (!Uri.TryCreate(value, UriKind.Absolute, out _))
-            {
-                return Result.Failure<ShortUrl>(DomainErrors.ShortUrl.InvalidFormat);
-            }
-
-            return new ShortUrl(value);
+            return !Uri.TryCreate(value, UriKind.Absolute, out _) ? 
+                Result.Failure<ShortUrl>(DomainErrors.ShortUrl.InvalidFormat) : 
+                new ShortUrl(value);
         }
 
         protected override IEnumerable<object> GetAtomicValues()

@@ -14,7 +14,7 @@ namespace Shortify.NET.Applicaion.Users.Queries.GetUserById
 
         public async Task<Result<UserDto>> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
         {
-            User? user = await _userRepository.GetByIdAsync(query.UserId, cancellationToken);
+            var user = await _userRepository.GetByIdAsync(query.UserId, cancellationToken);
 
             if (user is null)
             {

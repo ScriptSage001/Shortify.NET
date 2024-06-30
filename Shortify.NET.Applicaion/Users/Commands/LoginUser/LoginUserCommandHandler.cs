@@ -28,7 +28,7 @@ namespace Shortify.NET.Applicaion.Users.Commands.LoginUser
 
             if (!string.IsNullOrWhiteSpace(command.UserName))
             {
-                Result<UserName> userName = UserName.Create(command.UserName);
+                var userName = UserName.Create(command.UserName);
 
                 if (userName.IsFailure)
                 {
@@ -39,7 +39,7 @@ namespace Shortify.NET.Applicaion.Users.Commands.LoginUser
             }
             else if (!string.IsNullOrWhiteSpace(command.Email))
             {
-                Result<Email> email = Email.Create(command.Email);
+                var email = Email.Create(command.Email);
 
                 if (email.IsFailure)
                 {
@@ -56,27 +56,24 @@ namespace Shortify.NET.Applicaion.Users.Commands.LoginUser
 
             var userCredentials = user.UserCredentials;
 
-            bool isVerified = _authServices.VerifyPasswordHash(
+            var isVerified = _authServices.VerifyPasswordHash(
                                                  command.Password,
                                                  userCredentials.PasswordHash,
                                                  userCredentials.PasswordSalt);
 
-            if (isVerified)
-            {
-                AuthenticationResult authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
+            if (!isVerified) return Result.Failure<AuthenticationResult>(DomainErrors.UserCredentials.WrongCredentials);
+            var authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
 
-                userCredentials.AddOrUpdateRefreshToken(
-                                    authenticationResult.RefreshToken,
-                                    authenticationResult.RefreshTokenExpirationTimeUtc);
+            userCredentials.AddOrUpdateRefreshToken(
+                authenticationResult.RefreshToken,
+                authenticationResult.RefreshTokenExpirationTimeUtc);
 
-                _userCredentialsRepository.Update(userCredentials);
+            _userCredentialsRepository.Update(userCredentials);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return authenticationResult;
-            }
+            return authenticationResult;
 
-            return Result.Failure<AuthenticationResult>(DomainErrors.UserCredentials.WrongCredentials);
         }
     }
 }

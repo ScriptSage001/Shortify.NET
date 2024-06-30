@@ -21,15 +21,15 @@ namespace Shortify.NET.Infrastructure.BackgroudJobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            List<OutboxMessage> outboxMessages = await _appDbContext
+            var outboxMessages = await _appDbContext
                                                             .Set<OutboxMessage>()
                                                             .Where(obm => obm.ProcessedOnUtc == null)
                                                             .Take(10)
                                                             .ToListAsync(context.CancellationToken);
 
-            foreach (OutboxMessage outboxMessage in outboxMessages)
+            foreach (var outboxMessage in outboxMessages)
             {
-                IDomainEvent? domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
+                var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
                                                                     outboxMessage.Content,
                                                                     new JsonSerializerSettings
                                                                     {
@@ -42,14 +42,14 @@ namespace Shortify.NET.Infrastructure.BackgroudJobs
                     continue;
                 }
 
-                AsyncRetryPolicy retryPolicy = Policy
+                var retryPolicy = Policy
                                             .Handle<Exception>()
                                             .WaitAndRetryAsync(
                                                 3,
                                                 attempt => TimeSpan
                                                             .FromMilliseconds(100 * attempt));
 
-                PolicyResult policyResult = await retryPolicy
+                var policyResult = await retryPolicy
                                                     .ExecuteAndCaptureAsync(() =>
                                                         _apiService
                                                             .EventPublisher(domainEvent, context.CancellationToken));

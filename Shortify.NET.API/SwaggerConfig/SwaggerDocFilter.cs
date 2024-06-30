@@ -9,7 +9,7 @@ namespace Shortify.NET.API.SwaggerConfig
         {
             foreach (var desc in context.ApiDescriptions)
             {
-                if (desc.ParameterDescriptions.Any(p => p.Name == "X-Api-Version" && p.Source.Id == "Header"))
+                if (desc.ParameterDescriptions.Any(p => p is { Name: "X-Api-Version", Source.Id: "Header" }))
                     swaggerDoc.Paths.Remove($"/{desc.RelativePath?.TrimEnd('/')}");
             }
 

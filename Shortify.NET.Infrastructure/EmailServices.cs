@@ -33,18 +33,18 @@ namespace Shortify.NET.Infrastructure
 
         private MimeMessage PrepareMail(MailRequest mailRequest)
         {
-            var email = new MimeMessage()
+            var email = new MimeMessage
             {
                 Sender = MailboxAddress.Parse(_emailSettings.SenderEmail),
                 Subject = mailRequest.Subject,
-                Body = new BodyBuilder()
+                Body = new BodyBuilder
                 { 
                     HtmlBody = mailRequest.Body 
                 }
                 .ToMessageBody()
             };
 
-            foreach (string recipient in mailRequest.Recipients)
+            foreach (var recipient in mailRequest.Recipients)
             {
                 email.To.Add(MailboxAddress.Parse(recipient));
             }

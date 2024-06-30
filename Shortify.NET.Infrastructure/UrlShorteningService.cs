@@ -22,13 +22,13 @@ namespace Shortify.NET.Infrastructure
         /// <returns></returns>
         public async Task<string> GenerateUniqueCode(CancellationToken cancellationToken = default)
         {
-            int codeLength = _shortLinkSettings.Length;
-            string characters = _shortLinkSettings.CharacterRange;
-            ulong baseValue = (ulong)characters.Length;
+            var codeLength = _shortLinkSettings.Length;
+            var characters = _shortLinkSettings.CharacterRange;
+            var baseValue = (ulong)characters.Length;
 
             while (true)
             {
-                string code = EncodeBase62(codeLength, characters, baseValue);
+                var code = EncodeBase62(codeLength, characters, baseValue);
 
                 // Handling Edge Case
                 // To check for Collison
@@ -69,7 +69,7 @@ namespace Shortify.NET.Infrastructure
 
             // Handling Edge Case
             // Where generated code length is more than the desired code length
-            var code = sb.ToString().Substring(0, codeLength);
+            var code = sb.ToString()[..codeLength];
 
             return code;
         }
