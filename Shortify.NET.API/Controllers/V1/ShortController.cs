@@ -164,24 +164,22 @@ namespace Shortify.NET.API.Controllers.V1
                         HandleFailure(responseByCode) :
                         Ok(_mapper.ShortenedUrlDtoToResponse(responseByCode.Value));
             }
-            else
+
+            if (!Guid.TryParse(identifier, out var id))
             {
-                if (!Guid.TryParse(identifier, out var id))
-                {
-                    return HandleFailure(
-                        Result.Failure(
-                            Error.Validation(
-                                "Error.ValidationError",
-                                "The specified identifier is not a valid GUID or Code.")));
-                }
-
-                var queryById = new GetShortenedUrlByIdQuery(id);
-                var responseById = await _apiService.RequestAsync(queryById, cancellationToken);
-
-                return responseById.IsFailure ?
-                        HandleFailure(responseById) :
-                        Ok(_mapper.ShortenedUrlDtoToResponse(responseById.Value));
+                return HandleFailure(
+                    Result.Failure(
+                        Error.Validation(
+                            "Error.ValidationError",
+                            "The specified identifier is not a valid GUID or Code.")));
             }
+
+            var queryById = new GetShortenedUrlByIdQuery(id);
+            var responseById = await _apiService.RequestAsync(queryById, cancellationToken);
+
+            return responseById.IsFailure ?
+                HandleFailure(responseById) :
+                Ok(_mapper.ShortenedUrlDtoToResponse(responseById.Value));
         }
         
         #endregion

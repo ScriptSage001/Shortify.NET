@@ -38,7 +38,7 @@ namespace Shortify.NET.Infrastructure.Idempotence
             await _decoratedHandler.Handle(domainEvent, cancellationToken);
 
             _appDbContext.Set<OutboxMessageConsumer>()
-                    .Add(new()
+                    .Add(new OutboxMessageConsumer
                     {
                         Id = domainEvent.Id,
                         Name = consumer

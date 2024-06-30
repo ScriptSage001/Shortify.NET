@@ -27,12 +27,12 @@ namespace Shortify.NET.Core.Entites
             List<string>? tags) 
             : base(id)
         {
-            this.UserId = userId;
-            this.OriginalUrl = originalUrl;
-            this.ShortUrl = shortUrl;
-            this.Code = code;
-            this.Title = title;
-            this.Tags = tags;
+            UserId = userId;
+            OriginalUrl = originalUrl;
+            ShortUrl = shortUrl;
+            Code = code;
+            Title = title;
+            Tags = tags;
         }
 
         #endregion

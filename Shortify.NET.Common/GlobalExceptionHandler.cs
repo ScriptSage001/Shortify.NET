@@ -12,14 +12,14 @@ namespace Shortify.NET.Common
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            int status = StatusCodes.Status500InternalServerError;
+            var status = StatusCodes.Status500InternalServerError;
 
             if (exception is ValidationException)
             {
                 status = StatusCodes.Status400BadRequest;
             }
 
-            var response = new ProblemDetails()
+            var response = new ProblemDetails
             {
                 Status = status,
                 Title = exception.Message,

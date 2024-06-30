@@ -22,7 +22,7 @@ namespace Shortify.NET.Persistence.Repository
         /// <returns></returns>
         private async Task<UserCredentials?> GetUserCredentialsAsync(
             Expression<Func<UserCredentials, bool>> predicate,
-            Expression<Func<UserCredentials, Object>>? includeExpression = null,
+            Expression<Func<UserCredentials, object>>? includeExpression = null,
             bool asNoTracking = false,
             CancellationToken cancellationToken = default)
         {

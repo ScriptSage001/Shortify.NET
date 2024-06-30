@@ -39,29 +39,27 @@ namespace Shortify.NET.Infrastructure
         {
             services.AddQuartz(configure =>
             {
-                List<BackgroundJobConfig>? backgroundJobs = configuration.GetSection("BackgroundJobs").Get<List<BackgroundJobConfig>>();
+                var backgroundJobs = configuration.GetSection("BackgroundJobs").Get<List<BackgroundJobConfig>>();
 
-                if (backgroundJobs is not null && backgroundJobs.Count != 0)
+                if (backgroundJobs is null || backgroundJobs.Count == 0) return;
+                foreach (var backgroundJob in backgroundJobs)
                 {
-                    foreach (var backgroundJob in backgroundJobs)
+                    if (backgroundJob.Enabled)
                     {
-                        if (backgroundJob.Enabled)
+                        var jobType = AssemblyReference.Assembly.GetType($"Shortify.NET.Infrastructure.BackgroudJobs.{backgroundJob.Name}");
+
+                        if (jobType is not null)
                         {
-                            Type? jobType = AssemblyReference.Assembly.GetType($"Shortify.NET.Infrastructure.BackgroudJobs.{backgroundJob.Name}");
+                            var jobKey = new JobKey(backgroundJob.Name);
+                            var triggerKey = backgroundJob.Name + "Trigger";
 
-                            if (jobType is not null)
-                            {
-                                var jobKey = new JobKey(backgroundJob.Name);
-                                var triggerKey = backgroundJob.Name + "Trigger";
+                            configure.AddJob(jobType, jobKey);
 
-                                configure.AddJob(jobType, jobKey);
-
-                                configure.AddTrigger(trigger =>
-                                                        trigger
-                                                            .WithIdentity(triggerKey)
-                                                            .ForJob(jobKey)
-                                                            .WithCronSchedule(backgroundJob.Schedule));
-                            }
+                            configure.AddTrigger(trigger =>
+                                trigger
+                                    .WithIdentity(triggerKey)
+                                    .ForJob(jobKey)
+                                    .WithCronSchedule(backgroundJob.Schedule));
                         }
                     }
                 }

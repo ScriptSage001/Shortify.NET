@@ -40,14 +40,14 @@ namespace Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret
                 return Result.Failure<AuthenticationResult>(DomainErrors.User.UserNotFound);
             }
 
-            bool isValid = _authServices.ValidateClientSecret(command.ClientSecret);
+            var isValid = _authServices.ValidateClientSecret(command.ClientSecret);
 
             if (!isValid)
             {
                 return Result.Failure<AuthenticationResult>(DomainErrors.UserCredentials.WrongCredentials);
             }
 
-            AuthenticationResult authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
+            var authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
 
             user.UserCredentials.AddOrUpdateRefreshToken(
                                 authenticationResult.RefreshToken,

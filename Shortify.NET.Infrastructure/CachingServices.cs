@@ -73,7 +73,7 @@ namespace Shortify.NET.Infrastructure
         {
             await _distributedCache.RemoveAsync(key, cancellationToken);
 
-            CacheKeys.TryRemove(key, out bool _);
+            CacheKeys.TryRemove(key, out var _);
         }
 
         /// <inheritdoc/>
@@ -81,7 +81,7 @@ namespace Shortify.NET.Infrastructure
             string prefix, 
             CancellationToken cancellationToken = default)
         {
-            IEnumerable<Task> removeTasks = CacheKeys
+            var removeTasks = CacheKeys
                                                 .Keys
                                                 .Where(k => k.StartsWith(prefix))
                                                 .Select(k => RemoveAsync(k, cancellationToken));

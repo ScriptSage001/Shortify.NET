@@ -21,8 +21,8 @@ namespace Shortify.NET.Applicaion.Users.Events
 
         public async Task Handle(PasswordChangedDomainEvent domainEvent, CancellationToken cancellationToken)
         {
-            User user = await _userRepository.GetByIdAsync(domainEvent.UserId, cancellationToken) ??
-                        throw (new ValidationException("User Not Found."));
+            var user = await _userRepository.GetByIdAsync(domainEvent.UserId, cancellationToken) ??
+                       throw new ValidationException("User Not Found.");
 
             await SendWelcomeEmail(user, cancellationToken);
         }

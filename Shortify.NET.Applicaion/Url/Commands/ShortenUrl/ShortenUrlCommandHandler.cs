@@ -35,17 +35,17 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
         public async Task<Result<ShortUrl>> Handle(ShortenUrlCommand command, CancellationToken cancellationToken)
         {
             const int maxRetries = 5;
-            int retryCount = 0;
+            var retryCount = 0;
 
-            Guid userId = Guid.Parse(command.UserId);
+            var userId = Guid.Parse(command.UserId);
 
-            while(retryCount < maxRetries)
+            while(true)
             {
                 // Generate Code
                 var code = await _urlShorteningService.GenerateUniqueCode(cancellationToken);
 
                 // Generate Short Url
-                string shortUrlString = $"{command.HttpRequest.Scheme}://{command.HttpRequest.Host}/{code}";
+                var shortUrlString = $"{command.HttpRequest.Scheme}://{command.HttpRequest.Host}/{code}";
                 var shortUrl = ShortUrl.Create(shortUrlString);
 
                 // Validate Short Url
@@ -54,7 +54,7 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
                     return Result.Failure<ShortUrl>(shortUrl.Error);
                 }
 
-                // Genereate the shortened url object
+                // Generate the shortened url object
                 var shortenedUrl = ShortenedUrl.Create(
                         userId: userId,
                         originalUrl: command.Url,
@@ -86,11 +86,6 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
                     }
                 }
             }
-
-            return Result.Failure<ShortUrl>(
-                                    Error.Failure(
-                                            "ShortUrl.FailedToCreate",
-                                            "Failed to generate a unique short URL after multiple attempts."));
         }
     }
 }

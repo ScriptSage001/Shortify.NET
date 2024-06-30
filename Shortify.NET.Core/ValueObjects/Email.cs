@@ -24,12 +24,9 @@ namespace Shortify.NET.Core.ValueObjects
                 return Result.Failure<Email>(DomainErrors.Email.InvalidFormat);
             }
 
-            if (value.Length > MaxLength)
-            {
-                return Result.Failure<Email>(DomainErrors.Email.TooLong);
-            }
-
-            return new Email(value);
+            return value.Length > MaxLength ? 
+                Result.Failure<Email>(DomainErrors.Email.TooLong) : 
+                new Email(value);
         }
 
         protected override IEnumerable<object> GetAtomicValues()

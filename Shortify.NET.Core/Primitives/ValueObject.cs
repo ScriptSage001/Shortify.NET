@@ -14,7 +14,7 @@
 
         public override bool Equals(object? obj)
         {
-            return obj is not null && obj is ValueObject other && ValuesAreEqual(other);
+            return obj is ValueObject other && ValuesAreEqual(other);
         }
 
         public override int GetHashCode()

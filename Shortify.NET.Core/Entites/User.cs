@@ -41,9 +41,9 @@ namespace Shortify.NET.Core.Entites
             Email email,
             UserCredentials userCredentials) : base(id)
         {
-            this.UserName = userName;
-            this.Email = email;
-            this.UserCredentials = userCredentials;
+            UserName = userName;
+            Email = email;
+            UserCredentials = userCredentials;
         }
 
         #endregion
