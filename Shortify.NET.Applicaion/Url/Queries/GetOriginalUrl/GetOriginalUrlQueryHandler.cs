@@ -18,7 +18,7 @@ namespace Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl
         {
             #region GetFromCache
             
-            string cacheKey = $"Original_Url_{query.Code}";
+            var cacheKey = $"Original_Url_{query.Code}";
             var originalUrl = await _cachingServices
                                         .GetAsync<string>(
                                             cacheKey,

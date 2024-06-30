@@ -19,12 +19,7 @@
 
         public TNextValue Match<TNextValue>(Func<TValue, TNextValue> onSuccess, Func<Error, TNextValue> onError)
         {
-            if (IsSuccess)
-            {
-                return onSuccess(Value);
-            }
-
-            return onError(Error);
+            return IsSuccess ? onSuccess(Value) : onError(Error);
         }
     }
 }

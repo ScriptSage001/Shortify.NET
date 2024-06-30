@@ -17,7 +17,7 @@ namespace Shortify.NET.Applicaion.Token.Commands.RevokeToken
 
         public async Task<Result> Handle(RevokeRefreshTokenCommand command, CancellationToken cancellationToken)
         {
-            Guid userId = Guid.Parse(command.UserId);
+            var userId = Guid.Parse(command.UserId);
 
             var userCreds = await _userCredentialsRepository
                                         .GetByUserIdAsync(

@@ -60,9 +60,9 @@ namespace Shortify.NET.Persistence
         /// </summary>
         private void UpdateAuditableEntities()
         {
-            IEnumerable<EntityEntry<IAuditable>> entities = _appDbContext.ChangeTracker.Entries<IAuditable>();
+            var entities = _appDbContext.ChangeTracker.Entries<IAuditable>();
 
-            foreach (EntityEntry<IAuditable> entity in entities)
+            foreach (var entity in entities)
             {
                 if (entity.State == EntityState.Added)
                 {

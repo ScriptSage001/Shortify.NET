@@ -12,7 +12,7 @@ namespace Shortify.NET.Applicaion.Url.Queries.GetAllShortenedUrls
 
         public async Task<Result<List<ShortenedUrlDto>>> Handle(GetAllShortenedUrlsQuery query, CancellationToken cancellationToken)
         {
-            Guid userId = Guid.Parse(query.UserId);
+            var userId = Guid.Parse(query.UserId);
 
             var response = await _shortenedUrlRepository.GetAllByUserIdAsync(userId, cancellationToken);
 

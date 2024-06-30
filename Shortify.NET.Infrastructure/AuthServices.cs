@@ -55,8 +55,8 @@ namespace Shortify.NET.Infrastructure
         /// <returns>An AuthenticationResult containing the generated tokens and their expiration times.</returns>
         public AuthenticationResult CreateToken(Guid userId, string userName, string email)
         {
-            string accessToken = GenerateAccessToken(userId, userName, email);
-            string refreshToken = GenerateRefreshToken(out DateTime refreshTokenExpirationTime);
+            var accessToken = GenerateAccessToken(userId, userName, email);
+            var refreshToken = GenerateRefreshToken(out var refreshTokenExpirationTime);
 
             return new AuthenticationResult
             (
@@ -86,7 +86,7 @@ namespace Shortify.NET.Infrastructure
             var securityKey = new SymmetricSecurityKey(key);
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
 
-            var tokenDescriptor = new SecurityTokenDescriptor()
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Issuer = _appSettings.Issuer,
@@ -97,7 +97,7 @@ namespace Shortify.NET.Infrastructure
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            string jwt = tokenHandler.WriteToken(token);
+            var jwt = tokenHandler.WriteToken(token);
 
             return jwt;
         }
@@ -111,13 +111,13 @@ namespace Shortify.NET.Infrastructure
         public async Task<Result<AuthenticationResult>> RefreshToken(string accessToken, string refreshToken)
         {
             JwtSecurityTokenHandler tokenHandler = new();
-            JwtSecurityToken token = tokenHandler.ReadJwtToken(accessToken);
+            var token = tokenHandler.ReadJwtToken(accessToken);
 
-            string userIdFromClaims = token.Claims.First(c => c.Type == ClaimType.UserId).Value;
-            string userNameFromClaims = token.Claims.First(c => c.Type == ClaimType.UserName).Value;
-            string emailFromClaims = token.Claims.First(c => c.Type == ClaimType.Email).Value;
+            var userIdFromClaims = token.Claims.First(c => c.Type == ClaimType.UserId).Value;
+            var userNameFromClaims = token.Claims.First(c => c.Type == ClaimType.UserName).Value;
+            var emailFromClaims = token.Claims.First(c => c.Type == ClaimType.Email).Value;
 
-            Guid userId = Guid.Parse(userIdFromClaims);
+            var userId = Guid.Parse(userIdFromClaims);
 
             var userCredentials = await _userCredentialsRepository.GetByUserIdAsync(userId);
 
@@ -127,22 +127,20 @@ namespace Shortify.NET.Infrastructure
             {
                 return Result.Failure<AuthenticationResult>(Auth.InvalidCredentials);
             }
-            else
-            {
-                string newAccessToken = GenerateAccessToken(userId, userNameFromClaims, emailFromClaims);
-                string newRefreshToken = GenerateRefreshToken(out DateTime expirationTime);
 
-                userCredentials.AddOrUpdateRefreshToken(newRefreshToken, expirationTime);
+            var newAccessToken = GenerateAccessToken(userId, userNameFromClaims, emailFromClaims);
+            var newRefreshToken = GenerateRefreshToken(out var expirationTime);
 
-                _userCredentialsRepository.Update(userCredentials);
-                await _unitOfWork.SaveChangesAsync();
+            userCredentials.AddOrUpdateRefreshToken(newRefreshToken, expirationTime);
 
-                return new AuthenticationResult(
-                                UserId: userId,
-                                AccessToken: newAccessToken,
-                                RefreshToken: newRefreshToken,
-                                RefreshTokenExpirationTimeUtc: expirationTime);
-            }
+            _userCredentialsRepository.Update(userCredentials);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new AuthenticationResult(
+                UserId: userId,
+                AccessToken: newAccessToken,
+                RefreshToken: newRefreshToken,
+                RefreshTokenExpirationTimeUtc: expirationTime);
         }
 
         /// <summary>
@@ -190,9 +188,9 @@ namespace Shortify.NET.Infrastructure
             var tokenType = jwtToken.Claims.First(c => c.Type == ClaimType.TokenType)?.Value;
             var expiresOn = jwtToken.ValidTo;
 
-            return (email.Equals(userEmail, StringComparison.OrdinalIgnoreCase)
-                    && ClaimTypeValue.ValidateOtp.Equals(tokenType, StringComparison.OrdinalIgnoreCase)
-                    && expiresOn >= DateTime.UtcNow);
+            return email.Equals(userEmail, StringComparison.OrdinalIgnoreCase)
+                   && ClaimTypeValue.ValidateOtp.Equals(tokenType, StringComparison.OrdinalIgnoreCase)
+                   && expiresOn >= DateTime.UtcNow;
         }
 
         #endregion
@@ -221,9 +219,9 @@ namespace Shortify.NET.Infrastructure
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Secret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
 
-            int tokenExpirationTime = _appSettings.TokenExpirationTime;
+            var tokenExpirationTime = _appSettings.TokenExpirationTime;
 
-            var tokenDescriptor = new SecurityTokenDescriptor()
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims.ToArray()),
                 Issuer = _appSettings.Issuer,
@@ -233,8 +231,8 @@ namespace Shortify.NET.Infrastructure
             };
 
             JwtSecurityTokenHandler tokenHandler = new();
-            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-            string jwt = tokenHandler.WriteToken(token);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var jwt = tokenHandler.WriteToken(token);
 
             return jwt;
         }

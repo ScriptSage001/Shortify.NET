@@ -38,12 +38,10 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
                     subject = Subject.VerifyEmailOtp;
                     body = PrepareEmailBodyForEmailVerification(otp);
                     break;
-
                 case OtpType.ResetPassword:
                     subject = Subject.ResetPasswordOtp;
                     body = PrepareEmailBodyForPasswordReset(otp);
                     break;
-
                 case OtpType.Login:
                     subject = Subject.LoginOtp;
                     body = PrepareEmailBodyForLogin(otp);
@@ -72,7 +70,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
         /// <returns></returns>
         private static string GenerateOtp()
         {
-            Random random = new Random();
+            var random = new Random();
 
             return random.Next(100000, 1000000).ToString();
         }
@@ -84,7 +82,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
         /// <returns></returns>
         private string PrepareEmailBodyForEmailVerification(string otp)
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
 
             stringBuilder.Append("<html lang='en'><head><style>body{font-family:Arial,sans-serif;line-height:1.6;background-color:#f4f4f4;margin:0;padding:20px;}");
             stringBuilder.Append(".container{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:5px;box-shadow:0 0 10px rgba(0,0,0,0.1);}");
@@ -109,7 +107,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
         /// <returns></returns>
         private string PrepareEmailBodyForPasswordReset(string otp)
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
 
             stringBuilder.Append("<html lang='en'><head><style>body{font-family:Arial,sans-serif;line-height:1.6;background-color:#f4f4f4;margin:0;padding:20px;}");
             stringBuilder.Append(".container{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:5px;box-shadow:0 0 10px rgba(0,0,0,0.1);}");
@@ -134,7 +132,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.SendOtp
         /// <returns></returns>
         private string PrepareEmailBodyForLogin(string otp)
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
 
             stringBuilder.Append("<html lang='en'><head><style>body{font-family:Arial,sans-serif;line-height:1.6;background-color:#f4f4f4;margin:0;padding:20px;}");
             stringBuilder.Append(".container{max-width:600px;margin:auto;background:#fff;padding:20px;border-radius:5px;box-shadow:0 0 10px rgba(0,0,0,0.1);}");

@@ -29,7 +29,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
 
         public async Task<Result<AuthenticationResult>> Handle(LoginUsingOtpCommand command, CancellationToken cancellationToken = default)
         {
-            Result<Email> email = Email.Create(command.Email);
+            var email = Email.Create(command.Email);
 
             if (email.IsFailure)
             {
@@ -45,45 +45,31 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
 
             var isOtpValid = await IsOtpValid(command, cancellationToken);
 
-            if (isOtpValid)
-            {
-                AuthenticationResult authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
+            if (!isOtpValid) return Result.Failure<AuthenticationResult>(DomainErrors.Otp.Invalid);
+            var authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
 
-                user.UserCredentials.AddOrUpdateRefreshToken(
-                                        authenticationResult.RefreshToken,
-                                        authenticationResult.RefreshTokenExpirationTimeUtc);
+            user.UserCredentials.AddOrUpdateRefreshToken(
+                authenticationResult.RefreshToken,
+                authenticationResult.RefreshTokenExpirationTimeUtc);
 
-                _userCredentialsRepository.Update(user.UserCredentials);
+            _userCredentialsRepository.Update(user.UserCredentials);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                return authenticationResult;
-            }
+            return authenticationResult;
 
-            return Result.Failure<AuthenticationResult>(DomainErrors.Otp.Invalid);
         }
 
         private async Task<bool> IsOtpValid(LoginUsingOtpCommand command, CancellationToken cancellationToken = default)
         {
             var (otpId, otp) = await _otpRepository.GetLatestUnusedOtpAsync(command.Email, cancellationToken);
 
-            if (otpId != Guid.Empty && !string.IsNullOrEmpty(otp))
-            {
-                if (command.Otp.Equals(otp))
-                {
-                    await _otpRepository.MarkOtpDetailAsUsed(otpId, DateTime.UtcNow, cancellationToken);
+            if (otpId == Guid.Empty || string.IsNullOrEmpty(otp)) return false;
+            if (!command.Otp.Equals(otp)) return false;
+            await _otpRepository.MarkOtpDetailAsUsed(otpId, DateTime.UtcNow, cancellationToken);
 
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
+            return true;
+
         }
     }
 }

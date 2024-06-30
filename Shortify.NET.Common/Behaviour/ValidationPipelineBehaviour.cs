@@ -38,7 +38,7 @@ namespace Shortify.NET.Common.Behaviour
                 return await next();
             }
 
-            Error[] errors = _validators
+            var errors = _validators
                                 .Select(validator => validator.Validate(request))
                                 .SelectMany(validationResult => validationResult.Errors)
                                 .Where(failure => failure is not null)
@@ -71,7 +71,7 @@ namespace Shortify.NET.Common.Behaviour
                 return (ValidationResult.WithErrors(errors) as TResult)!;
             }
 
-            object validationResult = typeof(ValidationResult<>)
+            var validationResult = typeof(ValidationResult<>)
                                     .GetGenericTypeDefinition()
                                     .MakeGenericType(typeof(TResult).GenericTypeArguments[0])
                                     .GetMethod(nameof(ValidationResult.WithErrors))!
