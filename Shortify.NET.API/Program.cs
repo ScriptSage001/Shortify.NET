@@ -1,8 +1,9 @@
+using Asp.Versioning.ApiExplorer;
 using Shortify.NET.API;
-using Shortify.NET.Common;
-using Shortify.NET.Persistence;
-using Shortify.NET.Infrastructure;
 using Shortify.NET.Applicaion;
+using Shortify.NET.Common;
+using Shortify.NET.Infrastructure;
+using Shortify.NET.Persistence;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,18 +20,34 @@ var builder = WebApplication.CreateBuilder(args);
 {
     var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
-    //if (app.Environment.IsDevelopment())
-    //{
-    //    app.UseSwagger();
-    //    app.UseSwaggerUI(s => s.SwaggerEndpoint("/swagger/v1/swagger.json", "Shortify.NET API V1"));
-    //}
+    #region Swagger Config
 
+    var apiVersionDescProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
+    app.UseStaticFiles();
     app.UseSwagger();
-    app.UseSwaggerUI(s => 
+    app.UseSwaggerUI(swag => 
     {
-        s.SwaggerEndpoint("/swagger/v1/swagger.json", "Shortify.NET API V1");
+        foreach (var desc in apiVersionDescProvider.ApiVersionDescriptions)
+        {
+            swag.SwaggerEndpoint(
+                $"/swagger/{desc.GroupName}/swagger.json",
+                $"Shortify.NET API - {desc.GroupName.ToUpper()}");
+        }
+
+        swag.InjectStylesheet("../swagger-ui/shortify-theme.css");
+        swag.InjectJavascript("../swagger-ui/shortify-theme.js");
+        
+        swag.DefaultModelRendering(Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Model);
+        swag.EnableDeepLinking();
+        swag.DisplayRequestDuration();
+        swag.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+        swag.EnableFilter();
+        swag.ShowExtensions();
+        swag.DocumentTitle = "Shortify.NET API Documentations";
     });
+
+    #endregion
 
     app.UseHttpsRedirection();
 

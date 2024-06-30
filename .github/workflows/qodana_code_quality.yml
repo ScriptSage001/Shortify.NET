@@ -21,7 +21,8 @@ jobs:
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2024.1
         with:
-          args: -b qodana.sarif.json,--apply-fixes
+          # args: -b qodana.sarif.json,--apply-fixes
+          args: --baseline,qodana.sarif.json
           pr-mode: false
           push-fixes: pull-request
         env:

@@ -88,14 +88,12 @@ namespace Shortify.NET.API
 
         protected string GetUser()
         {
-            var userIdClaims = User.Claims.FirstOrDefault(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase));
+            var userIdClaims = User
+                                        .Claims
+                                        .FirstOrDefault(c => 
+                                                c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase));
 
-            if (userIdClaims is null)
-            {
-                return string.Empty;
-            }
-
-            return userIdClaims.Value;
+            return userIdClaims is null ? string.Empty : userIdClaims.Value;
         }
     }
 }
