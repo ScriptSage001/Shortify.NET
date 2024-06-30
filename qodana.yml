@@ -6,6 +6,7 @@ version: "1.0"
 profile:
   name: qodana.recommended
 dotnet:
+  solution: Shortify.NET.sln
   configuration: Release
 linter: jetbrains/qodana-cdnet:2024.1-eap
 fixesStrategy: apply
