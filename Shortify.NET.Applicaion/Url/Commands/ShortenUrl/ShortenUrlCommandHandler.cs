@@ -1,5 +1,6 @@
 ﻿using Shortify.NET.Applicaion.Abstractions;
 using Shortify.NET.Applicaion.Abstractions.Repositories;
+using Shortify.NET.Applicaion.Shared;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core;
@@ -16,20 +17,25 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
 
         private readonly IShortenedUrlRepository _shortenedUrlRepository;
 
+        private readonly ICachingServices _cachingServices;
+
         /// <summary>
         /// Constructor to initialize ShortenUrlCommandHandler
         /// </summary>
         /// <param name="urlShorteningService"></param>
         /// <param name="unitOfWork"></param>
         /// <param name="shortenedUrlRepository"></param>
+        /// <param name="cachingServices"></param>
         public ShortenUrlCommandHandler(
             IUrlShorteningService urlShorteningService, 
             IUnitOfWork unitOfWork, 
-            IShortenedUrlRepository shortenedUrlRepository)
+            IShortenedUrlRepository shortenedUrlRepository,
+            ICachingServices cachingServices)
         {
             _urlShorteningService = urlShorteningService;
             _unitOfWork = unitOfWork;
             _shortenedUrlRepository = shortenedUrlRepository;
+            _cachingServices = cachingServices;
         }
 
         public async Task<Result<ShortUrl>> Handle(ShortenUrlCommand command, CancellationToken cancellationToken)
@@ -70,6 +76,9 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
                     _shortenedUrlRepository.Add(shortenedUrl);
                     await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+                    // Set in Cache
+                    await SetCache(shortenedUrl, cancellationToken);
+
                     // Return
                     return shortUrl;
                 }
@@ -86,6 +95,20 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
                     }
                 }
             }
+        }
+
+        private async Task SetCache(
+            ShortenedUrl shortenedUrl, 
+            CancellationToken cancellationToken)
+        {
+            var cacheKey = $"{Constant.Cache.Prefixes.OriginalUrls}{shortenedUrl.Code}";
+
+            await _cachingServices
+                        .SetAsync(
+                            cacheKey, 
+                            shortenedUrl.OriginalUrl, 
+                            cancellationToken,
+                            slidingExpiration: TimeSpan.FromDays(1));
         }
     }
 }

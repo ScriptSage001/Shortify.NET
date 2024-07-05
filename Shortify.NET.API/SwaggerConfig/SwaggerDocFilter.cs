@@ -70,6 +70,11 @@ namespace Shortify.NET.API.SwaggerConfig
                 {
                     Name = "\ud83d\udc64 User Management",
                     Description = "Provides endpoints for managing user-related operations."
+                },
+                new()
+                {
+                    Name = "\ud83e\uddf9 Cache Management",
+                    Description = "Provides endpoints for Cache Management."
                 }
             };
 

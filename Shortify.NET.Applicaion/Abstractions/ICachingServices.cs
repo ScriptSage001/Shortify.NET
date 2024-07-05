@@ -38,8 +38,16 @@
         /// <param name="key">The key of the cached item.</param>
         /// <param name="value">The value of the cached item.</param>
         /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <param name="absoluteExpirationRelativeToNow">The absolute expiration time relative to now.</param>
+        /// <param name="slidingExpiration">The sliding expiration time.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        Task SetAsync<T>(string key, T value, CancellationToken cancellationToken = default) where T : class;
+        Task SetAsync<T>(
+            string key, 
+            T value, 
+            CancellationToken cancellationToken = default, 
+            TimeSpan? absoluteExpirationRelativeToNow = null, 
+            TimeSpan? slidingExpiration = null)
+            where T : class;
 
         /// <summary>
         /// Removes a cached item by its key.
@@ -56,5 +64,12 @@
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         Task RemoveByPrefixAsync(string prefix, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Removes all the cached items.
+        /// </summary>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        Task ClearAllAsync(CancellationToken cancellationToken = default);
     }
 }
