@@ -1,5 +1,6 @@
 ﻿using Shortify.NET.Applicaion.Abstractions;
 using Shortify.NET.Applicaion.Abstractions.Repositories;
+using Shortify.NET.Applicaion.Shared;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core.Errors;
@@ -18,7 +19,7 @@ namespace Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl
         {
             #region GetFromCache
             
-            var cacheKey = $"Original_Url_{query.Code}";
+            var cacheKey = $"{Constant.Cache.Prefixes.OriginalUrls}{query.Code}";
             var originalUrl = await _cachingServices
                                         .GetAsync<string>(
                                             cacheKey,
@@ -48,7 +49,8 @@ namespace Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl
                         .SetAsync(
                             cacheKey, 
                             shortenedUrl.OriginalUrl, 
-                            cancellationToken);
+                            cancellationToken,
+                            slidingExpiration: TimeSpan.FromDays(1));
 
             #endregion
 

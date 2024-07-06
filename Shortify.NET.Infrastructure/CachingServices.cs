@@ -53,14 +53,29 @@ namespace Shortify.NET.Infrastructure
         /// <inheritdoc/>
         public async Task SetAsync<T>(
             string key, 
-            T value, 
-            CancellationToken cancellationToken = default) 
+            T value,
+            CancellationToken cancellationToken = default, 
+            TimeSpan? absoluteExpirationRelativeToNow = null,
+            TimeSpan? slidingExpiration = null)
             where T : class
         {
+            var options = new DistributedCacheEntryOptions();
+
+            if (absoluteExpirationRelativeToNow.HasValue)
+            {
+                options.AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow;
+            }
+
+            if (slidingExpiration.HasValue)
+            {
+                options.SlidingExpiration = slidingExpiration;
+            }
+            
             await _distributedCache
                         .SetStringAsync(
                                 key,
                                 JsonConvert.SerializeObject(value),
+                                options,
                                 cancellationToken);
 
             CacheKeys.TryAdd(key, true);
@@ -86,6 +101,15 @@ namespace Shortify.NET.Infrastructure
                                                 .Where(k => k.StartsWith(prefix))
                                                 .Select(k => RemoveAsync(k, cancellationToken));
 
+            await Task.WhenAll(removeTasks);
+        }
+        
+        /// <inheritdoc/>
+        public async Task ClearAllAsync(CancellationToken cancellationToken = default)
+        {
+            var removeTasks = CacheKeys
+                                                .Keys
+                                                .Select(k => RemoveAsync(k, cancellationToken));
             await Task.WhenAll(removeTasks);
         }
     }
