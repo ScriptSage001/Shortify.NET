@@ -12,6 +12,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
     internal sealed class LoginUsingOtpCommandHandler(
         IUserRepository userRepository,
         IOtpRepository otpRepository,
+        IRoleRepository roleRepository,
         IUnitOfWork unitOfWork,
         IAuthServices authService,
         IUserCredentialsRepository userCredentialsRepository) 
@@ -21,6 +22,8 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
         
         private readonly IOtpRepository _otpRepository = otpRepository;
 
+        private readonly IRoleRepository _roleRepository = roleRepository;
+        
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         private readonly IAuthServices _authServices = authService;
@@ -36,7 +39,7 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
                 return Result.Failure<AuthenticationResult>(email.Error);
             }
 
-            var user = await _userRepository.GetByEmailAsyncWithCredentials(email.Value, cancellationToken);
+            var user = await _userRepository.GetByEmailAsyncWithCredentialsAndRoles(email.Value, cancellationToken);
 
             if (user is null)
             {
@@ -46,7 +49,12 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
             var isOtpValid = await IsOtpValid(command, cancellationToken);
 
             if (!isOtpValid) return Result.Failure<AuthenticationResult>(DomainErrors.Otp.Invalid);
-            var authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
+            
+            var userRoleIds = user.UserRoles.Select(ur => ur.RoleId).ToList();
+            var userRoles = await _roleRepository.GetAllRoleNamesByIdsAsync(userRoleIds, cancellationToken);
+            
+            var authenticationResult = _authServices
+                .CreateToken(user.Id, user.UserName.Value, user.Email.Value, userRoles);
 
             user.UserCredentials.AddOrUpdateRefreshToken(
                 authenticationResult.RefreshToken,
@@ -57,7 +65,6 @@ namespace Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return authenticationResult;
-
         }
 
         private async Task<bool> IsOtpValid(LoginUsingOtpCommand command, CancellationToken cancellationToken = default)

@@ -64,6 +64,35 @@ namespace Shortify.NET.Persistence.Migrations
                     b.ToTable("OutboxMessageConsumer", (string)null);
                 });
 
+            modelBuilder.Entity("Shortify.NET.Core.Entites.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role", "masterdata");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Customer"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Admin"
+                        });
+                });
+
             modelBuilder.Entity("Shortify.NET.Core.Entites.ShortenedUrl", b =>
                 {
                     b.Property<Guid>("Id")
@@ -187,6 +216,28 @@ namespace Shortify.NET.Persistence.Migrations
                     b.ToTable("UserCredentials", (string)null);
                 });
 
+            modelBuilder.Entity("Shortify.NET.Core.Entites.UserRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("RowStatus")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.ToTable("UserRole", (string)null);
+                });
+
             modelBuilder.Entity("Shortify.NET.Persistence.Models.OtpDetails", b =>
                 {
                     b.Property<Guid>("Id")
@@ -238,12 +289,23 @@ namespace Shortify.NET.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Shortify.NET.Core.Entites.UserRole", b =>
+                {
+                    b.HasOne("Shortify.NET.Core.Entites.User", null)
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Shortify.NET.Core.Entites.User", b =>
                 {
                     b.Navigation("ShortenedUrls");
 
                     b.Navigation("UserCredentials")
                         .IsRequired();
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

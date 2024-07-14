@@ -8,6 +8,7 @@ namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
         string Email,
         string Password,
         string ConfirmPassword,
-        string ValidateOtpToken
+        string ValidateOtpToken,
+        string UserRole
         ) : ICommand<AuthenticationResult>;
 }

@@ -30,6 +30,7 @@ namespace Shortify.NET.Persistence
             services.AddScoped<IUserCredentialsRepository, UserCredentialsRepository>();
             services.AddScoped<IShortenedUrlRepository, ShortenedUrlRepository>();
             services.AddScoped<IOtpRepository, OtpRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
         }
 
         private static void AddServices(this IServiceCollection services)

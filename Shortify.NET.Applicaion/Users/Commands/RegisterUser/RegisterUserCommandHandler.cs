@@ -7,16 +7,20 @@ using Shortify.NET.Core;
 using Shortify.NET.Core.Entites;
 using Shortify.NET.Core.Errors;
 using Shortify.NET.Core.ValueObjects;
+using static Shortify.NET.Core.Entites.UserRole;
 
 namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
 {
     internal sealed class RegisterUserCommandHandler(
         IUserRepository userRepository,
+        IRoleRepository roleRepository,
         IUnitOfWork unitOfWork,
         IAuthServices authServices) 
         : ICommandHandler<RegisterUserCommand, AuthenticationResult>
     {
         private readonly IUserRepository _userRepository = userRepository;
+        
+        private readonly IRoleRepository _roleRepository = roleRepository;
 
         private readonly IAuthServices _authServices = authServices;
 
@@ -51,17 +55,32 @@ namespace Shortify.NET.Applicaion.Users.Commands.RegisterUser
                 userId: userId,
                 passwordHash: passwordHash,
                 passwordSalt: passwordSalt);
+            
+            var authResult = _authServices
+                .CreateToken(
+                    userId, 
+                    userName.Value.Value, 
+                    email.Value.Value,
+                    [command.UserRole]);
 
-            var authResult = _authServices.CreateToken(userId, userName.Value.Value, email.Value.Value);
-
-            newUserCredentials.AddOrUpdateRefreshToken(authResult.RefreshToken, authResult.RefreshTokenExpirationTimeUtc);
-
+            newUserCredentials
+                .AddOrUpdateRefreshToken(
+                    authResult.RefreshToken, 
+                    authResult.RefreshTokenExpirationTimeUtc);
+            
             var newUser = User.CreateUser(
                 id: userId,
                 userName: userName.Value,
                 email: email.Value,
                 userCredentials: newUserCredentials);
 
+            var role = await _roleRepository
+                .GetByNameAsync(command.UserRole, cancellationToken);
+            if (role is not null)
+            {
+                newUser.AddUserRole(Create(userId, role.Id));
+            }
+            
             _userRepository.Add(newUser);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -9,13 +9,23 @@ using Shortify.NET.Applicaion.Users.Commands.ForgetPassword;
 using Shortify.NET.Applicaion.Users.Commands.LoginUser;
 using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
 using Shortify.NET.Applicaion.Users.Commands.ResetPassword;
+using Shortify.NET.Core.Entites;
 
 namespace Shortify.NET.API.Mappers
 {
     [Mapper]
     public partial class MapperProfiles
     {
-        public partial RegisterUserCommand RegisterUserRequestToCommand(RegisterUserRequest request);
+        public RegisterUserCommand RegisterUserRequestToCommand(RegisterUserRequest request, string role)
+        {
+            return new RegisterUserCommand(
+                UserName: request.UserName,
+                Email: request.Email,
+                Password: request.Password,
+                ConfirmPassword: request.ConfirmPassword,
+                ValidateOtpToken: request.ValidateOtpToken,
+                UserRole: role);
+        }
         
         public partial RegisterUserResponse AuthResultToRegisterUserResponse(AuthenticationResult result);
         
