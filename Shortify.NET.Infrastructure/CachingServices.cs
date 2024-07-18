@@ -30,13 +30,15 @@ namespace Shortify.NET.Infrastructure
         }
 
         /// <inheritdoc/>
-        public async Task<T> GetAsync<T>(
+        public async Task<T?> GetOrAddAsync<T>(
             string key, 
-            Func<Task<T>> factory, 
+            Func<Task<T?>> factory, 
+            TimeSpan? absoluteExpirationRelativeToNow = null,
+            TimeSpan? slidingExpiration = null,
             CancellationToken cancellationToken = default) 
             where T : class
         {
-            T? cachedValue = await GetAsync<T>(key, cancellationToken);
+            var cachedValue = await GetAsync<T>(key, cancellationToken);
 
             if (cachedValue is not null)
             {
@@ -45,8 +47,16 @@ namespace Shortify.NET.Infrastructure
 
             cachedValue = await factory();
 
-            await SetAsync(key, cachedValue, cancellationToken);
-
+            if (cachedValue is not null)
+            {
+                await SetAsync(
+                    key: key, 
+                    value: cachedValue, 
+                    absoluteExpirationRelativeToNow: absoluteExpirationRelativeToNow, 
+                    slidingExpiration: slidingExpiration, 
+                    cancellationToken: cancellationToken);
+            }
+            
             return cachedValue;
         }
 
@@ -54,9 +64,9 @@ namespace Shortify.NET.Infrastructure
         public async Task SetAsync<T>(
             string key, 
             T value,
-            CancellationToken cancellationToken = default, 
             TimeSpan? absoluteExpirationRelativeToNow = null,
-            TimeSpan? slidingExpiration = null)
+            TimeSpan? slidingExpiration = null,
+            CancellationToken cancellationToken = default) 
             where T : class
         {
             var options = new DistributedCacheEntryOptions();

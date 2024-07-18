@@ -47,6 +47,8 @@
             public struct Prefixes
             {
                 public const string OriginalUrls = "Original_Url_";
+                public const string RoleByName = "Role_By_Name_";
+                public const string RoleById = "Role_By_Id_";
             }
         }
 

@@ -46,9 +46,7 @@ namespace Shortify.NET.Core.Errors
         /// </summary>
         public readonly struct User
         {
-            public static readonly Error UserNameAlreadyInUse = Error.Conflict("User.UserNameAlreadyInUse", "The specified UserName is already in use.");
-
-            public static readonly Error EmailAlreadyInUse = Error.Conflict("User.EmailAlreadyInUse", "The specified Email is already in use.");
+            public static readonly Error UserNameOrEmailAlreadyInUse = Error.Conflict("User.UserNameOrEmailAlreadyInUse", "The specified UserName or Email is already in use.");
 
             public static readonly Error UserNotFound = Error.NotFound("User.UserNotFound", "The requested user doesn't Exists.");
         }
