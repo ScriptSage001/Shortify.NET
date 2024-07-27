@@ -47,6 +47,11 @@ namespace Shortify.NET.Persistence.Configurations
                 .HasForeignKey(shortenedUrl => shortenedUrl.UserId);
 
             builder
+                .HasMany(user => user.UserRoles)
+                .WithOne()
+                .HasForeignKey(userRole => userRole.UserId);
+            
+            builder
                 .HasQueryFilter(user => user.RowStatus);
         }
     }

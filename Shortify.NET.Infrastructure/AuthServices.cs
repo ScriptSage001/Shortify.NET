@@ -52,10 +52,11 @@ namespace Shortify.NET.Infrastructure
         /// <param name="userId">The ID of the user.</param>
         /// <param name="userName">The username of the user.</param>
         /// <param name="email">The email of the user.</param>
+        /// <param name="roles">The Roles of the User</param>
         /// <returns>An AuthenticationResult containing the generated tokens and their expiration times.</returns>
-        public AuthenticationResult CreateToken(Guid userId, string userName, string email)
+        public AuthenticationResult CreateToken(Guid userId, string userName, string email, List<string> roles)
         {
-            var accessToken = GenerateAccessToken(userId, userName, email);
+            var accessToken = GenerateAccessToken(userId, userName, email, roles);
             var refreshToken = GenerateRefreshToken(out var refreshTokenExpirationTime);
 
             return new AuthenticationResult
@@ -116,6 +117,10 @@ namespace Shortify.NET.Infrastructure
             var userIdFromClaims = token.Claims.First(c => c.Type == ClaimType.UserId).Value;
             var userNameFromClaims = token.Claims.First(c => c.Type == ClaimType.UserName).Value;
             var emailFromClaims = token.Claims.First(c => c.Type == ClaimType.Email).Value;
+            var rolesFromClaims = token.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value)
+                .ToList();
 
             var userId = Guid.Parse(userIdFromClaims);
 
@@ -128,7 +133,7 @@ namespace Shortify.NET.Infrastructure
                 return Result.Failure<AuthenticationResult>(Auth.InvalidCredentials);
             }
 
-            var newAccessToken = GenerateAccessToken(userId, userNameFromClaims, emailFromClaims);
+            var newAccessToken = GenerateAccessToken(userId, userNameFromClaims, emailFromClaims, rolesFromClaims);
             var newRefreshToken = GenerateRefreshToken(out var expirationTime);
 
             userCredentials.AddOrUpdateRefreshToken(newRefreshToken, expirationTime);
@@ -202,11 +207,12 @@ namespace Shortify.NET.Infrastructure
         /// </summary>
         /// <param name="userId">The ID of the user.</param>
         /// <param name="userName">The username of the user.</param>
-        /// <param name="email">The email of the user.</param>
+        /// <param name="email">The email of the user.</param>\
+        /// <param name="roles">The Roles if the User.</param>
         /// <returns>
         /// A JWT access token.
         /// </returns>
-        private string GenerateAccessToken(Guid userId, string userName, string email)
+        private string GenerateAccessToken(Guid userId, string userName, string email, List<string> roles)
         {
             List<Claim> claims =
             [
@@ -216,6 +222,12 @@ namespace Shortify.NET.Infrastructure
                 new Claim(ClaimType.TokenType, ClaimTypeValue.AccessToken)
             ];
 
+            claims
+                .AddRange(
+                    roles
+                        .Select(role => 
+                            new Claim(ClaimTypes.Role, role)));
+            
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Secret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
 

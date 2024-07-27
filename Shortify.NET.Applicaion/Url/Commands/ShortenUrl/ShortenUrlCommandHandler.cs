@@ -107,7 +107,7 @@ namespace Shortify.NET.Applicaion.Url.Commands.ShortenUrl
                         .SetAsync(
                             cacheKey, 
                             shortenedUrl.OriginalUrl, 
-                            cancellationToken,
+                            cancellationToken: cancellationToken,
                             slidingExpiration: TimeSpan.FromDays(1));
         }
     }

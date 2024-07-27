@@ -16,13 +16,13 @@ namespace Shortify.NET.Persistence.Repository
         /// Common Method to Reduce Repetitive Querying Logic
         /// </summary>
         /// <param name="predicate"></param>
-        /// <param name="includeExpression"></param>
+        /// <param name="includeExpressions"></param>
         /// <param name="asNoTracking"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         private async Task<User?> GetUserAsync(
             Expression<Func<User, bool>> predicate, 
-            Expression<Func<User, object>>? includeExpression = null,
+            IEnumerable<Expression<Func<User, object>>>? includeExpressions = null,
             bool asNoTracking = false,
             CancellationToken cancellationToken = default)
         {
@@ -33,9 +33,11 @@ namespace Shortify.NET.Persistence.Repository
                 query.AsNoTracking();
             }
 
-            if (includeExpression is not null)
+            if (includeExpressions is not null)
             {
-                query = query.Include(includeExpression);
+                query = includeExpressions
+                    .Aggregate(query, (current, includeExpression) => 
+                        current.Include(includeExpression));
             }
 
             return await query.FirstOrDefaultAsync(predicate, cancellationToken);
@@ -66,39 +68,60 @@ namespace Shortify.NET.Persistence.Repository
         public async Task<User?> GetByEmailAsyncWithCredentials(Email email, CancellationToken cancellationToken = default)
             => await GetUserAsync(
                             user => user.Email == email, 
-                            user => user.UserCredentials,
+                            [user => user.UserCredentials],
                             cancellationToken: cancellationToken);
 
         public async Task<User?> GetByUserNameAsyncWithCredentials(UserName userName, CancellationToken cancellationToken = default)
             => await GetUserAsync(
                             user => user.UserName == userName,
-                            user => user.UserCredentials,
+                            [user => user.UserCredentials],
                             cancellationToken: cancellationToken);
 
         public async Task<User?> GetByIdAsyncWithCredentials(Guid id, CancellationToken cancellationToken = default)
             => await GetUserAsync(
                             user => user.Id == id,
-                            user => user.UserCredentials,
+                            [user => user.UserCredentials],
                             cancellationToken: cancellationToken);
 
         public async Task<User?> GetByIdAsyncWithShortenedUrls(Guid id, CancellationToken cancellationToken = default)
             => await GetUserAsync(
                             user => user.Id == id,
-                            user => user.ShortenedUrls,
+                            [user => user.ShortenedUrls],
                             cancellationToken: cancellationToken);
 
         public async Task<User?> GetByUserNameAsyncWithShortenedUrls(UserName userName, CancellationToken cancellationToken = default)
             => await GetUserAsync(
                             user => user.UserName == userName,
-                            user => user.ShortenedUrls,
+                            [user => user.ShortenedUrls],
                             cancellationToken: cancellationToken);
 
         public async Task<User?> GetByEmailAsyncWithShortenedUrls(Email email, CancellationToken cancellationToken = default)
             => await GetUserAsync(
                             user => user.Email == email,
-                            user => user.ShortenedUrls,
+                            [user => user.ShortenedUrls],
                             cancellationToken: cancellationToken);
 
+        public async Task<User?> GetByEmailAsyncWithCredentialsAndRoles(Email email, CancellationToken cancellationToken = default)
+            => await GetUserAsync(
+                user => user.Email == email, 
+                [user => user.UserCredentials,
+                user => user.UserRoles],
+                cancellationToken: cancellationToken);
+
+        public async Task<User?> GetByUserNameAsyncWithCredentialsAndRoles(UserName userName, CancellationToken cancellationToken = default)
+            => await GetUserAsync(
+                user => user.UserName == userName,
+                [user => user.UserCredentials,
+                 user => user.UserRoles],
+                cancellationToken: cancellationToken);
+
+        public async Task<User?> GetByIdAsyncWithCredentialsAndRoles(Guid id, CancellationToken cancellationToken = default)
+            => await GetUserAsync(
+                user => user.Id == id,
+                [user => user.UserCredentials,
+                 user => user.UserRoles],
+                cancellationToken: cancellationToken);
+        
         public async Task<bool> IsEmailUniqueAsync(Email email, CancellationToken cancellationToken = default)
             => !await _appDbContext
                             .Set<User>()

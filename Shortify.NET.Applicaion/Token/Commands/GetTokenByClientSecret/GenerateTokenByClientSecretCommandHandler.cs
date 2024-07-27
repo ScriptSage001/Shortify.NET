@@ -12,6 +12,7 @@ namespace Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret
     internal sealed class GenerateTokenByClientSecretCommandHandler(
         IUserRepository userRepository,
         IUserCredentialsRepository userCredentialsRepository,
+        IRoleRepository roleRepository,
         IAuthServices authServices,
         IUnitOfWork unitOfWork) 
         : ICommandHandler<GenerateTokenByClientSecretCommand, AuthenticationResult>
@@ -19,6 +20,8 @@ namespace Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret
         private readonly IUserRepository _userRepository = userRepository;
 
         private readonly IUserCredentialsRepository _userCredentialsRepository = userCredentialsRepository;
+        
+        private readonly IRoleRepository _roleRepository = roleRepository;
 
         private readonly IAuthServices _authServices = authServices;
 
@@ -47,7 +50,11 @@ namespace Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret
                 return Result.Failure<AuthenticationResult>(DomainErrors.UserCredentials.WrongCredentials);
             }
 
-            var authenticationResult = _authServices.CreateToken(user.Id, user.UserName.Value, user.Email.Value);
+            var userRoleIds = user.UserRoles.Select(ur => ur.RoleId).ToList();
+            var userRoles = await _roleRepository.GetAllRoleNamesByIdsAsync(userRoleIds, cancellationToken);
+            
+            var authenticationResult = _authServices
+                .CreateToken(user.Id, user.UserName.Value, user.Email.Value, userRoles);
 
             user.UserCredentials.AddOrUpdateRefreshToken(
                                 authenticationResult.RefreshToken,

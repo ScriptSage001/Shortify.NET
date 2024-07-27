@@ -15,6 +15,15 @@
             internal const string OutboxMessage = nameof(OutboxMessage);
 
             internal const string OutboxMessageConsumer = nameof(OutboxMessageConsumer);
+            
+            internal const string Role = nameof(Role);
+            
+            internal const string UserRole = nameof(UserRole);
+        }
+
+        internal struct TableSchema
+        {
+            internal const string MasterData = "masterdata";
         }
     }
 }
