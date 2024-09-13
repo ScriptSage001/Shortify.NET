@@ -2,7 +2,7 @@
 
 namespace Shortify.NET.Applicaion.Url.Queries.GetAllShortenedUrls
 {
-    public class GetAllShortenedUrlsQueryValidator : AbstractValidator<GetAllShortenedUrlsQuery>
+    public class GetAllShortenedUrlsQueryValidator : AbstractValidator<GetShortenedUrlsQuery>
     {
         public GetAllShortenedUrlsQueryValidator()
         {

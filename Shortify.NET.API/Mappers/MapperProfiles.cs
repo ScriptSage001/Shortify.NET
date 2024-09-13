@@ -5,11 +5,12 @@ using Shortify.NET.Applicaion.Shared.Models;
 using Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret;
 using Shortify.NET.Applicaion.Token.Commands.RefreshToken;
 using Shortify.NET.Applicaion.Url.Commands.ShortenUrl;
+using Shortify.NET.Applicaion.Url.Commands.UpdateUrl;
 using Shortify.NET.Applicaion.Users.Commands.ForgetPassword;
 using Shortify.NET.Applicaion.Users.Commands.LoginUser;
 using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
 using Shortify.NET.Applicaion.Users.Commands.ResetPassword;
-using Shortify.NET.Core.Entites;
+using Shortify.NET.Common.FunctionalTypes;
 
 namespace Shortify.NET.API.Mappers
 {
@@ -67,6 +68,8 @@ namespace Shortify.NET.API.Mappers
 
         public partial ShortenedUrlResponse ShortenedUrlDtoToResponse(ShortenedUrlDto dtos);
 
-        public partial List<ShortenedUrlResponse> ShortenedUrlDtoListToResponseList(List<ShortenedUrlDto> dtos);
+        public partial PagedList<ShortenedUrlResponse> ShortenedUrlDtoListToResponseList(PagedList<ShortenedUrlDto> dtos);
+
+        public partial UpdateShortenedUrlCommand UpdateShortenedUrlRequestToCommand(UpdateShortenedUrlRequest request);
     }
 }

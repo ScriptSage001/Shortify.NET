@@ -80,6 +80,14 @@ namespace Shortify.NET.Core.Entites
             return shortenedUrl;
         }
 
+        public void Update(
+            string? title,
+            List<string>? tags)
+        {
+            this.Title = title;
+            this.Tags = tags;
+        }
+        
         #endregion
     }
 }

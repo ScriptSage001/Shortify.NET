@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shortify.NET.Applicaion.Abstractions.Repositories;
+using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Core.Entites;
 using System.Linq.Expressions;
+using static Shortify.NET.Persistence.Constants.RepositoryConstants.SortConstants;
 
 namespace Shortify.NET.Persistence.Repository
 {
@@ -79,6 +81,60 @@ namespace Shortify.NET.Persistence.Repository
                             .Set<ShortenedUrl>()
                             .AnyAsync(url => url.Code == code, cancellationToken);
         }
+
+        public async Task<PagedList<ShortenedUrl>?> GetByIdWithFilterAndSort(
+            Guid userId, 
+            string? searchTerm, 
+            string? sortColumn, 
+            string? sortOrder, 
+            int page, 
+            int pageSize, 
+            CancellationToken cancellationToken = default)
+        {
+            IQueryable<ShortenedUrl> query = _appDbContext
+                                                .Set<ShortenedUrl>()
+                                                .AsNoTracking()
+                                                .Where(x => x.UserId == userId);
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(url =>
+                                       (url.Title != null && url.Title.Contains(searchTerm)) ||
+                                       (url.Tags != null && url.Tags.Contains(searchTerm)));
+            }
+
+            var sortExpression = GetSortProperty(sortColumn);
+            query = sortOrder?.ToLower() == SortOrder.Descending
+                ? query.OrderByDescending(sortExpression)
+                : query.OrderBy(sortExpression);
+
+            var totalCount = await query.CountAsync(cancellationToken);
+            var items = await query
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToListAsync(cancellationToken);
+
+            var urls = new PagedList<ShortenedUrl>(
+                items: items, 
+                page: page, 
+                pageSize: pageSize, 
+                totalCount: totalCount);
+
+            return urls;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private static Expression<Func<ShortenedUrl, object>> GetSortProperty(string? sortColumn) => 
+            sortColumn?.ToLower() switch
+            {
+                SortProperty.Title => url => url.Title ?? string.Empty,
+                SortProperty.CreatedOn => url => url.CreatedOnUtc,
+                SortProperty.UpdatedOn => url => url.UpdatedOnUtc ?? DateTime.MinValue,
+                _ => url => url.Id
+            };
 
         #endregion
     }
