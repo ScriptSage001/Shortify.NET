@@ -6,12 +6,17 @@ namespace Shortify.NET.Core.Entites
 {
     public sealed class User : Entity, IAuditable
     {
-        #region Feilds
+        #region Fields
 
         /// <summary>
         /// Private field for readonly Shortened Urls list
         /// </summary>
         private readonly List<ShortenedUrl> _shortenedUrls = [];
+
+        /// <summary>
+        /// Private field for readonly UserRole list
+        /// </summary>
+        private readonly List<UserRole> _userRoles = [];
 
         #endregion
 
@@ -61,6 +66,8 @@ namespace Shortify.NET.Core.Entites
         public bool RowStatus { get; set; }
 
         public IReadOnlyCollection<ShortenedUrl> ShortenedUrls => _shortenedUrls;
+        
+        public IReadOnlyCollection<UserRole> UserRoles => _userRoles;
 
         public UserCredentials UserCredentials { get; private set; }
 
@@ -109,6 +116,24 @@ namespace Shortify.NET.Core.Entites
             _shortenedUrls.Add(shortenedUrl);
         }
 
+        /// <summary>
+        /// Adds a new user role to the user's collection
+        /// </summary>
+        /// <param name="userRole"></param>
+        public void AddUserRole(UserRole userRole)
+        {
+            _userRoles.Add(userRole);
+        }
+        
+        /// <summary>
+        /// Adds a range of user roles to the user's collection
+        /// </summary>
+        /// <param name="userRoles"></param>
+        public void AddUserRoles(List<UserRole> userRoles)
+        {
+            _userRoles.AddRange(userRoles);
+        }
+        
         #endregion
     }
 }

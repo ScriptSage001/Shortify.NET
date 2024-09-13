@@ -23,6 +23,12 @@ namespace Shortify.NET.Applicaion.Abstractions.Repositories
 
         Task<User?> GetByEmailAsyncWithShortenedUrls(Email email, CancellationToken cancellationToken = default);
 
+        Task<User?> GetByIdAsyncWithCredentialsAndRoles(Guid id, CancellationToken cancellationToken = default);
+
+        Task<User?> GetByUserNameAsyncWithCredentialsAndRoles(UserName userName, CancellationToken cancellationToken = default);
+
+        Task<User?> GetByEmailAsyncWithCredentialsAndRoles(Email email, CancellationToken cancellationToken = default);
+        
         Task<bool> IsEmailUniqueAsync(Email email, CancellationToken cancellationToken = default);
 
         Task<bool> IsUserNameUniqueAsync(UserName userName, CancellationToken cancellationToken = default);

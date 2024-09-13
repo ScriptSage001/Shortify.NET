@@ -26,10 +26,18 @@
         /// <param name="key">The key of the cached item.</param>
         /// <param name="factory">A function to create the item if it does not exist in the cache.</param>
         /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <param name="absoluteExpirationRelativeToNow">The absolute expiration time relative to now.</param>
+        /// <param name="slidingExpiration">The sliding expiration time.</param>
         /// <returns>
-        /// A task that represents the asynchronous operation. The task result contains the cached item.
+        /// A task that represents the asynchronous operation. The task result contains the cached item
+        /// or null in case of unavailability on the DB also.
         /// </returns>
-        Task<T> GetAsync<T>(string key, Func<Task<T>> factory, CancellationToken cancellationToken = default) where T : class;
+        Task<T?> GetOrAddAsync<T>(
+            string key, 
+            Func<Task<T?>> factory, 
+            TimeSpan? absoluteExpirationRelativeToNow = null,
+            TimeSpan? slidingExpiration = null,
+            CancellationToken cancellationToken = default) where T : class; 
 
         /// <summary>
         /// Adds or updates a cached item with the specified key and value.
@@ -37,9 +45,17 @@
         /// <typeparam name="T">The type of the item to be cached.</typeparam>
         /// <param name="key">The key of the cached item.</param>
         /// <param name="value">The value of the cached item.</param>
+        /// <param name="absoluteExpirationRelativeToNow">The absolute expiration time relative to now.</param>
+        /// <param name="slidingExpiration">The sliding expiration time.</param>
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        Task SetAsync<T>(string key, T value, CancellationToken cancellationToken = default) where T : class;
+        Task SetAsync<T>(
+            string key, 
+            T value,
+            TimeSpan? absoluteExpirationRelativeToNow = null, 
+            TimeSpan? slidingExpiration = null,
+            CancellationToken cancellationToken = default)
+            where T : class;
 
         /// <summary>
         /// Removes a cached item by its key.
@@ -56,5 +72,12 @@
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         Task RemoveByPrefixAsync(string prefix, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Removes all the cached items.
+        /// </summary>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        Task ClearAllAsync(CancellationToken cancellationToken = default);
     }
 }

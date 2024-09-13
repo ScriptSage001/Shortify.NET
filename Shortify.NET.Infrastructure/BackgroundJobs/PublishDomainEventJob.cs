@@ -1,13 +1,12 @@
-﻿using Polly.Retry;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Polly;
 using Quartz;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Common.Messaging.Outbox;
 using Shortify.NET.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
-namespace Shortify.NET.Infrastructure.BackgroudJobs
+namespace Shortify.NET.Infrastructure.BackgroundJobs
 {
     [DisallowConcurrentExecution]
     public class PublishDomainEventJob(

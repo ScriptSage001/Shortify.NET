@@ -5,6 +5,7 @@ using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
 using Shortify.NET.Applicaion.Token.Commands.RevokeToken;
 using Shortify.NET.Common.Messaging.Abstractions;
+using Shortify.NET.Core.Enums;
 
 namespace Shortify.NET.API.Controllers.V1
 {
@@ -53,7 +54,7 @@ namespace Shortify.NET.API.Controllers.V1
         [ProducesResponseType(typeof(ProblemDetails), statusCode: StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
-            var command = _mapper.RegisterUserRequestToCommand(request);
+            var command = _mapper.RegisterUserRequestToCommand(request, nameof(Roles.Customer));
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
@@ -62,6 +63,34 @@ namespace Shortify.NET.API.Controllers.V1
                     Created(nameof(RegisterUser), _mapper.AuthResultToRegisterUserResponse(response.Value));
         }
 
+        /// <summary>
+        /// Registers a new admin user. 
+        /// Only an Admin User can register another Admin User. 
+        /// </summary>
+        /// <param name="request">The request containing user registration details.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A response indicating the result of the registration.</returns>
+        /// <response code="201">The user was successfully registered.</response>
+        /// <response code="400">The request is invalid.</response>
+        /// <response code="409">The request is conflicting with existing User.</response>
+        /// <response code="401">The request contains an invalid ValidateOtpToken.</response>
+        [Authorize(Roles = "Admin")]
+        [HttpPost("register/admin")]
+        [ProducesResponseType(typeof(RegisterUserResponse), statusCode: StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), statusCode: StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), statusCode: StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), statusCode: StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> RegisterAdminUser([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
+        {
+            var command = _mapper.RegisterUserRequestToCommand(request, nameof(Roles.Admin));
+
+            var response = await _apiService.SendAsync(command, cancellationToken);
+
+            return response.IsFailure ?
+                HandleFailure(response) :
+                Created(nameof(RegisterUser), _mapper.AuthResultToRegisterUserResponse(response.Value));
+        }
+        
         #endregion
 
         #region Login

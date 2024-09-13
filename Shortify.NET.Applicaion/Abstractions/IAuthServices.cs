@@ -29,8 +29,9 @@ namespace Shortify.NET.Applicaion.Abstractions
         /// <param name="userId">The ID of the user.</param>
         /// <param name="userName">The username of the user.</param>
         /// <param name="email">The email of the user.</param>
+        /// <param name="roles">The Roles of the User</param>
         /// <returns>An AuthenticationResult containing the generated tokens and their expiration times.</returns>
-        AuthenticationResult CreateToken(Guid userId, string userName, string email);
+        AuthenticationResult CreateToken(Guid userId, string userName, string email, List<string>  roles);
 
         /// <summary>
         /// Refreshes the access and refresh tokens using the provided tokens.

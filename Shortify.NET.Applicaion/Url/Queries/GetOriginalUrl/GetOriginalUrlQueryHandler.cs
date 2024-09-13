@@ -1,5 +1,6 @@
 ﻿using Shortify.NET.Applicaion.Abstractions;
 using Shortify.NET.Applicaion.Abstractions.Repositories;
+using Shortify.NET.Applicaion.Shared;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core.Errors;
@@ -16,43 +17,20 @@ namespace Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl
 
         public async Task<Result<string>> Handle(GetOriginalUrlQuery query, CancellationToken cancellationToken)
         {
-            #region GetFromCache
+            var cacheKey = $"{Constant.Cache.Prefixes.OriginalUrls}{query.Code}";
             
-            var cacheKey = $"Original_Url_{query.Code}";
             var originalUrl = await _cachingServices
-                                        .GetAsync<string>(
-                                            cacheKey,
-                                            cancellationToken);
-
-            #endregion
-
-            if (originalUrl is not null)
-            {
-                return originalUrl;
-            }
-
-            #region GetFromDB
-
-            var shortenedUrl = await _shortenedUrlRepository.GetByCodeAsync(query.Code, cancellationToken);
-
-            #endregion
-
-            if (shortenedUrl == null)
-            {
-                return Result.Failure<string>(DomainErrors.ShortenedUrl.ShortenedUrlNotFound);
-            }
-
-            #region SetCache
-
-            await _cachingServices
-                        .SetAsync(
-                            cacheKey, 
-                            shortenedUrl.OriginalUrl, 
-                            cancellationToken);
-
-            #endregion
-
-            return shortenedUrl.OriginalUrl;
+                .GetOrAddAsync<string>(
+                    cacheKey,
+                    factory: async () => 
+                        (await _shortenedUrlRepository
+                            .GetByCodeAsync(query.Code, cancellationToken))?
+                        .OriginalUrl,
+                    cancellationToken: cancellationToken,
+                    slidingExpiration: TimeSpan.FromDays(1));
+            
+            return originalUrl ?? 
+                   Result.Failure<string>(DomainErrors.ShortenedUrl.ShortenedUrlNotFound);
         }
     }
 }

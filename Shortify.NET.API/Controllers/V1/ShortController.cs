@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
+using Shortify.NET.Applicaion.Url.Commands.DeleteUrl;
 using Shortify.NET.Applicaion.Url.Queries.GetAllShortenedUrls;
 using Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl;
 using Shortify.NET.Applicaion.Url.Queries.ShortenedUrl;
@@ -41,7 +42,9 @@ namespace Shortify.NET.API.Controllers.V1
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ShortenUrl([FromBody] ShortenUrlRequest request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ShortenUrl(
+            [FromBody] ShortenUrlRequest request, 
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(request.Url))
             {
@@ -101,19 +104,33 @@ namespace Shortify.NET.API.Controllers.V1
         }
 
         /// <summary>
-        /// Gets all shortened URLs of the current user.
+        /// Gets shortened URLs of the current user.
+        /// Search the URLs based on the Title or any Tag or a fraction of them.
+        /// Sort by Title, CreatedOn, UpdatedOn in Ascending or Descending Order. Default sort is Ascending on Id.
+        /// Paginated Response with Total Count.
         /// </summary>
+        /// <param name="searchTerm">Search term can be the Title or any Tag or a fraction of them. Nullable.</param>
+        /// <param name="sortColumn">Column to Sort the response on. Nullable. Default sort will be on Id.</param>
+        /// <param name="sortOrder">Can be "desc" or null. Default is ascending.</param>
+        /// <param name="page">Page No. Mandatory.</param>
+        /// <param name="pageSize">Page Size. Mandatory.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A list of shortened URLs.</returns>
+        /// <returns>A paged list of shortened URLs.</returns>
         /// <response code="200">Retrieved all shortened URLs successfully.</response>
         /// <response code="401">Unauthorized request.</response>
         /// <response code="500">An error occurred while retrieving the shortened URLs.</response>
         [Authorize]
-        [HttpGet("getAll")]
-        [ProducesResponseType(typeof(ShortenedUrlResponse), statusCode: StatusCodes.Status200OK)]
+        [HttpGet()]
+        [ProducesResponseType(typeof(PagedList<ShortenedUrlResponse>), statusCode: StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllShortenedUrls(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetShortenedUrls(
+            string? searchTerm,
+            string? sortColumn,
+            string? sortOrder,
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken = default)
         {
             var userId = GetUser();
 
@@ -122,7 +139,13 @@ namespace Shortify.NET.API.Controllers.V1
                 return HandleUnauthorizedRequest(); 
             }
 
-            var query = new GetAllShortenedUrlsQuery(userId);
+            var query = new GetShortenedUrlsQuery(
+                UserId: userId,
+                SearchTerm: searchTerm,
+                SortColumn: sortColumn,
+                SortOrder: sortOrder,
+                Page: page,
+                PageSize: pageSize);
 
             var response = await _apiService.RequestAsync(query, cancellationToken);
 
@@ -180,6 +203,72 @@ namespace Shortify.NET.API.Controllers.V1
             return responseById.IsFailure ?
                 HandleFailure(responseById) :
                 Ok(_mapper.ShortenedUrlDtoToResponse(responseById.Value));
+        }
+        
+        /// <summary>
+        /// Deletes a shortened URL by its identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the shortened URL to delete.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> indicating the result of the delete operation.
+        /// If successful, returns a 200 OK with a success message.
+        /// If the operation fails, returns the appropriate error response.
+        /// </returns>
+        /// <response code="200">If the shortened URL was deleted successfully.</response>
+        /// <response code="400">If the request is invalid.</response>
+        /// <response code="404">If the shortened URL with the specified ID was not found.</response>
+        /// <response code="500">If an internal server error occurs.</response>
+        [Authorize]
+        [HttpDelete("{id:guid}")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteShortenedUrl(
+            Guid id,
+            CancellationToken cancellationToken = default)
+        {
+            var command = new DeleteShortenedUrlByIdCommand(id);
+            var response = await _apiService.SendAsync(command, cancellationToken);
+
+            return response.IsFailure ? 
+                HandleFailure(response) : 
+                Ok("Shortened URL deleted successfully!");
+        }
+
+        /// <summary>
+        /// Updates Title and Tags of a shortened URL by its identifier.
+        /// </summary>
+        /// <param name="request">Update shortened URL request having identifier, title and tags.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> indicating the result of the delete operation.
+        /// If successful, returns a 200 OK with a success message.
+        /// If the operation fails, returns the appropriate error response.
+        /// </returns>
+        /// <response code="200">If the shortened URL was updated successfully.</response>
+        /// <response code="400">If the request is invalid.</response>
+        /// <response code="404">If the shortened URL with the specified ID was not found.</response>
+        /// <response code="500">If an internal server error occurs.</response>
+        [Authorize]
+        [HttpPut("update")]
+        [ProducesResponseType(typeof(ShortenedUrlResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateShortenedUrl(
+            [FromBody] UpdateShortenedUrlRequest request, 
+            CancellationToken cancellationToken = default)
+        {
+            var command = _mapper.UpdateShortenedUrlRequestToCommand(request);
+            var response = await _apiService.SendAsync(command, cancellationToken);
+            
+            return response.IsFailure ?
+                HandleFailure(response) :
+                Ok(_mapper.ShortenedUrlDtoToResponse(response.Value));
         }
         
         #endregion

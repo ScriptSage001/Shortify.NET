@@ -26,17 +26,24 @@ namespace Shortify.NET.Infrastructure
 
             return cachedValue is null ? 
                         null : 
-                        JsonConvert.DeserializeObject<T>(cachedValue);
+                        JsonConvert.DeserializeObject<T>(
+                            cachedValue,
+                            new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            });
         }
 
         /// <inheritdoc/>
-        public async Task<T> GetAsync<T>(
+        public async Task<T?> GetOrAddAsync<T>(
             string key, 
-            Func<Task<T>> factory, 
+            Func<Task<T?>> factory, 
+            TimeSpan? absoluteExpirationRelativeToNow = null,
+            TimeSpan? slidingExpiration = null,
             CancellationToken cancellationToken = default) 
             where T : class
         {
-            T? cachedValue = await GetAsync<T>(key, cancellationToken);
+            var cachedValue = await GetAsync<T>(key, cancellationToken);
 
             if (cachedValue is not null)
             {
@@ -45,22 +52,50 @@ namespace Shortify.NET.Infrastructure
 
             cachedValue = await factory();
 
-            await SetAsync(key, cachedValue, cancellationToken);
-
+            if (cachedValue is not null)
+            {
+                await SetAsync(
+                    key: key, 
+                    value: cachedValue, 
+                    absoluteExpirationRelativeToNow: absoluteExpirationRelativeToNow, 
+                    slidingExpiration: slidingExpiration, 
+                    cancellationToken: cancellationToken);
+            }
+            
             return cachedValue;
         }
 
         /// <inheritdoc/>
         public async Task SetAsync<T>(
             string key, 
-            T value, 
+            T value,
+            TimeSpan? absoluteExpirationRelativeToNow = null,
+            TimeSpan? slidingExpiration = null,
             CancellationToken cancellationToken = default) 
             where T : class
         {
+            var options = new DistributedCacheEntryOptions();
+
+            if (absoluteExpirationRelativeToNow.HasValue)
+            {
+                options.AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow;
+            }
+
+            if (slidingExpiration.HasValue)
+            {
+                options.SlidingExpiration = slidingExpiration;
+            }
+            
             await _distributedCache
                         .SetStringAsync(
                                 key,
-                                JsonConvert.SerializeObject(value),
+                                JsonConvert.SerializeObject(
+                                    value,
+                                    new JsonSerializerSettings
+                                    {
+                                        TypeNameHandling = TypeNameHandling.All
+                                    }),
+                                options,
                                 cancellationToken);
 
             CacheKeys.TryAdd(key, true);
@@ -86,6 +121,15 @@ namespace Shortify.NET.Infrastructure
                                                 .Where(k => k.StartsWith(prefix))
                                                 .Select(k => RemoveAsync(k, cancellationToken));
 
+            await Task.WhenAll(removeTasks);
+        }
+        
+        /// <inheritdoc/>
+        public async Task ClearAllAsync(CancellationToken cancellationToken = default)
+        {
+            var removeTasks = CacheKeys
+                                                .Keys
+                                                .Select(k => RemoveAsync(k, cancellationToken));
             await Task.WhenAll(removeTasks);
         }
     }

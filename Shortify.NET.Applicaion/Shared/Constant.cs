@@ -2,6 +2,8 @@
 {
     public static class Constant
     {
+        #region  EmailConstants
+
         /// <summary>
         /// Constants related to Emails
         /// </summary>
@@ -29,5 +31,27 @@
                 public const string PasswordChanged = "Your Password for Shortify.NET is changed";
             }
         }
+
+        #endregion
+        
+        #region  Cache Constants
+
+        /// <summary>
+        /// Constants related to Cache
+        /// </summary>
+        public struct Cache
+        {
+            /// <summary>
+            /// Cache Key Prefixes
+            /// </summary>
+            public struct Prefixes
+            {
+                public const string OriginalUrls = "Original_Url_";
+                public const string RoleByName = "Role_By_Name_";
+                public const string RoleById = "Role_By_Id_";
+            }
+        }
+
+        #endregion
     }
 }
