@@ -12,12 +12,12 @@
         /// </summary>
         /// <param name="id">Role Entity Identifier of type INT</param>
         /// <param name="name">Role Name</param>
-        private Role(int id, string name)
+        public Role(int id, string name)
         {
             Id = id;
             Name = name;
         }
-        
+
         #endregion
 
         #region Properties

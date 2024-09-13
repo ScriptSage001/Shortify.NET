@@ -26,7 +26,12 @@ namespace Shortify.NET.Infrastructure
 
             return cachedValue is null ? 
                         null : 
-                        JsonConvert.DeserializeObject<T>(cachedValue);
+                        JsonConvert.DeserializeObject<T>(
+                            cachedValue,
+                            new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            });
         }
 
         /// <inheritdoc/>
@@ -84,7 +89,12 @@ namespace Shortify.NET.Infrastructure
             await _distributedCache
                         .SetStringAsync(
                                 key,
-                                JsonConvert.SerializeObject(value),
+                                JsonConvert.SerializeObject(
+                                    value,
+                                    new JsonSerializerSettings
+                                    {
+                                        TypeNameHandling = TypeNameHandling.All
+                                    }),
                                 options,
                                 cancellationToken);
 

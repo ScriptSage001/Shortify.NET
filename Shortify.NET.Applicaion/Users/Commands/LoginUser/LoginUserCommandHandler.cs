@@ -45,7 +45,7 @@ namespace Shortify.NET.Applicaion.Users.Commands.LoginUser
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The authentication result.</returns>
         public async Task<Result<AuthenticationResult>> Handle(LoginUserCommand command, CancellationToken cancellationToken)
-        {
+         {
             var (user, error) = await GetUserAsync(command, cancellationToken);
             if (user is null) return Result.Failure<AuthenticationResult>(error ?? DomainErrors.User.UserNotFound);
 
