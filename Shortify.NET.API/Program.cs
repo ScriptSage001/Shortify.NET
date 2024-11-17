@@ -56,6 +56,8 @@ var builder = WebApplication.CreateBuilder(args);
 
     app.UseExceptionHandler(_ => { });
 
+    app.UseCors("AllowShortifyUI");
+    
     app.MapControllers();
     app.Run();
 }
