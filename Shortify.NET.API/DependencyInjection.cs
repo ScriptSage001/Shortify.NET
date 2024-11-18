@@ -114,7 +114,7 @@ namespace Shortify.NET.API
                     else
                     {
                         policy
-                            .AllowAnyHeader()
+                            .AllowAnyOrigin()
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     }
