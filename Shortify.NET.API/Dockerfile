@@ -10,7 +10,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Shortify.NET.API/Shortify.NET.API.csproj", "Shortify.NET.API/"]
-COPY ["Shortify.NET.Applicaion/Shortify.NET.Applicaion.csproj", "Shortify.NET.Applicaion/"]
+COPY ["Shortify.NET.Application/Shortify.NET.Application.csproj", "Shortify.NET.Application/"]
 COPY ["Shortify.NET.Core/Shortify.NET.Core.csproj", "Shortify.NET.Core/"]
 COPY ["Shortify.NET.Common/Shortify.NET.Common.csproj", "Shortify.NET.Common/"]
 COPY ["Shortify.NET.Infrastructure/Shortify.NET.Infrastructure.csproj", "Shortify.NET.Infrastructure/"]
