@@ -2,8 +2,8 @@
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using Shortify.NET.Applicaion.Abstractions;
-using Shortify.NET.Applicaion.Shared.Models;
+using Shortify.NET.Application.Abstractions;
+using Shortify.NET.Application.Shared.Models;
 using Shortify.NET.Infrastructure.Helpers;
 
 namespace Shortify.NET.Infrastructure

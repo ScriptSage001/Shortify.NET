@@ -1,6 +1,6 @@
 using Asp.Versioning.ApiExplorer;
 using Shortify.NET.API;
-using Shortify.NET.Applicaion;
+using Shortify.NET.Application;
 using Shortify.NET.Common;
 using Shortify.NET.Infrastructure;
 using Shortify.NET.Persistence;
@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services
                 .AddApi(builder.Configuration)
-                .AddShortifyNetCommon(Shortify.NET.Applicaion.AssemblyReference.Assembly)
+                .AddShortifyNetCommon(Shortify.NET.Application.AssemblyReference.Assembly)
                 .AddPersistence(builder.Configuration)
                 .AddInfrastructure(builder.Configuration)
                 .AddApplication(builder.Configuration);
@@ -20,6 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 {
     var app = builder.Build();
 
+    app.UseCors("AllowShortifyUI");
+    
     #region Swagger Config
 
     var apiVersionDescProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
@@ -55,7 +57,7 @@ var builder = WebApplication.CreateBuilder(args);
     app.UseAuthorization();
 
     app.UseExceptionHandler(_ => { });
-
+    
     app.MapControllers();
     app.Run();
 }

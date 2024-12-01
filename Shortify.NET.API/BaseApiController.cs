@@ -6,7 +6,7 @@ using Shortify.NET.Common.Messaging.Abstractions;
 namespace Shortify.NET.API
 {
     /// <summary>
-    /// Base ApiController with Genric Features
+    /// Base ApiController with Generic Features
     /// </summary>
     [ApiController]
     public abstract class BaseApiController(IApiService apiService) 
@@ -15,13 +15,14 @@ namespace Shortify.NET.API
         protected readonly IApiService _apiService = apiService;
 
         /// <summary>
-        /// Handles Failure Scenarios to Genarate
-        /// Standard Machine-Readabble ProblemDetails
+        /// Handles Failure Scenarios to Generate
+        /// Standard Machine-Readable ProblemDetails
         /// </summary>
         /// <param name="result"></param>
+        /// <param name="isRedirectToErrorPage"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        protected IActionResult HandleFailure(Result result)
+        protected IActionResult HandleFailure(Result result, bool isRedirectToErrorPage = false)
         {
             if (result.IsSuccess)
             {
@@ -50,8 +51,14 @@ namespace Shortify.NET.API
                     ErrorType.Validation => StatusCodes.Status400BadRequest,
                     ErrorType.Conflict => StatusCodes.Status409Conflict,
                     ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+                    ErrorType.Gone => StatusCodes.Status410Gone,
                     _ => StatusCodes.Status500InternalServerError
                 };
+
+                if (isRedirectToErrorPage)
+                {
+                    return Redirect($"/error/{statusCode}"); 
+                }
 
                 return Problem(
                         statusCode: statusCode,
@@ -86,6 +93,10 @@ namespace Shortify.NET.API
             return ValidationProblem(modelStateDictionary);
         }
 
+        /// <summary>
+        /// Gets the userId from the Tokens claim
+        /// </summary>
+        /// <returns></returns>
         protected string GetUser()
         {
             var userIdClaims = User

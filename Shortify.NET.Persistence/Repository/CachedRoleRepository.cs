@@ -1,7 +1,7 @@
-﻿using Shortify.NET.Applicaion.Abstractions;
-using Shortify.NET.Applicaion.Abstractions.Repositories;
+﻿using Shortify.NET.Application.Abstractions;
+using Shortify.NET.Application.Abstractions.Repositories;
 using Shortify.NET.Core.Entites;
-using static Shortify.NET.Applicaion.Shared.Constant;
+using static Shortify.NET.Application.Shared.Constant;
 
 namespace Shortify.NET.Persistence.Repository
 {

@@ -19,6 +19,7 @@ namespace Shortify.NET.API
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwagger();
+            services.AddCorsPolicy(configuration);
             
             return services;
         }
@@ -52,7 +53,9 @@ namespace Shortify.NET.API
                                 configuration.GetSection("AppSettings:Secret").Value!)),
                         ValidateIssuer = true,
                         ValidIssuer = configuration.GetSection("AppSettings:Issuer").Value,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
                     });
         }
         
@@ -93,6 +96,31 @@ namespace Shortify.NET.API
                 swag.IncludeXmlComments(xmlPath);
                 
                 swag.DocumentFilter<SwaggerDocFilter>();
+            });
+        }
+        
+        private static void AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowShortifyUI", policy =>
+                {
+                    var origins = configuration.GetSection("AllowedClients").Get<string[]>();
+                    if (origins is not null)
+                    {
+                        policy
+                            .WithOrigins(origins)
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    }
+                    else
+                    {
+                        policy
+                            .AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    }
+                });
             });
         }
     }

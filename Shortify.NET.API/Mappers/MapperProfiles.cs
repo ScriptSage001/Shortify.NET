@@ -1,15 +1,15 @@
 ﻿using Riok.Mapperly.Abstractions;
 using Shortify.NET.API.Contracts;
-using Shortify.NET.Applicaion.Otp.Commands.LoginUsingOtp;
-using Shortify.NET.Applicaion.Shared.Models;
-using Shortify.NET.Applicaion.Token.Commands.GetTokenByClientSecret;
-using Shortify.NET.Applicaion.Token.Commands.RefreshToken;
-using Shortify.NET.Applicaion.Url.Commands.ShortenUrl;
-using Shortify.NET.Applicaion.Url.Commands.UpdateUrl;
-using Shortify.NET.Applicaion.Users.Commands.ForgetPassword;
-using Shortify.NET.Applicaion.Users.Commands.LoginUser;
-using Shortify.NET.Applicaion.Users.Commands.RegisterUser;
-using Shortify.NET.Applicaion.Users.Commands.ResetPassword;
+using Shortify.NET.Application.Otp.Commands.LoginUsingOtp;
+using Shortify.NET.Application.Shared.Models;
+using Shortify.NET.Application.Token.Commands.GetTokenByClientSecret;
+using Shortify.NET.Application.Token.Commands.RefreshToken;
+using Shortify.NET.Application.Url.Commands.ShortenUrl;
+using Shortify.NET.Application.Url.Commands.UpdateUrl;
+using Shortify.NET.Application.Users.Commands.ForgetPassword;
+using Shortify.NET.Application.Users.Commands.LoginUser;
+using Shortify.NET.Application.Users.Commands.RegisterUser;
+using Shortify.NET.Application.Users.Commands.ResetPassword;
 using Shortify.NET.Common.FunctionalTypes;
 
 namespace Shortify.NET.API.Mappers

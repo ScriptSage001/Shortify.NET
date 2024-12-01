@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.6.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.6" />
-    <PackageReference Include="MimeKit" Version="4.6.0" />
+    <PackageReference Include="MimeKit" Version="4.8.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Polly" Version="8.4.0" />
     <PackageReference Include="Quartz" Version="3.9.0" />
@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shortify.NET.Applicaion\Shortify.NET.Applicaion.csproj" />
+    <ProjectReference Include="..\Shortify.NET.Application\Shortify.NET.Application.csproj" />
     <ProjectReference Include="..\Shortify.NET.Persistence\Shortify.NET.Persistence.csproj" />
   </ItemGroup>
 

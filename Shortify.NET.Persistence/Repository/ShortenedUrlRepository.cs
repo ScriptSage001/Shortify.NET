@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Shortify.NET.Applicaion.Abstractions.Repositories;
+using Shortify.NET.Application.Abstractions.Repositories;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Core.Entites;
 using System.Linq.Expressions;
@@ -94,7 +94,9 @@ namespace Shortify.NET.Persistence.Repository
             IQueryable<ShortenedUrl> query = _appDbContext
                                                 .Set<ShortenedUrl>()
                                                 .AsNoTracking()
-                                                .Where(x => x.UserId == userId);
+                                                .Where(x => 
+                                                    x.UserId == userId &&
+                                                    x.RowStatus);
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {

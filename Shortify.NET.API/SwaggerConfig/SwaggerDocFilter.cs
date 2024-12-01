@@ -31,7 +31,8 @@ namespace Shortify.NET.API.SwaggerConfig
                                           "<li><strong>URL Shortening</strong> \u2702\ufe0f: Efficiently shorten URLs to make them more " +
                                           "manageable and shareable, without sacrificing functionality.</li>\n      " +
                                           "<li><strong>User Management</strong> \ud83d\udc64: Administer user-related operations, including " +
-                                          "creating, updating, and deleting user accounts.</li>\n    </ul>\n    " +
+                                          "creating, updating, and deleting user accounts.</li>\n      " +
+                                          "<li><strong>Error Endpoints</strong> \u2757: Provides endpoints for handling and managing error responses.</li>\n    </ul>\n    " +
                                           "<h2>Coming Soon</h2>\n    " +
                                           "<p>We are constantly improving Shortify.NET. In future updates, we plan to introduce URL hit " +
                                           "tracking to provide detailed analytics on how your shortened URLs are being accessed and utilized.</p>\n    " +
@@ -75,6 +76,11 @@ namespace Shortify.NET.API.SwaggerConfig
                 {
                     Name = "\ud83e\uddf9 Cache Management",
                     Description = "Provides endpoints for Cache Management."
+                },
+                new()
+                {
+                    Name = "\u2757 Error Endpoints",
+                    Description = "Provides endpoints for handling and managing error responses."
                 }
             };
 

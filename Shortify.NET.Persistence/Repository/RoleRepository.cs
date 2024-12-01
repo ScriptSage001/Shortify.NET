@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Shortify.NET.Applicaion.Abstractions.Repositories;
+using Shortify.NET.Application.Abstractions.Repositories;
 using Shortify.NET.Core.Entites;
 
 namespace Shortify.NET.Persistence.Repository

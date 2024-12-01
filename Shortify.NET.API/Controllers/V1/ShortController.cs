@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
-using Shortify.NET.Applicaion.Url.Commands.DeleteUrl;
-using Shortify.NET.Applicaion.Url.Queries.GetAllShortenedUrls;
-using Shortify.NET.Applicaion.Url.Queries.GetOriginalUrl;
-using Shortify.NET.Applicaion.Url.Queries.ShortenedUrl;
+using Shortify.NET.Application.Url.Commands.DeleteUrl;
+using Shortify.NET.Application.Url.Queries.GetAllShortenedUrls;
+using Shortify.NET.Application.Url.Queries.GetOriginalUrl;
+using Shortify.NET.Application.Url.Queries.ShortenedUrl;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 
@@ -99,7 +99,7 @@ namespace Shortify.NET.API.Controllers.V1
             var response = await _apiService.RequestAsync(query, cancellationToken);
 
             return response.IsFailure ?
-                    HandleFailure(response) :
+                    HandleFailure(response, true) :
                     Redirect(response.Value);
         }
 

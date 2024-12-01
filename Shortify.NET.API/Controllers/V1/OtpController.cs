@@ -1,10 +1,11 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
-using Shortify.NET.Applicaion.Otp.Commands.SendOtp;
-using Shortify.NET.Applicaion.Otp.Commands.ValidateOtp;
+using Shortify.NET.Application.Otp.Commands.SendOtp;
+using Shortify.NET.Application.Otp.Commands.ValidateOtp;
+using Shortify.NET.Application.Users.Queries.IsEmailUnique;
 using Shortify.NET.Common.Messaging.Abstractions;
-using static Shortify.NET.Applicaion.Shared.Constant.EmailConstants;
+using static Shortify.NET.Application.Shared.Constant.EmailConstants;
 
 namespace Shortify.NET.API.Controllers.V1
 {
@@ -42,14 +43,30 @@ namespace Shortify.NET.API.Controllers.V1
             {
                 return HandleNullOrEmptyRequest();
             }
+            
+            var isEmailUnique = await _apiService
+                                                    .RequestAsync(
+                                                        new IsEmailUniqueQuery(email), 
+                                                        cancellationToken);
 
-            var command = new SendOtpCommand(email, OtpType.VerifyEmail);
+            if (isEmailUnique.Value)
+            {
+                var command = new SendOtpCommand(email, OtpType.VerifyEmail);
 
-            var response = await _apiService.SendAsync(command, cancellationToken);
+                var response = await _apiService.SendAsync(command, cancellationToken);
 
-            return response.IsFailure ?
-                        HandleFailure(response) :
-                        Ok("Otp sent successfully.");
+                return response.IsFailure ?
+                    HandleFailure(response) :
+                    Ok("Otp sent successfully.");
+            }
+            else
+            {
+                return Problem(
+                    statusCode: StatusCodes.Status409Conflict,
+                    type: "Conflict",
+                    title: "Email already exists.",
+                    detail: "Existing user, please login.");
+            }
         }
 
         /// <summary>

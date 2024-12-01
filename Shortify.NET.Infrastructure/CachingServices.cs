@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
-using Shortify.NET.Applicaion.Abstractions;
+using Shortify.NET.Application.Abstractions;
 using System.Collections.Concurrent;
 
 namespace Shortify.NET.Infrastructure

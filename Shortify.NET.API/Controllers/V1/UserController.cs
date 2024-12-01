@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
-using Shortify.NET.Applicaion.Users.Queries.GetUserById;
+using Shortify.NET.Application.Users.Queries.GetUserById;
 using Shortify.NET.Common.Messaging.Abstractions;
 
 namespace Shortify.NET.API.Controllers.V1
