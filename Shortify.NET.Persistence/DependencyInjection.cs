@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shortify.NET.Applicaion.Abstractions.Repositories;
+using Shortify.NET.Application.Abstractions.Repositories;
 using Shortify.NET.Core;
 using Shortify.NET.Persistence.Repository;
 

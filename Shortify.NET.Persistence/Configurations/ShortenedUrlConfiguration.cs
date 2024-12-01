@@ -27,9 +27,6 @@ namespace Shortify.NET.Persistence.Configurations
             builder
                 .HasIndex(shortenedUrl => shortenedUrl.Code)
                 .IsUnique();
-
-            builder
-                .HasQueryFilter(shortenedUrl => shortenedUrl.RowStatus);
         }
     }
 }

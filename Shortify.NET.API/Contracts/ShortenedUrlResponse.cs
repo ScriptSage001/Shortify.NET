@@ -9,6 +9,7 @@
             string? Title,
             List<string>? Tags,
             DateTime CreatedOnUtc,
-            DateTime? UpdatedOnUtc
+            DateTime? UpdatedOnUtc,
+            bool RowStatus
         );
 }

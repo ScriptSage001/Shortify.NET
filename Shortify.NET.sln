@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shortify.NET.API", "Shortify.NET.API\Shortify.NET.API.csproj", "{8A26324F-9E39-4220-ACFB-9F41D0A9DC5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shortify.NET.Applicaion", "Shortify.NET.Applicaion\Shortify.NET.Applicaion.csproj", "{14F482A7-0ED8-4A79-ACBE-6A0E4729428D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shortify.NET.Application", "Shortify.NET.Application\Shortify.NET.Application.csproj", "{14F482A7-0ED8-4A79-ACBE-6A0E4729428D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shortify.NET.Core", "Shortify.NET.Core\Shortify.NET.Core.csproj", "{63598DCF-39E5-40BF-8AEA-322A887E321B}"
 EndProject

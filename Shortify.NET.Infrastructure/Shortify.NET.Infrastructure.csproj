@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shortify.NET.Applicaion\Shortify.NET.Applicaion.csproj" />
+    <ProjectReference Include="..\Shortify.NET.Application\Shortify.NET.Application.csproj" />
     <ProjectReference Include="..\Shortify.NET.Persistence\Shortify.NET.Persistence.csproj" />
   </ItemGroup>
 

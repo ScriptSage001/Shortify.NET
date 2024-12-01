@@ -73,6 +73,7 @@ namespace Shortify.NET.Core.Errors
         public readonly struct ShortenedUrl
         {
             public static readonly Error ShortenedUrlNotFound = Error.NotFound("ShortenedUrl.NotFound", "The specified short url does not exists.");
+            public static readonly Error ShortenedUrlIsGone = Error.Gone("ShortenedUrl.Gone", "The specified short url is permanently gone.");
         }
     }
 }

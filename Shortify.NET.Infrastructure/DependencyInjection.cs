@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
-using Shortify.NET.Applicaion.Abstractions;
+using Shortify.NET.Application.Abstractions;
 using Shortify.NET.Infrastructure.Helpers;
 using Shortify.NET.Infrastructure.Idempotence;
 

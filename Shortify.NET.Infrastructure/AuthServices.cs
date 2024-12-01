@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Shortify.NET.Applicaion.Abstractions;
-using Shortify.NET.Applicaion.Abstractions.Repositories;
-using Shortify.NET.Applicaion.Shared.Models;
+using Shortify.NET.Application.Abstractions;
+using Shortify.NET.Application.Abstractions.Repositories;
+using Shortify.NET.Application.Shared.Models;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Core;
 using Shortify.NET.Infrastructure.Helpers;
@@ -258,7 +258,7 @@ namespace Shortify.NET.Infrastructure
         /// </returns>
         private string GenerateRefreshToken(out DateTime expirationTime)
         {
-            expirationTime = DateTime.UtcNow.AddMinutes(
+            expirationTime = DateTime.UtcNow.AddDays(
                                  _appSettings.RefreshTokenExpirationTimeInDays == 0 ?
                                     7 : _appSettings.RefreshTokenExpirationTimeInDays);
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
-using Shortify.NET.Applicaion.Abstractions;
-using Shortify.NET.Applicaion.Abstractions.Repositories;
+using Shortify.NET.Application.Abstractions;
+using Shortify.NET.Application.Abstractions.Repositories;
 using Shortify.NET.Infrastructure.Helpers;
 using System.Text;
 

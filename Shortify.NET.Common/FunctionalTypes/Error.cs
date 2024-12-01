@@ -26,6 +26,7 @@
         public static Error NotFound(string code, string message) => new(code, message, ErrorType.NotFound);
         public static Error Unauthorized(string code, string message) => new(code, message, ErrorType.Unauthorized);
         public static Error Forbidden(string code, string message) => new(code, message, ErrorType.Forbidden);
+        public static Error Gone(string code, string message) => new(code, message, ErrorType.Gone);
     }
 
     /// <summary>
@@ -40,6 +41,7 @@
         NotFound,
         Unauthorized,
         Forbidden,
+        Gone,
         None
     }
 }

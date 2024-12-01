@@ -1,9 +1,9 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shortify.NET.Applicaion.Cache.Commands.ClearAll;
-using Shortify.NET.Applicaion.Cache.Commands.ClearByPrefix;
-using Shortify.NET.Applicaion.Shared;
+using Shortify.NET.Application.Cache.Commands.ClearAll;
+using Shortify.NET.Application.Cache.Commands.ClearByPrefix;
+using Shortify.NET.Application.Shared;
 using Shortify.NET.Common.Messaging.Abstractions;
 
 namespace Shortify.NET.API.Controllers.V1

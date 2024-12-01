@@ -53,7 +53,9 @@ namespace Shortify.NET.API
                                 configuration.GetSection("AppSettings:Secret").Value!)),
                         ValidateIssuer = true,
                         ValidIssuer = configuration.GetSection("AppSettings:Issuer").Value,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
                     });
         }
         

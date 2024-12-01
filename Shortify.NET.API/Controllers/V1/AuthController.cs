@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
-using Shortify.NET.Applicaion.Token.Commands.RevokeToken;
+using Shortify.NET.Application.Token.Commands.RevokeToken;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core.Enums;
 
