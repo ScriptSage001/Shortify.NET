@@ -105,9 +105,10 @@ namespace Shortify.NET.API
             {
                 options.AddPolicy("AllowShortifyUI", policy =>
                 {
-                    var origins = configuration.GetSection("AllowedClients").Get<string[]>();
-                    if (origins is not null)
+                    var origin = configuration.GetSection("AllowedClients").Get<string>();
+                    if (origin is not null)
                     {
+                        var origins = origin.Split(",");
                         policy
                             .WithOrigins(origins)
                             .AllowAnyHeader()
