@@ -5,6 +5,7 @@ namespace Shortify.NET.Application.Url.Commands.UpdateUrl
 {
     public record UpdateShortenedUrlCommand(
         Guid Id,
+        string OriginalUrl,
         string? Title,
         List<string>? Tags)
         : ICommand<ShortenedUrlDto>;

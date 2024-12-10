@@ -87,6 +87,8 @@ namespace Shortify.NET.Persistence.Repository
             string? searchTerm, 
             string? sortColumn, 
             string? sortOrder, 
+            DateTime? fromDate,
+            DateTime? toDate,
             int page, 
             int pageSize, 
             CancellationToken cancellationToken = default)
@@ -103,6 +105,11 @@ namespace Shortify.NET.Persistence.Repository
                 query = query.Where(url =>
                                        (url.Title != null && url.Title.Contains(searchTerm)) ||
                                        (url.Tags != null && url.Tags.Contains(searchTerm)));
+            }
+
+            if (fromDate is not null && toDate is not null)
+            {
+                query = query.Where(url => url.CreatedOnUtc >= fromDate && url.CreatedOnUtc <= toDate);
             }
 
             var sortExpression = GetSortProperty(sortColumn);

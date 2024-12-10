@@ -19,7 +19,9 @@ namespace Shortify.NET.Application.Abstractions.Repositories
             Guid id,
             string? searchTerm,
             string? sortColumn,
-            string? sortOrder,
+            string? sortOrder, 
+            DateTime? fromDate,
+            DateTime? toDate,
             int page,
             int pageSize,
             CancellationToken cancellationToken = default);

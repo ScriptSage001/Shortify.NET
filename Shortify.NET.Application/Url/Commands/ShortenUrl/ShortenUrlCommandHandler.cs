@@ -1,6 +1,7 @@
 ﻿using Shortify.NET.Application.Abstractions;
 using Shortify.NET.Application.Abstractions.Repositories;
 using Shortify.NET.Application.Shared;
+using Shortify.NET.Application.Shared.Models;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core;
@@ -102,11 +103,22 @@ namespace Shortify.NET.Application.Url.Commands.ShortenUrl
             CancellationToken cancellationToken)
         {
             var cacheKey = $"{Constant.Cache.Prefixes.OriginalUrls}{shortenedUrl.Code}";
+            var cacheItem = new ShortenedUrlDto(
+                                    shortenedUrl.Id, 
+                                    shortenedUrl.UserId, 
+                                    shortenedUrl.OriginalUrl, 
+                                    shortenedUrl.ShortUrl.Value, 
+                                    shortenedUrl.Code,
+                                    shortenedUrl.Title,
+                                    shortenedUrl.Tags,
+                                    shortenedUrl.CreatedOnUtc,
+                                    shortenedUrl.UpdatedOnUtc,
+                                    shortenedUrl.RowStatus);
 
             await _cachingServices
                         .SetAsync(
-                            cacheKey, 
-                            shortenedUrl.OriginalUrl, 
+                            cacheKey,
+                            cacheItem, 
                             cancellationToken: cancellationToken,
                             slidingExpiration: TimeSpan.FromDays(1));
         }

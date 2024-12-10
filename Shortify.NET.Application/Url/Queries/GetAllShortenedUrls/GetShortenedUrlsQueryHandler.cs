@@ -21,6 +21,8 @@ namespace Shortify.NET.Application.Url.Queries.GetAllShortenedUrls
                     query.SearchTerm,
                     query.SortColumn,
                     query.SortOrder,
+                    query.FromDate,
+                    query.ToDate,
                     query.Page,
                     query.PageSize,
                     cancellationToken);

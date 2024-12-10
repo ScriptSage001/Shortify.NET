@@ -81,9 +81,11 @@ namespace Shortify.NET.Core.Entites
         }
 
         public void Update(
+            string originalUrl,
             string? title,
             List<string>? tags)
         {
+            this.OriginalUrl = originalUrl;
             this.Title = title;
             this.Tags = tags;
         }

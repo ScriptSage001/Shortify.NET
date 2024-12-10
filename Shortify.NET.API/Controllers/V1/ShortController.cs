@@ -112,6 +112,8 @@ namespace Shortify.NET.API.Controllers.V1
         /// <param name="searchTerm">Search term can be the Title or any Tag or a fraction of them. Nullable.</param>
         /// <param name="sortColumn">Column to Sort the response on. Nullable. Default sort will be on Id.</param>
         /// <param name="sortOrder">Can be "desc" or null. Default is ascending.</param>
+        /// <param name="fromDate">Starting Range of CreatedOnUtc for filtering. Nullable.</param>
+        /// <param name="toDate">Ending Range of CreatedOnUtc for filtering. Nullable.</param>
         /// <param name="page">Page No. Mandatory.</param>
         /// <param name="pageSize">Page Size. Mandatory.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -128,6 +130,8 @@ namespace Shortify.NET.API.Controllers.V1
             string? searchTerm,
             string? sortColumn,
             string? sortOrder,
+            DateTime? fromDate,
+            DateTime? toDate,
             int page,
             int pageSize,
             CancellationToken cancellationToken = default)
@@ -144,6 +148,8 @@ namespace Shortify.NET.API.Controllers.V1
                 SearchTerm: searchTerm,
                 SortColumn: sortColumn,
                 SortOrder: sortOrder,
+                FromDate: fromDate,
+                ToDate: toDate,
                 Page: page,
                 PageSize: pageSize);
 
@@ -263,6 +269,15 @@ namespace Shortify.NET.API.Controllers.V1
             [FromBody] UpdateShortenedUrlRequest request, 
             CancellationToken cancellationToken = default)
         {
+            if(!Uri.TryCreate(request.OriginalUrl, UriKind.Absolute, out _))
+            {
+                return HandleFailure(
+                    Result.Failure(
+                        Error.Validation(
+                            "Error.ValidationError", 
+                            "The specified Original URL is not valid.")));
+            }
+            
             var command = _mapper.UpdateShortenedUrlRequestToCommand(request);
             var response = await _apiService.SendAsync(command, cancellationToken);
             

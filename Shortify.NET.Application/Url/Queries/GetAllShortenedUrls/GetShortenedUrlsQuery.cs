@@ -9,6 +9,8 @@ namespace Shortify.NET.Application.Url.Queries.GetAllShortenedUrls
         string? SearchTerm,
         string? SortColumn,
         string? SortOrder,
+        DateTime? FromDate,
+        DateTime? ToDate,
         int Page,
         int PageSize) 
         : IQuery<PagedList<ShortenedUrlDto>>;
