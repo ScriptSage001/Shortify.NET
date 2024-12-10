@@ -23,7 +23,7 @@ namespace Shortify.NET.Application.Url.Commands.UpdateUrl
 
             if (url is null) return Result.Failure<ShortenedUrlDto>(DomainErrors.ShortenedUrl.ShortenedUrlNotFound);
             
-            url.Update(command.Title, command.Tags);
+            url.Update(command.OriginalUrl, command.Title, command.Tags);
             _shortenedUrlRepository.Update(url);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
