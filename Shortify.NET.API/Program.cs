@@ -1,4 +1,5 @@
 using Asp.Versioning.ApiExplorer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Shortify.NET.API;
 using Shortify.NET.Application;
 using Shortify.NET.Common;
@@ -51,6 +52,11 @@ var builder = WebApplication.CreateBuilder(args);
 
     #endregion
 
+    app.UseForwardedHeaders(new ForwardedHeadersOptions()
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    });
+    
     app.UseHttpsRedirection();
 
     app.UseAuthentication();
