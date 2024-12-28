@@ -31,8 +31,8 @@ namespace Shortify.NET.Application.Url.Queries.GetAllShortenedUrls
             {
                 return Result
                         .Failure<PagedList<ShortenedUrlDto>>(
-                            Error.NotFound(
-                                "ShortenedUrl.NotFound", 
+                            Error.NoContent(
+                                "ShortenedUrl.NotContent", 
                                 "No Shortened Url is available for this User."));
             }
 
