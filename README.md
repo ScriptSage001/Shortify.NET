@@ -87,7 +87,7 @@ docker run -d -p 5000:80 \
 <br>
 
 <p>3. Access the Swagger UI:</p>
-Visit <a href="http://localhost:5000/swagger/index.html">http://localhost:5000/swagger/index.html</a> to explore the API.
+Visit <a target="_blank" href="http://localhost:5000/swagger/index.html">http://localhost:5000/swagger/index.html</a> to explore the API.
 
 <br><br>
 <h3>Local Development</h3>
@@ -140,15 +140,15 @@ dotnet run
 <br>
 
 <p>5. Access the Swagger UI:</p>
-<p>Swagger UI will be available at <a href="http://localhost:5000/swagger/index.html">http://localhost:5000/swagger/index.html</a> or the port specified in the console logs.</p>
+<p>Swagger UI will be available at <a target="_blank" href="http://localhost:5000/swagger/index.html">http://localhost:5000/swagger/index.html</a> or the port specified in the console logs.</p>
 
 <br>
 
 <h2>📚 API Documentation</h2>
 The API is fully documented using Swagger. Access the live documentation here:
 
-- [Swagger UI](https://shortify-net.onrender.com/swagger/index.html)
-- [Swagger JSON](https://shortify-net.onrender.com/swagger/v1/swagger.json)
+- <a target="_blank" href="https://shortify-net.onrender.com/swagger/index.html">Swagger UI</a>
+- <a target="_blank" href="https://shortify-net.onrender.com/swagger/v1/swagger.json">Swagger JSON</a>
 
 <br>
 
