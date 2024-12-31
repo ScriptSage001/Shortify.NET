@@ -27,6 +27,8 @@
         public static Error Unauthorized(string code, string message) => new(code, message, ErrorType.Unauthorized);
         public static Error Forbidden(string code, string message) => new(code, message, ErrorType.Forbidden);
         public static Error Gone(string code, string message) => new(code, message, ErrorType.Gone);
+        public static Error NoContent(string code, string message) => new(code, message, ErrorType.NoContent);
+        public static Error BadRequest(string code, string message) => new(code, message, ErrorType.BadRequest);
     }
 
     /// <summary>
@@ -42,6 +44,8 @@
         Unauthorized,
         Forbidden,
         Gone,
+        NoContent,
+        BadRequest,
         None
     }
 }

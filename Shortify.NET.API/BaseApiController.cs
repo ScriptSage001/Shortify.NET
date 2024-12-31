@@ -49,15 +49,22 @@ namespace Shortify.NET.API
                 {
                     ErrorType.NotFound => StatusCodes.Status404NotFound,
                     ErrorType.Validation => StatusCodes.Status400BadRequest,
+                    ErrorType.BadRequest => StatusCodes.Status400BadRequest,
                     ErrorType.Conflict => StatusCodes.Status409Conflict,
                     ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
                     ErrorType.Gone => StatusCodes.Status410Gone,
+                    ErrorType.NoContent => StatusCodes.Status204NoContent,
                     _ => StatusCodes.Status500InternalServerError
                 };
 
                 if (isRedirectToErrorPage)
                 {
                     return Redirect($"/error/{statusCode}"); 
+                }
+
+                if (statusCode == StatusCodes.Status204NoContent)
+                {
+                    return NoContent();
                 }
 
                 return Problem(

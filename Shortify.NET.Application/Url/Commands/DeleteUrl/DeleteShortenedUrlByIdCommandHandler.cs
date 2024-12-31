@@ -1,7 +1,10 @@
-﻿using Shortify.NET.Application.Abstractions.Repositories;
+﻿using Shortify.NET.Application.Abstractions;
+using Shortify.NET.Application.Abstractions.Repositories;
+using Shortify.NET.Application.Shared;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
 using Shortify.NET.Core;
+using Shortify.NET.Core.Entites;
 using Shortify.NET.Core.Errors;
 
 namespace Shortify.NET.Application.Url.Commands.DeleteUrl;
@@ -11,10 +14,12 @@ namespace Shortify.NET.Application.Url.Commands.DeleteUrl;
 /// </summary>
 internal sealed class DeleteShortenedUrlByIdCommandHandler(
     IShortenedUrlRepository shortenedUrlRepository,
+    ICachingServices cachingServices,
     IUnitOfWork unitOfWork)
     : ICommandHandler<DeleteShortenedUrlByIdCommand>
 {
     private readonly IShortenedUrlRepository _shortenedUrlRepository = shortenedUrlRepository;
+    private readonly ICachingServices _cachingServices = cachingServices;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     /// <summary>
@@ -29,8 +34,15 @@ internal sealed class DeleteShortenedUrlByIdCommandHandler(
         if (url is null) return Result.Failure(DomainErrors.ShortenedUrl.ShortenedUrlNotFound);
         
         _shortenedUrlRepository.Delete(url);
+        await RemoveFromCacheAsync(url, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
+    }
+
+    private async Task RemoveFromCacheAsync(ShortenedUrl shortenedUrl, CancellationToken cancellationToken)
+    {
+        var cacheKey = $"{Constant.Cache.Prefixes.OriginalUrls}{shortenedUrl.Code}";
+        await _cachingServices.RemoveAsync(cacheKey, cancellationToken);
     }
 }

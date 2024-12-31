@@ -56,7 +56,7 @@ namespace Shortify.NET.Core.Errors
         /// </summary>
         public readonly struct UserCredentials
         {
-            public static readonly Error WrongCredentials = Error.Unauthorized("User.WrongCredentials", "The specified credentials are wrong.");
+            public static readonly Error WrongCredentials = Error.BadRequest("User.WrongCredentials", "The specified credentials are wrong.");
         }
 
         /// <summary>
