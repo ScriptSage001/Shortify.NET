@@ -13,7 +13,11 @@ namespace Shortify.NET.Application.Abstractions.Repositories
 
         Task<ShortenedUrl?> GetByCodeAsync(string code, CancellationToken cancellationToken = default);
 
-        Task<List<ShortenedUrl>?> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+        Task<List<ShortenedUrl>?> GetAllByUserIdAsync(
+            Guid userId, 
+            DateTime? fromDate,
+            DateTime? toDate, 
+            CancellationToken cancellationToken = default);
 
         Task<PagedList<ShortenedUrl>?> GetByIdWithFilterAndSort(
             Guid id,

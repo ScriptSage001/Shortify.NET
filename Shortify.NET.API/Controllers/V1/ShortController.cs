@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Shortify.NET.API.Contracts;
 using Shortify.NET.API.Mappers;
 using Shortify.NET.Application.Url.Commands.DeleteUrl;
+using Shortify.NET.Application.Url.Queries.CanCreateShortUrl;
 using Shortify.NET.Application.Url.Queries.GetAllShortenedUrls;
 using Shortify.NET.Application.Url.Queries.GetOriginalUrl;
 using Shortify.NET.Application.Url.Queries.ShortenedUrl;
@@ -67,13 +68,31 @@ namespace Shortify.NET.API.Controllers.V1
                 return HandleUnauthorizedRequest();
             }
 
+            var canCreate = true;
+            
+            if(!IsUserAdmin())
+            {
+                canCreate = (await _apiService
+                                        .RequestAsync(new CanCreateShortLinkQuery(userId), cancellationToken))
+                                        .Value;
+            }
+
+            if (!canCreate)
+            {
+                return HandleFailure(
+                    Result.Failure(
+                        Error.BadRequest(
+                            "Error.LimitReached",
+                            "Monthly limit of 10 short links reached.")));
+            }
+            
             var command = _mapper.ShortenUrlRequestToCommand(request, userId, HttpContext.Request);
 
             var response = await _apiService.SendAsync(command, cancellationToken);
 
             return response.IsFailure ?
-                    HandleFailure(response) :
-                    Created(nameof(ShortenUrl), response.Value.Value);
+                HandleFailure(response) :
+                Created(nameof(ShortenUrl), response.Value.Value);
         }
 
         /// <summary>
