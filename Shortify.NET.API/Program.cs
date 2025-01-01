@@ -59,6 +59,8 @@ var builder = WebApplication.CreateBuilder(args);
     
     app.UseHttpsRedirection();
 
+    app.UseRateLimiter();
+
     app.UseAuthentication();
     app.UseAuthorization();
 

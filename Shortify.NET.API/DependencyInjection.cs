@@ -1,10 +1,13 @@
-﻿using System.Reflection;
+﻿using System.Net;
+using System.Reflection;
 using System.Text;
+using System.Threading.RateLimiting;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Shortify.NET.API.Helpers;
 using Shortify.NET.API.SwaggerConfig;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -20,6 +23,7 @@ namespace Shortify.NET.API
             services.AddEndpointsApiExplorer();
             services.AddSwagger();
             services.AddCorsPolicy(configuration);
+            services.AddRateLimiting(configuration);
             
             return services;
         }
@@ -121,6 +125,47 @@ namespace Shortify.NET.API
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     }
+                });
+            });
+        }
+
+        private static void AddRateLimiting(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddRateLimiter(options =>
+            {
+                options.OnRejected = (context, cancellationToken) =>
+                {
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                    context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.", cancellationToken);
+                    return new ValueTask(); 
+                };
+                
+                options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                {
+                    var remoteIpAddress = context.Connection.RemoteIpAddress;
+
+                    if (IPAddress.IsLoopback(remoteIpAddress!))
+                        return RateLimitPartition.GetNoLimiter(IPAddress.Loopback.ToString());
+                    
+                    var rateLimiterOptions = configuration
+                                                .GetSection("RateLimiterOptions")
+                                                .Get<RateLimiterOptions>();
+                    
+                    if (rateLimiterOptions is not null)
+                    {
+                        return RateLimitPartition.GetSlidingWindowLimiter(
+                            remoteIpAddress?.ToString()!, 
+                            _ =>
+                                new SlidingWindowRateLimiterOptions
+                                {
+                                    PermitLimit = rateLimiterOptions.PermitLimit,
+                                    Window = TimeSpan.FromSeconds(rateLimiterOptions.WindowInSeconds),
+                                    SegmentsPerWindow = rateLimiterOptions.SegmentsPerWindow,
+                                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                                    QueueLimit = rateLimiterOptions.QueueLimit
+                                });
+                    }
+                    return RateLimitPartition.GetNoLimiter(IPAddress.Loopback.ToString());
                 });
             });
         }
