@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Shortify.NET.Common.FunctionalTypes;
 using Shortify.NET.Common.Messaging.Abstractions;
@@ -112,6 +113,21 @@ namespace Shortify.NET.API
                                                 c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase));
 
             return userIdClaims is null ? string.Empty : userIdClaims.Value;
+        }
+        
+        /// <summary>
+        /// Checks if the user is an Admin User
+        /// </summary>
+        /// <returns></returns>
+        protected bool IsUserAdmin()
+        {
+            var isUserAdmin = User
+                                    .Claims
+                                    .Any(c => 
+                                        c.Type.Equals(ClaimTypes.Role, StringComparison.OrdinalIgnoreCase) && 
+                                        c.Value == "Admin");
+
+            return isUserAdmin;
         }
     }
 }

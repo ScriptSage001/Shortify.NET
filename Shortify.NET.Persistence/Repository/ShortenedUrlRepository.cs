@@ -66,13 +66,25 @@ namespace Shortify.NET.Persistence.Repository
                         true,
                         cancellationToken);
 
-        public async Task<List<ShortenedUrl>?> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<List<ShortenedUrl>?> GetAllByUserIdAsync(
+            Guid userId, 
+            DateTime? fromDate,
+            DateTime? toDate, 
+            CancellationToken cancellationToken = default)
         {
-            return await _appDbContext
-                              .Set<ShortenedUrl>()
-                              .AsNoTracking()
-                              .Where(x => x.UserId == userId)
-                              .ToListAsync(cancellationToken);
+            var query = _appDbContext
+                                            .Set<ShortenedUrl>()
+                                            .AsNoTracking()
+                                            .Where(x =>
+                                                x.UserId == userId &&
+                                                x.RowStatus);
+            
+            if (fromDate is not null && toDate is not null)
+            {
+                query = query.Where(url => url.CreatedOnUtc >= fromDate && url.CreatedOnUtc < toDate);
+            }
+            
+            return await query.ToListAsync(cancellationToken);
         }
 
         public async Task<bool> IsCodeUniqueAsync(string code, CancellationToken cancellationToken = default)
