@@ -1,13 +1,12 @@
-﻿using Shortify.NET.Common.Messaging.Abstractions;
-using Shortify.NET.Core.Entites;
-using Shortify.NET.Core.Events;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Shortify.NET.Application.Abstractions;
 using Shortify.NET.Application.Abstractions.Repositories;
 using Shortify.NET.Application.Shared;
 using Shortify.NET.Application.Shared.Models;
-using static Shortify.NET.Application.Shared.Constant.EmailConstants;
+using Shortify.NET.Common.Messaging.Abstractions;
+using Shortify.NET.Core.Entites;
+using Shortify.NET.Core.Events;
 
 namespace Shortify.NET.Application.Users.Events
 {

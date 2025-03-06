@@ -1,13 +1,12 @@
-﻿using Shortify.NET.Common.Messaging.Abstractions;
-using Shortify.NET.Core.Events;
-using System.ComponentModel.DataAnnotations;
-using Shortify.NET.Core.Entites;
-using static Shortify.NET.Application.Shared.Constant.EmailConstants;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Shortify.NET.Application.Abstractions;
 using Shortify.NET.Application.Abstractions.Repositories;
 using Shortify.NET.Application.Shared;
 using Shortify.NET.Application.Shared.Models;
+using Shortify.NET.Common.Messaging.Abstractions;
+using Shortify.NET.Core.Entites;
+using Shortify.NET.Core.Events;
 
 namespace Shortify.NET.Application.Users.Events
 {
@@ -25,18 +24,18 @@ namespace Shortify.NET.Application.Users.Events
             var user = await _userRepository.GetByIdAsync(domainEvent.UserId, cancellationToken) ??
                        throw new ValidationException("User Not Found.");
 
-            await SendWelcomeEmail(user, cancellationToken);
+            await SendPasswordChangedEmail(user, cancellationToken);
         }
 
         #region Private Methods
 
         /// <summary>
-        /// To Send Welcome Email
+        /// To Send Password Changed Email
         /// </summary>
         /// <param name="user"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private async Task SendWelcomeEmail(User user, CancellationToken cancellationToken)
+        private async Task SendPasswordChangedEmail(User user, CancellationToken cancellationToken)
         {
             MailRequest mailRequest = new
             (
